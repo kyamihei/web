@@ -586,6 +586,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初期化
     loadStateFromURL();
     initializeStreamPlayers();
+    
+    // URLにステートがない場合は2x2レイアウトを適用
+    if (!window.location.search) {
+        document.getElementById('layout-2x2').click();
+    }
 
     function createLayoutButtons() {
         const layoutButtons = document.querySelector('.layout-buttons');
