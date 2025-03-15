@@ -584,18 +584,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 初期化
+    loadStateFromURL();
     initializeStreamPlayers();
     
     // URLにステートがない場合は2x2レイアウトを適用
     if (!window.location.search) {
-        const layout2x2Button = document.getElementById('layout-2x2');
-        layout2x2Button.classList.add('active');
-        streamsContainer.className = 'streams-container layout-2x2';
-        
-        // 初期状態では状態をURLに保存しない
-        currentState.layout = 'layout-2x2';
-    } else {
-        loadStateFromURL();
+        document.getElementById('layout-2x2').click();
     }
 
     function createLayoutButtons() {
