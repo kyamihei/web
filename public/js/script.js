@@ -563,6 +563,34 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初期化時に実行
     createShareUrlContainer();
     
+    // 全画面表示の切り替え機能
+    const fullscreenToggle = document.getElementById('fullscreen-toggle');
+    
+    fullscreenToggle.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.log(`全画面表示エラー: ${err.message}`);
+            });
+            fullscreenToggle.classList.add('active');
+        } else {
+            document.exitFullscreen();
+            fullscreenToggle.classList.remove('active');
+        }
+    });
+    
+    // 全画面状態の変更を監視
+    document.addEventListener('fullscreenchange', () => {
+        if (document.fullscreenElement) {
+            fullscreenToggle.classList.add('active');
+            fullscreenToggle.querySelector('i').classList.remove('fa-expand');
+            fullscreenToggle.querySelector('i').classList.add('fa-compress');
+        } else {
+            fullscreenToggle.classList.remove('active');
+            fullscreenToggle.querySelector('i').classList.remove('fa-compress');
+            fullscreenToggle.querySelector('i').classList.add('fa-expand');
+        }
+    });
+    
     // ストリームプレーヤーのホバーエフェクト
     document.querySelectorAll('.stream-player').forEach(player => {
         player.addEventListener('mouseenter', () => {
