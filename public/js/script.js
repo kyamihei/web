@@ -478,6 +478,8 @@ document.addEventListener('DOMContentLoaded', () => {
             iframe.setAttribute('allow', 'autoplay; fullscreen');
         }
         
+        // 既存のコンテンツをクリアしてiframeを追加
+        streamContainer.innerHTML = '';
         streamContainer.appendChild(iframe);
         
         // リセットボタンを追加
@@ -575,14 +577,26 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         
         // メニューの適切な位置に挿入
-        const addStreamButton = document.querySelector('.add-stream-button');
-        if (addStreamButton) {
-            addStreamButton.parentNode.insertBefore(container, addStreamButton.nextSibling);
+        const streamControls = document.querySelector('.stream-controls');
+        if (streamControls) {
+            streamControls.appendChild(container);
         }
     }
 
-    // 初期化時に共有URLコンテナを作成
+    // 配信入力フィールドのラベルを更新
+    function updateStreamInputLabels() {
+        const streamInputs = document.querySelectorAll('.stream-input');
+        streamInputs.forEach(input => {
+            const label = input.querySelector('h3');
+            if (label) {
+                label.innerHTML = '<i class="fas fa-plus"></i> 配信を追加';
+            }
+        });
+    }
+
+    // 初期化時に実行
     createShareUrlContainer();
+    updateStreamInputLabels();
     
     // ストリームプレーヤーのホバーエフェクト
     document.querySelectorAll('.stream-player').forEach(player => {
@@ -607,3 +621,4 @@ document.addEventListener('DOMContentLoaded', () => {
     loadStateFromURL();
     enableDragAndDrop();
 });
+
