@@ -588,7 +588,14 @@ document.addEventListener('DOMContentLoaded', () => {
         loadStateFromURL();
     } else {
         // URLにステートがない場合は、URLを変更せずに2x2レイアウトを適用
+        
+        // まず他のボタンからactiveクラスを削除（念のため）
+        layoutButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // 2x2ボタンにactiveクラスを追加
         document.getElementById('layout-2x2').classList.add('active');
+        
+        // レイアウトクラスの設定
         streamsContainer.className = 'streams-container layout-2x2';
         currentState.layout = 'layout-2x2';
         
