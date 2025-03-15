@@ -194,28 +194,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const streamContainer = document.getElementById(`stream-${streamId}`);
         const mainInput = document.getElementById(`stream-input-${streamId}`);
         
-        // 既存のiframeがあれば削除
-        const existingIframe = streamContainer.querySelector('iframe');
-        if (existingIframe) {
-            existingIframe.remove();
-        }
+        // イベントリスナーを含むすべての要素を削除して再構築
+        streamContainer.innerHTML = `
+            <div class="placeholder">
+                <i class="fas fa-plus-circle placeholder-icon"></i>
+                <p>配信を追加</p>
+                <p>クリックしてURLを入力</p>
+            </div>
+        `;
         
-        // リセットボタンを削除
-        const resetButton = streamContainer.querySelector('.reset-button-container');
-        if (resetButton) {
-            resetButton.remove();
-        }
-        
-        // プレースホルダーを表示
+        // プレースホルダーのクリックイベントを再設定
         const placeholder = streamContainer.querySelector('.placeholder');
         if (placeholder) {
-            placeholder.style.display = 'flex';
-        }
-        
-        // インラインURL入力があれば削除
-        const inlineInput = streamContainer.querySelector('.inline-url-input');
-        if (inlineInput) {
-            inlineInput.remove();
+            placeholder.addEventListener('click', () => {
+                createInlineUrlInput(streamContainer, streamId);
+            });
         }
         
         // メインの入力フィールドをリセット
@@ -273,11 +266,29 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // メニュー開閉機能
     menuToggle.addEventListener('click', () => {
+        document.body.style.overflow = 'hidden'; // スクロール防止
         streamMenu.classList.add('open');
+        
+        // 共有URLを更新
+        updateShareUrl();
+        
+        // メニューアイテムのフェードインアニメーション
+        const menuItems = streamMenu.querySelectorAll('h3, .layout-buttons, .stream-input, .add-stream-button, .url-help, .share-url-container');
+        menuItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            
+            setTimeout(() => {
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, 100 + (index * 50));
+        });
     });
     
     closeMenu.addEventListener('click', () => {
         streamMenu.classList.remove('open');
+        document.body.style.overflow = ''; // スクロール復活
     });
     
     // メニュー外クリックで閉じる
@@ -521,59 +532,57 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初期スタイルを適用
     applyPlatformStyles();
     
-    // メニュー開閉時のアニメーション
-    menuToggle.addEventListener('click', () => {
-        document.body.style.overflow = 'hidden'; // スクロール防止
-        streamMenu.classList.add('open');
-        
-        // メニューアイテムのフェードインアニメーション
-        const menuItems = streamMenu.querySelectorAll('h3, .layout-buttons, .stream-input, .add-stream-button, .url-help');
-        menuItems.forEach((item, index) => {
-            item.style.opacity = '0';
-            item.style.transform = 'translateY(20px)';
-            item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+    // 共有URLを更新する関数
+    function updateShareUrl() {
+        const shareUrlInput = document.getElementById('share-url');
+        if (shareUrlInput) {
+            shareUrlInput.value = window.location.href;
+        }
+    }
+
+    // 共有URLをコピーする関数
+    function copyShareUrl() {
+        const shareUrlInput = document.getElementById('share-url');
+        if (shareUrlInput) {
+            shareUrlInput.select();
+            document.execCommand('copy');
+            
+            // コピー成功のフィードバック
+            const copyButton = document.querySelector('.copy-url-button');
+            const originalText = copyButton.textContent;
+            copyButton.textContent = 'コピーしました！';
+            copyButton.style.background = 'var(--success-color)';
             
             setTimeout(() => {
-                item.style.opacity = '1';
-                item.style.transform = 'translateY(0)';
-            }, 100 + (index * 50));
-        });
-    });
-    
-    closeMenu.addEventListener('click', () => {
-        streamMenu.classList.remove('open');
-        document.body.style.overflow = ''; // スクロール復活
-    });
-    
-    // // file://プロトコルでの実行時のみ警告メッセージを表示
-    // if (window.location.protocol === 'file:') {
-    //     const warningDiv = document.createElement('div');
-    //     warningDiv.className = 'warning-message';
-    //     warningDiv.innerHTML = `
-    //         <div class="warning-icon"><i class="fas fa-exclamation-triangle"></i></div>
-    //         <div class="warning-content">
-    //             <h3>注意</h3>
-    //             <p>ファイルとして直接開いた場合、Twitchの埋め込みプレーヤーは動作しません。</p>
-    //             <p>Twitchの埋め込みプレーヤーを使用するには、以下の手順でローカルサーバーを使用してください：</p>
-    //             <ol>
-    //                 <li><code>install-server.bat</code>を実行してローカルサーバーをインストール</li>
-    //                 <li><code>start-server.bat</code>を実行してサーバーを起動</li>
-    //                 <li>ブラウザで<code>http://localhost:8080</code>にアクセス</li>
-    //             </ol>
-    //         </div>
-    //         <button class="close-warning"><i class="fas fa-times"></i></button>
-    //     `;
-    //     document.body.insertBefore(warningDiv, document.querySelector('.top-bar'));
+                copyButton.textContent = originalText;
+                copyButton.style.background = '';
+            }, 2000);
+        }
+    }
+
+    // 初期化時に共有URLコンテナを作成
+    function createShareUrlContainer() {
+        const container = document.createElement('div');
+        container.className = 'share-url-container';
+        container.innerHTML = `
+            <h3><i class="fas fa-share-alt"></i> 共有</h3>
+            <div class="share-url-input-container">
+                <input type="text" id="share-url" readonly>
+                <button class="copy-url-button" onclick="copyShareUrl()">
+                    <i class="fas fa-copy"></i> コピー
+                </button>
+            </div>
+        `;
         
-    //     // 警告メッセージを閉じる機能
-    //     const closeWarning = warningDiv.querySelector('.close-warning');
-    //     closeWarning.addEventListener('click', () => {
-    //         warningDiv.style.opacity = '0';
-    //         setTimeout(() => {
-    //             warningDiv.remove();
-    //         }, 300);
-    //     });
-    // }
+        // メニューの適切な位置に挿入
+        const addStreamButton = document.querySelector('.add-stream-button');
+        if (addStreamButton) {
+            addStreamButton.parentNode.insertBefore(container, addStreamButton.nextSibling);
+        }
+    }
+
+    // 初期化時に共有URLコンテナを作成
+    createShareUrlContainer();
     
     // ストリームプレーヤーのホバーエフェクト
     document.querySelectorAll('.stream-player').forEach(player => {

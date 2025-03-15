@@ -822,3 +822,64 @@ iframe {
 .stream-reset-button i {
     font-size: 16px;
 }
+
+/* 共有URLコンテナ */
+.share-url-container {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius);
+    padding: 12px;
+    margin: 15px 0;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.share-url-container h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.share-url-container h3 i {
+    color: var(--secondary-color);
+}
+
+.share-url-input-container {
+    display: flex;
+    gap: 10px;
+}
+
+.share-url-input-container input {
+    flex: 1;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: var(--text-primary);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    border-radius: var(--border-radius);
+    font-family: monospace;
+    font-size: 14px;
+}
+
+.copy-url-button {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #00a8a3 100%);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.copy-url-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.copy-url-button:active {
+    transform: translateY(0);
+}
