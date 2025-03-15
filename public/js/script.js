@@ -583,16 +583,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 初期化
-    loadStateFromURL();
-    initializeStreamPlayers();
+    if (window.location.search) {
+        // URLからステートがある場合のみ復元
+        loadStateFromURL();
+    } else {
+        // URLにステートがない場合は、URLを変更せずに2x2レイアウトを適用
         
-    // URLにステートがない場合は2x2レイアウトを適用
-    if (!window.location.search) {
-        // ボタンのアクティブ状態を設定
-        document.querySelectorAll('.layout-controls button').forEach(btn => btn.classList.remove('active'));
+        // まず他のボタンからactiveクラスを削除（念のため）
+        layoutButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // 2x2ボタンにactiveクラスを追加
         document.getElementById('layout-2x2').classList.add('active');
         
-        // レイアウトの設定（click()は使わない）
+        // レイアウトクラスの設定
         streamsContainer.className = 'streams-container layout-2x2';
         currentState.layout = 'layout-2x2';
         
@@ -603,7 +606,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    createLayoutButtons();
+    initializeStreamPlayers();
 
     function createLayoutButtons() {
         const layoutButtons = document.querySelector('.layout-buttons');
@@ -672,6 +675,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const buttons = layoutButtons.querySelectorAll('button');
         buttons.forEach(button => {
             button.addEventListener('click', () => {
+                 // もしこのボタンがcurrentStateのレイアウトと一致するなら、アクティブにする
+                if (button.id === currentState.layout) {
+                    button.classList.add('active');
+                }
                 // アクティブクラスの切り替え
                 buttons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
