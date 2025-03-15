@@ -675,10 +675,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const buttons = layoutButtons.querySelectorAll('button');
         buttons.forEach(button => {
             button.addEventListener('click', () => {
-                 // もしこのボタンがcurrentStateのレイアウトと一致するなら、アクティブにする
-                if (button.id === currentState.layout) {
-                    button.classList.add('active');
-                }
+                
+                // アクティブクラスの切り替え
+                buttons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
                 
                 // レイアウトクラスの切り替え
                 const layoutClass = button.id;
@@ -723,5 +723,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     createLayoutButtons();
+
+    // script.js の最後に追加
+    window.addEventListener('load', () => {
+        console.log("Window loaded - setting active button");
+        if (!window.location.search) {
+        const layout2x2Button = document.getElementById('layout-2x2');
+        if (layout2x2Button) {
+            layout2x2Button.classList.add('active');
+            console.log("Active class added to 2x2 button");
+        }
+        }
+    });
 });
 
