@@ -199,6 +199,12 @@ document.addEventListener('DOMContentLoaded', () => {
             existingIframe.remove();
         }
         
+        // リセットボタンを削除
+        const resetButton = streamContainer.querySelector('.reset-button-container');
+        if (resetButton) {
+            resetButton.remove();
+        }
+        
         // プレースホルダーを表示
         const placeholder = streamContainer.querySelector('.placeholder');
         if (placeholder) {
@@ -212,10 +218,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // メインの入力フィールドをリセット
-        const platformSelect = document.getElementById(`platform-${streamId}`);
-        const channelInput = document.getElementById(`channel-${streamId}`);
-        if (platformSelect) platformSelect.value = 'twitch';
-        if (channelInput) channelInput.value = '';
+        const mainInput = document.getElementById(`stream-input-${streamId}`);
+        if (mainInput) {
+            const platformSelect = mainInput.querySelector('.platform-select');
+            const channelInput = mainInput.querySelector('input');
+            if (platformSelect) platformSelect.value = 'twitch';
+            if (channelInput) channelInput.value = '';
+            
+            // 配信2以降の場合は非表示に
+            if (streamId > 1) {
+                mainInput.classList.add('hidden');
+                visibleStreamInputs = Math.max(1, visibleStreamInputs - 1);
+            }
+        }
+        
+        // 「追加」ボタンの表示状態を更新
+        if (visibleStreamInputs < 8) {
+            addStreamButton.classList.remove('hidden');
+        }
         
         // 状態を更新
         delete currentState.streams[streamId];
@@ -394,18 +414,27 @@ document.addEventListener('DOMContentLoaded', () => {
             inlineInput.remove();
         }
 
-        // メイン入力フィールドを非表示（配信2以降の場合）
+        // メイン入力フィールドを更新（配信2以降の場合）
         const mainInput = document.getElementById(`stream-input-${streamId}`);
-        if (mainInput && streamId > 1) {
-            mainInput.classList.add('hidden');
-            
-            // 表示されている入力フィールドの数を更新
-            visibleStreamInputs = Array.from(document.querySelectorAll('.stream-input:not(.hidden)')).length;
-            
-            // 「追加」ボタンを再表示
-            if (visibleStreamInputs < 8) {
-                addStreamButton.classList.remove('hidden');
+        if (mainInput) {
+            if (streamId > 1) {
+                mainInput.classList.add('hidden');
             }
+            // プラットフォームと入力値を更新
+            const platformSelect = mainInput.querySelector('.platform-select');
+            const channelInput = mainInput.querySelector('input');
+            if (platformSelect) platformSelect.value = platform;
+            if (channelInput) channelInput.value = channelId;
+        }
+        
+        // 表示されている入力フィールドの数を更新
+        visibleStreamInputs = Array.from(document.querySelectorAll('.stream-input:not(.hidden)')).length;
+        
+        // 「追加」ボタンの表示状態を更新
+        if (visibleStreamInputs < 8) {
+            addStreamButton.classList.remove('hidden');
+        } else {
+            addStreamButton.classList.add('hidden');
         }
         
         // URLの正規化と埋め込みURL生成
@@ -484,6 +513,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         streamContainer.appendChild(iframe);
+        
+        // リセットボタンを追加
+        const resetButtonContainer = document.createElement('div');
+        resetButtonContainer.className = 'reset-button-container';
+        const resetButton = document.createElement('button');
+        resetButton.className = 'stream-reset-button';
+        resetButton.innerHTML = '<i class="fas fa-undo"></i>';
+        resetButton.title = 'リセット';
+        resetButton.addEventListener('click', () => resetStream(streamId));
+        resetButtonContainer.appendChild(resetButton);
+        streamContainer.appendChild(resetButtonContainer);
         
         // 状態を更新
         currentState.streams[streamId] = { platform, channelId: normalizedChannelId };

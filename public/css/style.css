@@ -33,7 +33,7 @@ body {
     background: linear-gradient(135deg, var(--dark-bg) 0%, #16162c 100%);
     color: var(--text-primary);
     line-height: 1.6;
-    padding: 20px;
+    padding: 10px;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -101,7 +101,7 @@ h1, h2, h3, h4, h5, h6 {
     z-index: 1000;
     overflow-y: auto;
     transition: right var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    padding: 20px;
+    padding: 15px;
     border-left: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -113,9 +113,9 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 15px;
+    padding-bottom: 10px;
 }
 
 .menu-header h2 {
@@ -155,8 +155,8 @@ h1, h2, h3, h4, h5, h6 {
 .layout-controls {
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: var(--border-radius);
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: 12px;
+    margin-bottom: 15px;
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -260,8 +260,8 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-bottom: 15px;
-    padding: 15px;
+    margin-bottom: 10px;
+    padding: 12px;
     border-radius: var(--border-radius);
     background-color: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -402,10 +402,10 @@ input[type="text"]::placeholder {
 /* ストリームコンテナ */
 .streams-container {
     display: grid;
-    gap: 15px;
+    gap: 10px;
     flex: 1;
     min-height: 500px;
-    margin-top: 60px; /* トップバーの高さ分のマージンを追加 */
+    margin-top: 40px;
 }
 
 /* レイアウト設定 */
@@ -450,7 +450,7 @@ input[type="text"]::placeholder {
     border-radius: var(--border-radius);
     overflow: hidden;
     position: relative;
-    min-height: 200px;
+    min-height: 180px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -479,7 +479,7 @@ input[type="text"]::placeholder {
 .placeholder {
     text-align: center;
     color: var(--text-secondary);
-    padding: 20px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -726,12 +726,12 @@ iframe {
     left: 50%;
     transform: translate(-50%, -50%);
     background: var(--dark-surface);
-    padding: 20px;
+    padding: 15px;
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     width: 80%;
     max-width: 400px;
     z-index: 10;
@@ -740,7 +740,7 @@ iframe {
 .inline-url-input select,
 .inline-url-input input {
     width: 100%;
-    padding: 10px;
+    padding: 8px;
     border-radius: var(--border-radius);
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: var(--dark-surface-2);
@@ -790,4 +790,35 @@ iframe {
 .reset-button:hover {
     background: #ff8787;
     transform: translateY(-2px);
+}
+
+/* ストリームプレーヤーのリセットボタン */
+.reset-button-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+}
+
+.stream-reset-button {
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    color: white;
+    transition: all var(--transition-speed) ease;
+}
+
+.stream-reset-button:hover {
+    background: var(--danger-color);
+    transform: rotate(-180deg);
+}
+
+.stream-reset-button i {
+    font-size: 16px;
 }
