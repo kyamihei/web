@@ -130,8 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // 初期状態で2x2レイアウトをアクティブに
-    document.getElementById('layout-2x4').classList.add('active');
+    // 初期状態で4x2レイアウトをアクティブに
+    document.getElementById('layout-4x2').classList.add('active');
     
     // 読み込みボタンのイベントリスナー
     loadButtons.forEach(button => {
