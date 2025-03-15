@@ -583,13 +583,23 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 初期化
-    loadStateFromURL();
-    initializeStreamPlayers();
-    
-    // URLにステートがない場合は2x2レイアウトを適用
-    if (!window.location.search) {
-        document.getElementById('layout-2x2').click();
+    if (window.location.search) {
+        // URLからステートがある場合のみ復元
+        loadStateFromURL();
+    } else {
+        // URLにステートがない場合は、URLを変更せずに2x2レイアウトを適用
+        document.getElementById('layout-2x2').classList.add('active');
+        streamsContainer.className = 'streams-container layout-2x2';
+        currentState.layout = 'layout-2x2';
+        
+        // レイアウトに応じてストリームプレーヤーの表示/非表示を設定
+        const streamPlayers = document.querySelectorAll('.stream-player');
+        streamPlayers.forEach((player, index) => {
+            player.style.display = index < 4 ? 'flex' : 'none';
+        });
     }
+
+    initializeStreamPlayers();
 
     function createLayoutButtons() {
         const layoutButtons = document.querySelector('.layout-buttons');
