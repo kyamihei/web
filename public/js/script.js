@@ -471,24 +471,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 共有URLをコピーする関数
-    function copyShareUrl() {
-        const shareUrlInput = document.getElementById('share-url');
-        if (shareUrlInput) {
-            shareUrlInput.select();
-            document.execCommand('copy');
-            
-            // コピー成功のフィードバック
-            const copyButton = document.querySelector('.copy-url-button');
-            const originalText = copyButton.textContent;
-            copyButton.textContent = 'コピーしました！';
-            copyButton.style.background = 'var(--success-color)';
-            
-            setTimeout(() => {
-                copyButton.textContent = originalText;
-                copyButton.style.background = '';
-            }, 2000);
+    // 全体をリセットする関数
+    function resetAll() {
+        // すべてのストリームをリセット
+        for (let i = 1; i <= 8; i++) {
+            resetStream(i);
         }
+        
+        // レイアウトを4x2に戻す
+        document.getElementById('layout-4x2').click();
+        
+        // 入力フィールドを初期状態に
+        visibleStreamInputs = 1;
+        document.querySelectorAll('.stream-input').forEach((input, index) => {
+            if (index === 0) {
+                input.classList.remove('hidden');
+            } else {
+                input.classList.add('hidden');
+            }
+        });
+        
+        // 状態をリセット
+        currentState = {
+            layout: 'layout-4x2',
+            streams: {}
+        };
+        saveStateToURL();
+        
+        // 「追加」ボタンを表示
+        addStreamButton.classList.remove('hidden');
     }
 
     // 初期化時に共有URLコンテナを作成
@@ -499,33 +510,53 @@ document.addEventListener('DOMContentLoaded', () => {
             <h3><i class="fas fa-share-alt"></i> 共有</h3>
             <div class="share-url-input-container">
                 <input type="text" id="share-url" readonly>
-                <button class="copy-url-button" onclick="copyShareUrl()">
+                <button class="copy-url-button">
                     <i class="fas fa-copy"></i> コピー
                 </button>
             </div>
         `;
         
+        // コピーボタンのイベントリスナーを追加
+        const copyButton = container.querySelector('.copy-url-button');
+        copyButton.addEventListener('click', () => {
+            const shareUrlInput = container.querySelector('#share-url');
+            shareUrlInput.select();
+            document.execCommand('copy');
+            
+            // コピー成功のフィードバック
+            const originalText = copyButton.innerHTML;
+            copyButton.innerHTML = '<i class="fas fa-check"></i> コピーしました！';
+            copyButton.style.background = 'var(--success-color)';
+            
+            setTimeout(() => {
+                copyButton.innerHTML = originalText;
+                copyButton.style.background = '';
+            }, 2000);
+        });
+        
         // メニューの適切な位置に挿入
         const streamControls = document.querySelector('.stream-controls');
         if (streamControls) {
             streamControls.appendChild(container);
+            
+            // リセットボタンを追加
+            const resetContainer = document.createElement('div');
+            resetContainer.className = 'reset-all-container';
+            resetContainer.innerHTML = `
+                <button class="reset-all-button">
+                    <i class="fas fa-undo-alt"></i> すべてリセット
+                </button>
+            `;
+            
+            const resetButton = resetContainer.querySelector('.reset-all-button');
+            resetButton.addEventListener('click', resetAll);
+            
+            streamControls.appendChild(resetContainer);
         }
-    }
-
-    // 配信入力フィールドのラベルを更新
-    function updateStreamInputLabels() {
-        const streamInputs = document.querySelectorAll('.stream-input');
-        streamInputs.forEach(input => {
-            const label = input.querySelector('h3');
-            if (label) {
-                label.innerHTML = '<i class="fas fa-plus"></i> 配信を追加';
-            }
-        });
     }
 
     // 初期化時に実行
     createShareUrlContainer();
-    updateStreamInputLabels();
     
     // ストリームプレーヤーのホバーエフェクト
     document.querySelectorAll('.stream-player').forEach(player => {

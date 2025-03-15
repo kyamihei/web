@@ -941,3 +941,40 @@ iframe {
     align-items: center;
     justify-content: center;
 }
+
+/* リセットボタン */
+.reset-all-container {
+    margin-top: 20px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+}
+
+.reset-all-button {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #e17055 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 16px;
+    transition: all var(--transition-speed) ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 auto;
+}
+
+.reset-all-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.reset-all-button:active {
+    transform: translateY(0);
+}
+
+.reset-all-button i {
+    font-size: 18px;
+}
