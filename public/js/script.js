@@ -563,34 +563,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初期化時に実行
     createShareUrlContainer();
     
-    // 全画面表示の切り替え機能
-    const fullscreenToggle = document.getElementById('fullscreen-toggle');
-    
-    fullscreenToggle.addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(err => {
-                console.log(`全画面表示エラー: ${err.message}`);
-            });
-            fullscreenToggle.classList.add('active');
-        } else {
-            document.exitFullscreen();
-            fullscreenToggle.classList.remove('active');
-        }
-    });
-    
-    // 全画面状態の変更を監視
-    document.addEventListener('fullscreenchange', () => {
-        if (document.fullscreenElement) {
-            fullscreenToggle.classList.add('active');
-            fullscreenToggle.querySelector('i').classList.remove('fa-expand');
-            fullscreenToggle.querySelector('i').classList.add('fa-compress');
-        } else {
-            fullscreenToggle.classList.remove('active');
-            fullscreenToggle.querySelector('i').classList.remove('fa-compress');
-            fullscreenToggle.querySelector('i').classList.add('fa-expand');
-        }
-    });
-    
     // ストリームプレーヤーのホバーエフェクト
     document.querySelectorAll('.stream-player').forEach(player => {
         player.addEventListener('mouseenter', () => {
@@ -751,6 +723,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     createLayoutButtons();
+
+    // 全画面表示の切り替え機能
+    const fullscreenToggle = document.getElementById('fullscreen-toggle');
+    
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.log(`Error attempting to enable full-screen mode: ${err.message}`);
+            });
+            fullscreenToggle.innerHTML = '<i class="fas fa-compress"></i>';
+            fullscreenToggle.title = '全画面表示を解除';
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+                fullscreenToggle.innerHTML = '<i class="fas fa-expand"></i>';
+                fullscreenToggle.title = '全画面表示';
+            }
+        }
+    }
+
+    // 全画面表示ボタンのクリックイベント
+    fullscreenToggle.addEventListener('click', toggleFullScreen);
+
+    // 全画面表示の変更を監視
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement) {
+            fullscreenToggle.innerHTML = '<i class="fas fa-expand"></i>';
+            fullscreenToggle.title = '全画面表示';
+        }
+    });
+
+    // F11キーでの全画面表示も同じように処理
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'F11') {
+            e.preventDefault();
+            toggleFullScreen();
+        }
+    });
 
     // script.js の最後に追加
     window.addEventListener('load', () => {

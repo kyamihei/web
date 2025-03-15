@@ -63,67 +63,33 @@ h1, h2, h3, h4, h5, h6 {
     left: 0;
     right: 0;
     padding: 10px;
-    z-index: 1000;
-    background: transparent;
-}
-
-.top-bar-left {
     display: flex;
-    gap: 8px;
-    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+    pointer-events: none;
 }
 
-.menu-toggle,
-.fullscreen-toggle {
+.menu-toggle, .fullscreen-toggle {
     background: rgba(0, 0, 0, 0.5);
     border: none;
     color: white;
-    width: 32px;
-    height: 32px;
+    padding: 8px;
     border-radius: 4px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-    margin-right: 8px;
+    transition: background-color 0.3s ease;
+    pointer-events: auto;
 }
 
-.menu-toggle:hover,
-.fullscreen-toggle:hover {
+.menu-toggle:hover, .fullscreen-toggle:hover {
     background: rgba(0, 0, 0, 0.7);
 }
 
-.fullscreen-toggle.active i::before {
-    content: "\f066"; /* fa-compress アイコン */
+.menu-toggle i, .fullscreen-toggle i {
+    font-size: 1.2em;
 }
 
-/* ハンバーガーメニュー */
-.menu-toggle {
-    background-color: var(--primary-color);
-    border: none;
-    border-radius: 0 50% 50% 0;
-    width: 60px;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    position: relative;
-    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
-    transition: all var(--transition-speed) ease;
-    margin-left: -10px; /* 左側から少し飛び出す */
-}
-
-.menu-toggle:hover {
-    background-color: var(--primary-light);
-    transform: translateX(5px);
-    margin-left: -5px;
-}
-
-.menu-toggle i {
-    color: white;
-    font-size: 20px;
+.fullscreen-toggle {
+    margin-right: 10px;
 }
 
 /* メニューパネル */
