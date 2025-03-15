@@ -121,11 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 streamPlayers.forEach(player => {
                     player.style.display = 'flex';
                 });
-            } else if (layoutClass === 'layout-8x1') {
-                // 8x1レイアウトの場合、すべてのプレーヤーを表示
-                streamPlayers.forEach(player => {
-                    player.style.display = 'flex';
-                });
             } else {
                 // 2x2レイアウトの場合、最初の4つのプレーヤーのみ表示
                 streamPlayers.forEach((player, index) => {

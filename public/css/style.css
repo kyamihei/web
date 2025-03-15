@@ -444,11 +444,6 @@ input[type="text"]::placeholder {
     grid-template-rows: 1fr 1fr 1fr 1fr;
 }
 
-.layout-8x1 {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-}
-
 /* ストリームプレーヤー */
 .stream-player {
     background: linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(36, 37, 56, 0.8) 100%);
