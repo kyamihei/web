@@ -612,6 +612,55 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </button>
         `;
+
+        // レイアウトボタンのイベントリスナーを再設定
+        const buttons = layoutButtons.querySelectorAll('button');
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                // アクティブクラスの切り替え
+                buttons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // レイアウトクラスの切り替え
+                const layoutClass = button.id;
+                streamsContainer.className = 'streams-container ' + layoutClass;
+                
+                // 状態を更新
+                currentState.layout = layoutClass;
+                saveStateToURL();
+                
+                // レイアウトに応じてストリームプレーヤーの表示/非表示を切り替え
+                const streamPlayers = document.querySelectorAll('.stream-player');
+                
+                if (layoutClass === 'layout-1x2') {
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 2 ? 'flex' : 'none';
+                    });
+                } else if (layoutClass === 'layout-2x1') {
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 2 ? 'flex' : 'none';
+                    });
+                } else if (layoutClass === 'layout-1x3') {
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 3 ? 'flex' : 'none';
+                    });
+                } else if (layoutClass === 'layout-3x1') {
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 3 ? 'flex' : 'none';
+                    });
+                } else if (layoutClass === 'layout-4x2' || layoutClass === 'layout-2x4') {
+                    streamPlayers.forEach(player => {
+                        player.style.display = 'flex';
+                    });
+                } else {
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 4 ? 'flex' : 'none';
+                    });
+                }
+
+                initializeStreamPlayers();
+            });
+        });
     }
 
     createLayoutButtons();
