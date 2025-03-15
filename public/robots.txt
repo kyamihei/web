@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Sitemap: https://fukumado.com/sitemap.xml
+
+# 不要なディレクトリへのアクセスを制限
+Disallow: /js/
+Disallow: /css/
+Disallow: /images/raw/ 
