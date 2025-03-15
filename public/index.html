@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マルチストリームビューア</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="top-bar">
+        <button id="menu-toggle" class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+    
+    <div id="stream-menu" class="stream-menu">
+        <div class="menu-header">
+            <h2><i class="fas fa-cog"></i> 配信設定</h2>
+            <button id="close-menu" class="close-menu"><i class="fas fa-times"></i></button>
+        </div>
+        
+        <div class="layout-controls">
+            <h3><i class="fas fa-th-large"></i> レイアウト</h3>
+            <div class="layout-buttons">
+                <button id="layout-2x2">2x2</button>
+                <button id="layout-1x2">1x2</button>
+                <button id="layout-2x1">2x1</button>
+                <button id="layout-1x3">1x3</button>
+                <button id="layout-3x1">3x1</button>
+                <button id="layout-4x2">4x2</button>
+                <button id="layout-2x4">2x4</button>
+                <button id="layout-8x1">8x1</button>
+            </div>
+        </div>
+        
+        <div class="stream-controls">
+            <h3><i class="fas fa-video"></i> 配信</h3>
+            <div id="stream-input-1" class="stream-input">
+                <div class="input-group">
+                    <select id="platform-1" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-1" placeholder="チャンネルID/動画ID">
+                    <button class="load-stream" data-target="1"><i class="fas fa-play"></i> 読み込み</button>
+                </div>
+            </div>
+            
+            <div id="stream-input-2" class="stream-input hidden">
+                <div class="input-group">
+                    <select id="platform-2" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-2" placeholder="チャンネルID/動画ID">
+                    <button class="load-stream" data-target="2"><i class="fas fa-play"></i> 読み込み</button>
+                </div>
+                <button class="delete-stream" data-target="2"><i class="fas fa-trash-alt"></i> 削除</button>
+            </div>
+            
+            <div id="stream-input-3" class="stream-input hidden">
+                <div class="input-group">
+                    <select id="platform-3" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-3" placeholder="チャンネルID/動画ID">
+                    <button class="load-stream" data-target="3"><i class="fas fa-play"></i> 読み込み</button>
+                </div>
+                <button class="delete-stream" data-target="3"><i class="fas fa-trash-alt"></i> 削除</button>
+            </div>
+            
+            <div id="stream-input-4" class="stream-input hidden">
+                <div class="input-group">
+                    <select id="platform-4" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-4" placeholder="チャンネルID/動画ID">
+                    <button class="load-stream" data-target="4"><i class="fas fa-play"></i> 読み込み</button>
+                </div>
+                <button class="delete-stream" data-target="4"><i class="fas fa-trash-alt"></i> 削除</button>
+            </div>
+            
+            <div id="stream-input-5" class="stream-input hidden">
+                <div class="input-group">
+                    <select id="platform-5" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-5" placeholder="チャンネルID/動画ID">
+                    <button class="load-stream" data-target="5"><i class="fas fa-play"></i> 読み込み</button>
+                </div>
+                <button class="delete-stream" data-target="5"><i class="fas fa-trash-alt"></i> 削除</button>
+            </div>
+            
+            <div id="stream-input-6" class="stream-input hidden">
+                <div class="input-group">
+                    <select id="platform-6" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-6" placeholder="チャンネルID/動画ID">
+                    <button class="load-stream" data-target="6"><i class="fas fa-play"></i> 読み込み</button>
+                </div>
+                <button class="delete-stream" data-target="6"><i class="fas fa-trash-alt"></i> 削除</button>
+            </div>
+            
+            <div id="stream-input-7" class="stream-input hidden">
+                <div class="input-group">
+                    <select id="platform-7" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-7" placeholder="チャンネルID/動画ID">
+                    <button class="load-stream" data-target="7"><i class="fas fa-play"></i> 読み込み</button>
+                </div>
+                <button class="delete-stream" data-target="7"><i class="fas fa-trash-alt"></i> 削除</button>
+            </div>
+            
+            <div id="stream-input-8" class="stream-input hidden">
+                <div class="input-group">
+                    <select id="platform-8" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-8" placeholder="チャンネルID/動画ID">
+                    <button class="load-stream" data-target="8"><i class="fas fa-play"></i> 読み込み</button>
+                </div>
+                <button class="delete-stream" data-target="8"><i class="fas fa-trash-alt"></i> 削除</button>
+            </div>
+            
+            <button id="add-stream" class="add-stream-button"><i class="fas fa-plus"></i> 配信を追加</button>
+        </div>
+    </div>
+    
+    <div class="streams-container layout-2x2">
+        <div id="stream-1" class="stream-player">
+            <div class="placeholder">
+                <div class="placeholder-icon"><i class="fas fa-play-circle"></i></div>
+                <p>配信1</p>
+                <p>チャンネルIDを入力して「読み込み」をクリックしてください</p>
+            </div>
+        </div>
+        <div id="stream-2" class="stream-player">
+            <div class="placeholder">
+                <div class="placeholder-icon"><i class="fas fa-play-circle"></i></div>
+                <p>配信2</p>
+                <p>チャンネルIDを入力して「読み込み」をクリックしてください</p>
+            </div>
+        </div>
+        <div id="stream-3" class="stream-player">
+            <div class="placeholder">
+                <div class="placeholder-icon"><i class="fas fa-play-circle"></i></div>
+                <p>配信3</p>
+                <p>チャンネルIDを入力して「読み込み」をクリックしてください</p>
+            </div>
+        </div>
+        <div id="stream-4" class="stream-player">
+            <div class="placeholder">
+                <div class="placeholder-icon"><i class="fas fa-play-circle"></i></div>
+                <p>配信4</p>
+                <p>チャンネルIDを入力して「読み込み」をクリックしてください</p>
+            </div>
+        </div>
+        <div id="stream-5" class="stream-player">
+            <div class="placeholder">
+                <div class="placeholder-icon"><i class="fas fa-play-circle"></i></div>
+                <p>配信5</p>
+                <p>チャンネルIDを入力して「読み込み」をクリックしてください</p>
+            </div>
+        </div>
+        <div id="stream-6" class="stream-player">
+            <div class="placeholder">
+                <div class="placeholder-icon"><i class="fas fa-play-circle"></i></div>
+                <p>配信6</p>
+                <p>チャンネルIDを入力して「読み込み」をクリックしてください</p>
+            </div>
+        </div>
+        <div id="stream-7" class="stream-player">
+            <div class="placeholder">
+                <div class="placeholder-icon"><i class="fas fa-play-circle"></i></div>
+                <p>配信7</p>
+                <p>チャンネルIDを入力して「読み込み」をクリックしてください</p>
+            </div>
+        </div>
+        <div id="stream-8" class="stream-player">
+            <div class="placeholder">
+                <div class="placeholder-icon"><i class="fas fa-play-circle"></i></div>
+                <p>配信8</p>
+                <p>チャンネルIDを入力して「読み込み」をクリックしてください</p>
+            </div>
+        </div>
+    </div>
+    
+    
+    <script src="js/script.js"></script>
+</body>
+</html>
