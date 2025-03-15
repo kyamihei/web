@@ -738,8 +738,7 @@ iframe {
 }
 
 .inline-url-input select,
-.inline-url-input input,
-.inline-url-input button {
+.inline-url-input input {
     width: 100%;
     padding: 10px;
     border-radius: var(--border-radius);
@@ -758,15 +757,37 @@ iframe {
     border-color: var(--primary-color);
 }
 
-.inline-url-input button {
-    background: var(--primary-color);
+.button-container {
+    display: flex;
+    gap: 10px;
+}
+
+.load-button,
+.reset-button {
+    flex: 1;
+    padding: 10px;
+    border-radius: var(--border-radius);
     border: none;
     cursor: pointer;
     font-weight: 500;
     transition: all var(--transition-speed) ease;
+    color: var(--text-primary);
 }
 
-.inline-url-input button:hover {
+.load-button {
+    background: var(--primary-color);
+}
+
+.load-button:hover {
     background: var(--primary-light);
+    transform: translateY(-2px);
+}
+
+.reset-button {
+    background: var(--danger-color);
+}
+
+.reset-button:hover {
+    background: #ff8787;
     transform: translateY(-2px);
 }

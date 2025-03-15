@@ -136,8 +136,20 @@ document.addEventListener('DOMContentLoaded', () => {
         urlInput.type = 'text';
         urlInput.placeholder = 'URLまたはチャンネルIDを入力';
         
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'button-container';
+        
         const loadButton = document.createElement('button');
         loadButton.textContent = '読み込み';
+        loadButton.className = 'load-button';
+        
+        const resetButton = document.createElement('button');
+        resetButton.textContent = 'リセット';
+        resetButton.className = 'reset-button';
+        
+        buttonContainer.appendChild(loadButton);
+        buttonContainer.appendChild(resetButton);
+        
         loadButton.addEventListener('click', () => {
             const platform = platformSelect.value;
             const channelId = urlInput.value.trim();
@@ -158,9 +170,15 @@ document.addEventListener('DOMContentLoaded', () => {
             inputContainer.remove();
         });
         
+        resetButton.addEventListener('click', () => {
+            // ストリームをリセット
+            resetStream(streamId);
+            inputContainer.remove();
+        });
+        
         inputContainer.appendChild(platformSelect);
         inputContainer.appendChild(urlInput);
-        inputContainer.appendChild(loadButton);
+        inputContainer.appendChild(buttonContainer);
         
         const placeholder = player.querySelector('.placeholder');
         if (placeholder) {
@@ -169,6 +187,42 @@ document.addEventListener('DOMContentLoaded', () => {
         player.appendChild(inputContainer);
         
         urlInput.focus();
+    }
+
+    // ストリームをリセットする関数
+    function resetStream(streamId) {
+        const streamContainer = document.getElementById(`stream-${streamId}`);
+        
+        // 既存のiframeがあれば削除
+        const existingIframe = streamContainer.querySelector('iframe');
+        if (existingIframe) {
+            existingIframe.remove();
+        }
+        
+        // プレースホルダーを表示
+        const placeholder = streamContainer.querySelector('.placeholder');
+        if (placeholder) {
+            placeholder.style.display = 'flex';
+        }
+        
+        // インラインURL入力があれば削除
+        const inlineInput = streamContainer.querySelector('.inline-url-input');
+        if (inlineInput) {
+            inlineInput.remove();
+        }
+        
+        // メインの入力フィールドをリセット
+        const platformSelect = document.getElementById(`platform-${streamId}`);
+        const channelInput = document.getElementById(`channel-${streamId}`);
+        if (platformSelect) platformSelect.value = 'twitch';
+        if (channelInput) channelInput.value = '';
+        
+        // 状態を更新
+        delete currentState.streams[streamId];
+        saveStateToURL();
+        
+        // ドラッグ&ドロップを再有効化
+        enableDragAndDrop();
     }
 
     // 配信入力フィールドを追加する機能
@@ -328,46 +382,59 @@ document.addEventListener('DOMContentLoaded', () => {
             inlineInput.remove();
         }
         
-        // プラットフォームに応じた埋め込みURLを生成
+        // URLの正規化と埋め込みURL生成
         let embedUrl = '';
+        let normalizedChannelId = channelId;
         
         switch (platform) {
             case 'twitch':
                 const parentParam = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
-                if (channelId.startsWith('v')) {
-                    embedUrl = `https://player.twitch.tv/?video=${channelId}&parent=${parentParam}`;
+                // Twitchの完全なURLからチャンネル名を抽出
+                if (channelId.includes('twitch.tv/')) {
+                    normalizedChannelId = channelId.split('twitch.tv/')[1].split('/')[0];
+                }
+                if (normalizedChannelId.startsWith('v')) {
+                    embedUrl = `https://player.twitch.tv/?video=${normalizedChannelId}&parent=${parentParam}`;
                 } else {
-                    embedUrl = `https://player.twitch.tv/?channel=${channelId}&parent=${parentParam}`;
+                    embedUrl = `https://player.twitch.tv/?channel=${normalizedChannelId}&parent=${parentParam}`;
                 }
                 break;
                 
             case 'youtube':
-                let youtubeId = channelId;
-                if (channelId.includes('youtube.com/watch?v=')) {
-                    const url = new URL(channelId);
-                    youtubeId = url.searchParams.get('v');
-                } else if (channelId.includes('youtu.be/')) {
-                    youtubeId = channelId.split('youtu.be/')[1];
+                // YouTubeの様々なURL形式に対応
+                let youtubeId = normalizedChannelId;
+                if (normalizedChannelId.includes('youtube.com/')) {
+                    const url = new URL(normalizedChannelId);
+                    if (normalizedChannelId.includes('youtube.com/watch')) {
+                        youtubeId = url.searchParams.get('v');
+                    } else if (normalizedChannelId.includes('youtube.com/live/')) {
+                        youtubeId = normalizedChannelId.split('youtube.com/live/')[1].split('?')[0];
+                    } else if (normalizedChannelId.includes('youtube.com/channel/')) {
+                        youtubeId = normalizedChannelId.split('youtube.com/channel/')[1].split('?')[0];
+                    }
+                } else if (normalizedChannelId.includes('youtu.be/')) {
+                    youtubeId = normalizedChannelId.split('youtu.be/')[1].split('?')[0];
                 }
                 embedUrl = `https://www.youtube.com/embed/${youtubeId}?autoplay=1`;
                 break;
                 
             case 'twitcasting':
-                embedUrl = `https://twitcasting.tv/${channelId}/embeddedplayer/live?auto_play=true`;
+                // ツイキャスの完全なURLからユーザー名を抽出
+                if (normalizedChannelId.includes('twitcasting.tv/')) {
+                    normalizedChannelId = normalizedChannelId.split('twitcasting.tv/')[1].split('/')[0];
+                }
+                embedUrl = `https://twitcasting.tv/${normalizedChannelId}/embeddedplayer/live?auto_play=true`;
                 break;
                 
             case 'openrec':
-                if (channelId.includes('/')) {
-                    const match = channelId.match(/openrec\.tv\/(?:live|movie)\/([^\/]+)/);
+                // OPENRECの完全なURLから配信IDを抽出
+                if (normalizedChannelId.includes('openrec.tv/')) {
+                    const match = normalizedChannelId.match(/openrec\.tv\/(?:live|movie)\/([^\/\?]+)/);
                     if (match) {
-                        embedUrl = `https://www.openrec.tv/embed/${match[1]}`;
-                    } else {
-                        alert('無効なOPENREC URLです');
-                        return;
+                        normalizedChannelId = match[1];
                     }
-                } else {
-                    embedUrl = `https://www.openrec.tv/embed/${channelId}`;
                 }
+                embedUrl = `https://www.openrec.tv/embed/${normalizedChannelId}`;
                 break;
                 
             default:
@@ -387,8 +454,11 @@ document.addEventListener('DOMContentLoaded', () => {
         streamContainer.appendChild(iframe);
         
         // 状態を更新
-        currentState.streams[streamId] = { platform, channelId };
+        currentState.streams[streamId] = { platform, channelId: normalizedChannelId };
         saveStateToURL();
+        
+        // ドラッグ&ドロップを再有効化
+        enableDragAndDrop();
     }
     
     // プラットフォームに応じたスタイルを適用
