@@ -584,127 +584,34 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 初期化
-    loadStateFromURL();
-    initializeStreamPlayers();
-    
-    // URLにステートがない場合は2x2レイアウトを適用
-    if (!window.location.search) {
-        document.getElementById('layout-2x2').click();
+    if (window.location.search) {
+        loadStateFromURL();
+    } else {
+        // 初期状態の設定（すべてリセットと同じ状態）
+        // レイアウトを2x2に設定
+        const layout2x2Button = document.getElementById('layout-2x2');
+        layout2x2Button.classList.add('active');
+        streamsContainer.className = 'streams-container layout-2x2';
+        
+        // 入力フィールドを初期状態に
+        visibleStreamInputs = 1;
+        document.querySelectorAll('.stream-input').forEach((input, index) => {
+            if (index === 0) {
+                input.classList.remove('hidden');
+            } else {
+                input.classList.add('hidden');
+            }
+        });
+        
+        // 「追加」ボタンを表示
+        addStreamButton.classList.remove('hidden');
     }
+    
+    initializeStreamPlayers();
+    createLayoutButtons();
 
     function createLayoutButtons() {
-        const layoutButtons = document.querySelector('.layout-buttons');
-        layoutButtons.innerHTML = `
-            <button id="layout-2x2" title="2x2レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-1x2" title="1x2レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-2x1" title="2x1レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-1x3" title="1x3レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-3x1" title="3x1レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-4x2" title="4x2レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-2x4" title="2x4レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-        `;
-
-        // レイアウトボタンのイベントリスナーを再設定
-        const buttons = layoutButtons.querySelectorAll('button');
-        buttons.forEach(button => {
-            button.addEventListener('click', () => {
-                // アクティブクラスの切り替え
-                buttons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                
-                // レイアウトクラスの切り替え
-                const layoutClass = button.id;
-                streamsContainer.className = 'streams-container ' + layoutClass;
-                
-                // 状態を更新
-                currentState.layout = layoutClass;
-                saveStateToURL();
-                
-                // レイアウトに応じてストリームプレーヤーの表示/非表示を切り替え
-                const streamPlayers = document.querySelectorAll('.stream-player');
-                
-                if (layoutClass === 'layout-1x2') {
-                    streamPlayers.forEach((player, index) => {
-                        player.style.display = index < 2 ? 'flex' : 'none';
-                    });
-                } else if (layoutClass === 'layout-2x1') {
-                    streamPlayers.forEach((player, index) => {
-                        player.style.display = index < 2 ? 'flex' : 'none';
-                    });
-                } else if (layoutClass === 'layout-1x3') {
-                    streamPlayers.forEach((player, index) => {
-                        player.style.display = index < 3 ? 'flex' : 'none';
-                    });
-                } else if (layoutClass === 'layout-3x1') {
-                    streamPlayers.forEach((player, index) => {
-                        player.style.display = index < 3 ? 'flex' : 'none';
-                    });
-                } else if (layoutClass === 'layout-4x2' || layoutClass === 'layout-2x4') {
-                    streamPlayers.forEach(player => {
-                        player.style.display = 'flex';
-                    });
-                } else {
-                    streamPlayers.forEach((player, index) => {
-                        player.style.display = index < 4 ? 'flex' : 'none';
-                    });
-                }
-
-                initializeStreamPlayers();
-            });
-        });
+        // ... existing code ...
     }
-
-    createLayoutButtons();
 });
 
