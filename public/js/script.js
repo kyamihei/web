@@ -437,20 +437,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const streamInput = select.closest('.stream-input');
             const loadButton = streamInput.querySelector('.load-stream');
             
-            // プラットフォームに応じたカラーを適用
-            switch(select.value) {
-                case 'twitch':
-                    loadButton.style.background = 'linear-gradient(135deg, #9146FF 0%, #6441a5 100%)';
-                    break;
-                case 'youtube':
-                    loadButton.style.background = 'linear-gradient(135deg, #FF0000 0%, #cc0000 100%)';
-                    break;
-                case 'twitcasting':
-                    loadButton.style.background = 'linear-gradient(135deg, #00a0dc 0%, #0077a2 100%)';
-                    break;
-                case 'openrec':
-                    loadButton.style.background = 'linear-gradient(135deg, #eb5528 0%, #c73e1d 100%)';
-                    break;
+            // すべての読み込みボタンに統一したスタイルを適用
+            if (loadButton) {
+                loadButton.style.background = 'linear-gradient(135deg, #4a90e2 0%, #357abd 100%)';
             }
         });
     }
