@@ -297,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // 初期状態で4x2レイアウトをアクティブに
-    document.getElementById('layout-4x2').classList.add('active');
+    document.getElementById('layout-2x2').classList.add('active');
     
     // 読み込みボタンのイベントリスナー
     loadButtons.forEach(button => {
@@ -496,10 +496,16 @@ document.addEventListener('DOMContentLoaded', () => {
             layout: 'layout-4x2',
             streams: {}
         };
-        saveStateToURL();
+
+        // URLをクリア（クエリパラメータを削除）
+        const newURL = window.location.pathname;
+        window.history.pushState({}, '', newURL);
         
         // 「追加」ボタンを表示
         addStreamButton.classList.remove('hidden');
+
+        // 共有URLを更新
+        updateShareUrl();
     }
 
     // 初期化時に共有URLコンテナを作成
