@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // 初期状態で2x2レイアウトをアクティブに
-    document.getElementById('layout-2x2').classList.add('active');
+    document.getElementById('layout-2x4').classList.add('active');
     
     // 読み込みボタンのイベントリスナー
     loadButtons.forEach(button => {
@@ -305,35 +305,35 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = ''; // スクロール復活
     });
     
-    // file://プロトコルでの実行時のみ警告メッセージを表示
-    if (window.location.protocol === 'file:') {
-        const warningDiv = document.createElement('div');
-        warningDiv.className = 'warning-message';
-        warningDiv.innerHTML = `
-            <div class="warning-icon"><i class="fas fa-exclamation-triangle"></i></div>
-            <div class="warning-content">
-                <h3>注意</h3>
-                <p>ファイルとして直接開いた場合、Twitchの埋め込みプレーヤーは動作しません。</p>
-                <p>Twitchの埋め込みプレーヤーを使用するには、以下の手順でローカルサーバーを使用してください：</p>
-                <ol>
-                    <li><code>install-server.bat</code>を実行してローカルサーバーをインストール</li>
-                    <li><code>start-server.bat</code>を実行してサーバーを起動</li>
-                    <li>ブラウザで<code>http://localhost:8080</code>にアクセス</li>
-                </ol>
-            </div>
-            <button class="close-warning"><i class="fas fa-times"></i></button>
-        `;
-        document.body.insertBefore(warningDiv, document.querySelector('.top-bar'));
+    // // file://プロトコルでの実行時のみ警告メッセージを表示
+    // if (window.location.protocol === 'file:') {
+    //     const warningDiv = document.createElement('div');
+    //     warningDiv.className = 'warning-message';
+    //     warningDiv.innerHTML = `
+    //         <div class="warning-icon"><i class="fas fa-exclamation-triangle"></i></div>
+    //         <div class="warning-content">
+    //             <h3>注意</h3>
+    //             <p>ファイルとして直接開いた場合、Twitchの埋め込みプレーヤーは動作しません。</p>
+    //             <p>Twitchの埋め込みプレーヤーを使用するには、以下の手順でローカルサーバーを使用してください：</p>
+    //             <ol>
+    //                 <li><code>install-server.bat</code>を実行してローカルサーバーをインストール</li>
+    //                 <li><code>start-server.bat</code>を実行してサーバーを起動</li>
+    //                 <li>ブラウザで<code>http://localhost:8080</code>にアクセス</li>
+    //             </ol>
+    //         </div>
+    //         <button class="close-warning"><i class="fas fa-times"></i></button>
+    //     `;
+    //     document.body.insertBefore(warningDiv, document.querySelector('.top-bar'));
         
-        // 警告メッセージを閉じる機能
-        const closeWarning = warningDiv.querySelector('.close-warning');
-        closeWarning.addEventListener('click', () => {
-            warningDiv.style.opacity = '0';
-            setTimeout(() => {
-                warningDiv.remove();
-            }, 300);
-        });
-    }
+    //     // 警告メッセージを閉じる機能
+    //     const closeWarning = warningDiv.querySelector('.close-warning');
+    //     closeWarning.addEventListener('click', () => {
+    //         warningDiv.style.opacity = '0';
+    //         setTimeout(() => {
+    //             warningDiv.remove();
+    //         }, 300);
+    //     });
+    // }
     
     // ストリームプレーヤーのホバーエフェクト
     document.querySelectorAll('.stream-player').forEach(player => {
