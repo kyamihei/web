@@ -57,59 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ドラッグ&ドロップの実装
-    let draggedElement = null;
-
-    function enableDragAndDrop() {
-        const streamPlayers = document.querySelectorAll('.stream-player');
-        
-        streamPlayers.forEach(player => {
-            player.setAttribute('draggable', 'true');
-            
-            player.addEventListener('dragstart', (e) => {
-                draggedElement = player;
-                e.dataTransfer.setData('text/plain', player.id);
-                player.classList.add('dragging');
-            });
-
-            player.addEventListener('dragend', () => {
-                draggedElement.classList.remove('dragging');
-                draggedElement = null;
-            });
-
-            player.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                player.classList.add('drag-over');
-            });
-
-            player.addEventListener('dragleave', () => {
-                player.classList.remove('drag-over');
-            });
-
-            player.addEventListener('drop', (e) => {
-                e.preventDefault();
-                player.classList.remove('drag-over');
-                
-                if (draggedElement && draggedElement !== player) {
-                    // プレーヤーの位置を交換
-                    const draggedContent = draggedElement.innerHTML;
-                    const targetContent = player.innerHTML;
-                    
-                    player.innerHTML = draggedContent;
-                    draggedElement.innerHTML = targetContent;
-
-                    // ストリーム情報も交換
-                    const draggedId = draggedElement.id.split('-')[1];
-                    const targetId = player.id.split('-')[1];
-                    const tempStream = currentState.streams[draggedId];
-                    currentState.streams[draggedId] = currentState.streams[targetId];
-                    currentState.streams[targetId] = tempStream;
-
-                    saveStateToURL();
-                }
-            });
-
-            // インラインURL入力の実装
+    // インラインURL入力の実装
+    function initializeStreamPlayers() {
+        document.querySelectorAll('.stream-player').forEach(player => {
             const placeholder = player.querySelector('.placeholder');
             if (placeholder) {
                 placeholder.addEventListener('click', () => {
@@ -231,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveStateToURL();
         
         // ドラッグ&ドロップを再有効化
-        enableDragAndDrop();
+        initializeStreamPlayers();
     }
 
     // 表示されている入力フィールドの数を更新する関数
@@ -342,7 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            enableDragAndDrop();
+            initializeStreamPlayers();
         });
     });
     
@@ -372,36 +322,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const streamContainer = document.getElementById(`stream-${streamId}`);
         const mainInput = document.getElementById(`stream-input-${streamId}`);
         
-        // 既存のiframeがあれば削除
-        const existingIframe = streamContainer.querySelector('iframe');
-        if (existingIframe) {
-            existingIframe.remove();
-        }
-        
-        // プレースホルダーを非表示
-        const placeholder = streamContainer.querySelector('.placeholder');
-        if (placeholder) {
-            placeholder.style.display = 'none';
-        }
-        
-        // インラインURL入力があれば削除
-        const inlineInput = streamContainer.querySelector('.inline-url-input');
-        if (inlineInput) {
-            inlineInput.remove();
-        }
-
-        // メイン入力フィールドを更新
-        if (mainInput) {
-            // プラットフォームと入力値を更新
-            const platformSelect = mainInput.querySelector('.platform-select');
-            const channelInput = mainInput.querySelector('input');
-            if (platformSelect) platformSelect.value = platform;
-            if (channelInput) channelInput.value = channelId;
-            
-            // 非表示状態を解除
-            mainInput.classList.remove('hidden');
-            updateVisibleStreamInputs();
-        }
+        // 既存のコンテンツをクリアしてiframeを追加
+        streamContainer.innerHTML = '';
         
         // URLの正規化と埋め込みURL生成
         let embedUrl = '';
@@ -478,8 +400,6 @@ document.addEventListener('DOMContentLoaded', () => {
             iframe.setAttribute('allow', 'autoplay; fullscreen');
         }
         
-        // 既存のコンテンツをクリアしてiframeを追加
-        streamContainer.innerHTML = '';
         streamContainer.appendChild(iframe);
         
         // リセットボタンを追加
@@ -493,12 +413,21 @@ document.addEventListener('DOMContentLoaded', () => {
         resetButtonContainer.appendChild(resetButton);
         streamContainer.appendChild(resetButtonContainer);
         
+        // メイン入力フィールドを更新
+        if (mainInput) {
+            const platformSelect = mainInput.querySelector('.platform-select');
+            const channelInput = mainInput.querySelector('input');
+            if (platformSelect) platformSelect.value = platform;
+            if (channelInput) channelInput.value = channelId;
+            
+            // 非表示状態を解除
+            mainInput.classList.remove('hidden');
+            updateVisibleStreamInputs();
+        }
+        
         // 状態を更新
         currentState.streams[streamId] = { platform, channelId: normalizedChannelId };
         saveStateToURL();
-        
-        // ドラッグ&ドロップを再有効化
-        enableDragAndDrop();
     }
     
     // プラットフォームに応じたスタイルを適用
@@ -619,6 +548,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 初期化
     loadStateFromURL();
-    enableDragAndDrop();
+    initializeStreamPlayers();
+
+    function createLayoutButtons() {
+        const layoutButtons = document.querySelector('.layout-buttons');
+        layoutButtons.innerHTML = `
+            <button id="layout-2x2" title="2x2レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-1x2" title="1x2レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-2x1" title="2x1レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-1x3" title="1x3レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-3x1" title="3x1レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-4x2" title="4x2レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-2x4" title="2x4レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+        `;
+    }
+
+    createLayoutButtons();
 });
 

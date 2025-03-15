@@ -457,23 +457,12 @@ input[type="text"]::placeholder {
     box-shadow: var(--box-shadow);
     border: 1px solid rgba(255, 255, 255, 0.05);
     transition: all var(--transition-speed) ease;
-    cursor: move;
 }
 
 .stream-player:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     border-color: rgba(255, 255, 255, 0.1);
-}
-
-.stream-player.dragging {
-    opacity: 0.5;
-    border: 2px dashed var(--primary-color);
-}
-
-.stream-player.drag-over {
-    background-color: rgba(108, 92, 231, 0.1);
-    border: 2px dashed var(--primary-color);
 }
 
 .placeholder {
@@ -882,4 +871,73 @@ iframe {
 
 .copy-url-button:active {
     transform: translateY(0);
+}
+
+/* レイアウトアイコン */
+.layout-icon {
+    display: grid;
+    gap: 2px;
+    width: 40px;
+    height: 40px;
+    margin: 0 auto;
+}
+
+/* 各レイアウトのグリッド設定 */
+#layout-2x2 .layout-icon {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+#layout-1x2 .layout-icon {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+}
+
+#layout-2x1 .layout-icon {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(2, 1fr);
+}
+
+#layout-1x3 .layout-icon {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr;
+}
+
+#layout-3x1 .layout-icon {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, 1fr);
+}
+
+#layout-4x2 .layout-icon {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+}
+
+#layout-2x4 .layout-icon {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+.grid-cell {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    transition: all var(--transition-speed) ease;
+}
+
+.layout-buttons button:hover .grid-cell {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.layout-buttons button.active .grid-cell {
+    background-color: var(--primary-light);
+}
+
+/* レイアウトボタンのスタイル調整 */
+.layout-buttons button {
+    padding: 8px;
+    min-width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
