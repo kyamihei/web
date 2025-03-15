@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 状態管理
     let currentState = {
-        layout: 'layout-4x2',
+        layout: 'layout-2x2',
         streams: {}
     };
 
@@ -478,8 +478,8 @@ document.addEventListener('DOMContentLoaded', () => {
             resetStream(i);
         }
         
-        // レイアウトを4x2に戻す
-        document.getElementById('layout-4x2').click();
+        // レイアウトを2x2に戻す
+        document.getElementById('layout-2x2').click();
         
         // 入力フィールドを初期状態に
         visibleStreamInputs = 1;
@@ -493,7 +493,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // 状態をリセット
         currentState = {
-            layout: 'layout-4x2',
+            layout: 'layout-2x2',
             streams: {}
         };
 
