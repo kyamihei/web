@@ -192,6 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ストリームをリセットする関数
     function resetStream(streamId) {
         const streamContainer = document.getElementById(`stream-${streamId}`);
+        const mainInput = document.getElementById(`stream-input-${streamId}`);
         
         // 既存のiframeがあれば削除
         const existingIframe = streamContainer.querySelector('iframe');
@@ -218,7 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // メインの入力フィールドをリセット
-        const mainInput = document.getElementById(`stream-input-${streamId}`);
         if (mainInput) {
             const platformSelect = mainInput.querySelector('.platform-select');
             const channelInput = mainInput.querySelector('input');
@@ -229,12 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (streamId > 1) {
                 mainInput.classList.add('hidden');
                 visibleStreamInputs = Math.max(1, visibleStreamInputs - 1);
+                updateVisibleStreamInputs();
             }
-        }
-        
-        // 「追加」ボタンの表示状態を更新
-        if (visibleStreamInputs < 8) {
-            addStreamButton.classList.remove('hidden');
         }
         
         // 状態を更新
@@ -245,16 +241,24 @@ document.addEventListener('DOMContentLoaded', () => {
         enableDragAndDrop();
     }
 
+    // 表示されている入力フィールドの数を更新する関数
+    function updateVisibleStreamInputs() {
+        visibleStreamInputs = Array.from(document.querySelectorAll('.stream-input:not(.hidden)')).length;
+        
+        // 「追加」ボタンの表示状態を更新
+        if (visibleStreamInputs < 8) {
+            addStreamButton.classList.remove('hidden');
+        } else {
+            addStreamButton.classList.add('hidden');
+        }
+    }
+
     // 配信入力フィールドを追加する機能
     addStreamButton.addEventListener('click', () => {
         if (visibleStreamInputs < 8) {
             visibleStreamInputs++;
             document.getElementById(`stream-input-${visibleStreamInputs}`).classList.remove('hidden');
-            
-            // すべての配信入力フィールドが表示されたら「追加」ボタンを非表示にする
-            if (visibleStreamInputs === 8) {
-                addStreamButton.classList.add('hidden');
-            }
+            updateVisibleStreamInputs();
         }
     });
     
@@ -263,47 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteButtons.forEach(button => {
         button.addEventListener('click', () => {
             const streamId = parseInt(button.getAttribute('data-target'));
-            
-            // 削除対象の入力フィールドを非表示にする
-            const targetInput = document.getElementById(`stream-input-${streamId}`);
-            if (targetInput) {
-                targetInput.classList.add('hidden');
-            }
-            
-            // 削除対象より上の入力フィールドは変更しない
-            // 削除対象より下の入力フィールドをすべて1つ上に移動
-            for (let i = streamId; i < visibleStreamInputs; i++) {
-                const currentField = document.getElementById(`stream-input-${i}`);
-                const nextField = document.getElementById(`stream-input-${i + 1}`);
-                
-                if (currentField && nextField) {
-                    // プラットフォームの選択値をコピー
-                    const platformSelect = currentField.querySelector('.platform-select');
-                    const nextPlatformSelect = nextField.querySelector('.platform-select');
-                    if (platformSelect && nextPlatformSelect) {
-                        platformSelect.value = nextPlatformSelect.value;
-                    }
-                    
-                    // チャンネルIDをコピー
-                    const channelInput = currentField.querySelector('input');
-                    const nextChannelInput = nextField.querySelector('input');
-                    if (channelInput && nextChannelInput) {
-                        channelInput.value = nextChannelInput.value;
-                    }
-                }
-            }
-            
-            // 最後の表示されている入力フィールドを非表示にする
-            const lastInput = document.getElementById(`stream-input-${visibleStreamInputs}`);
-            if (lastInput) {
-                lastInput.classList.add('hidden');
-            }
-            
-            // 表示されている入力フィールドの数を1つ減らす
-            visibleStreamInputs--;
-            
-            // 「追加」ボタンを再表示する
-            addStreamButton.classList.remove('hidden');
+            resetStream(streamId);
         });
     });
     
@@ -395,6 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ストリームを読み込む関数
     function loadStream(streamId, platform, channelId) {
         const streamContainer = document.getElementById(`stream-${streamId}`);
+        const mainInput = document.getElementById(`stream-input-${streamId}`);
         
         // 既存のiframeがあれば削除
         const existingIframe = streamContainer.querySelector('iframe');
@@ -414,27 +379,17 @@ document.addEventListener('DOMContentLoaded', () => {
             inlineInput.remove();
         }
 
-        // メイン入力フィールドを更新（配信2以降の場合）
-        const mainInput = document.getElementById(`stream-input-${streamId}`);
+        // メイン入力フィールドを更新
         if (mainInput) {
-            if (streamId > 1) {
-                mainInput.classList.add('hidden');
-            }
             // プラットフォームと入力値を更新
             const platformSelect = mainInput.querySelector('.platform-select');
             const channelInput = mainInput.querySelector('input');
             if (platformSelect) platformSelect.value = platform;
             if (channelInput) channelInput.value = channelId;
-        }
-        
-        // 表示されている入力フィールドの数を更新
-        visibleStreamInputs = Array.from(document.querySelectorAll('.stream-input:not(.hidden)')).length;
-        
-        // 「追加」ボタンの表示状態を更新
-        if (visibleStreamInputs < 8) {
-            addStreamButton.classList.remove('hidden');
-        } else {
-            addStreamButton.classList.add('hidden');
+            
+            // 非表示状態を解除
+            mainInput.classList.remove('hidden');
+            updateVisibleStreamInputs();
         }
         
         // URLの正規化と埋め込みURL生成
