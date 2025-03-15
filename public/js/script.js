@@ -679,9 +679,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (button.id === currentState.layout) {
                     button.classList.add('active');
                 }
-                // アクティブクラスの切り替え
-                buttons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
                 
                 // レイアウトクラスの切り替え
                 const layoutClass = button.id;
