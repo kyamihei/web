@@ -245,7 +245,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const streamId = parseInt(button.getAttribute('data-target'));
             
             // 削除対象の入力フィールドを非表示にする
-            document.getElementById(`stream-input-${streamId}`).classList.add('hidden');
+            const targetInput = document.getElementById(`stream-input-${streamId}`);
+            if (targetInput) {
+                targetInput.classList.add('hidden');
+            }
             
             // 削除対象より上の入力フィールドは変更しない
             // 削除対象より下の入力フィールドをすべて1つ上に移動
@@ -253,19 +256,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 const currentField = document.getElementById(`stream-input-${i}`);
                 const nextField = document.getElementById(`stream-input-${i + 1}`);
                 
-                // プラットフォームの選択値をコピー
-                const platformSelect = currentField.querySelector('.platform-select');
-                const nextPlatformSelect = nextField.querySelector('.platform-select');
-                platformSelect.value = nextPlatformSelect.value;
-                
-                // チャンネルIDをコピー
-                const channelInput = currentField.querySelector('input');
-                const nextChannelInput = nextField.querySelector('input');
-                channelInput.value = nextChannelInput.value;
+                if (currentField && nextField) {
+                    // プラットフォームの選択値をコピー
+                    const platformSelect = currentField.querySelector('.platform-select');
+                    const nextPlatformSelect = nextField.querySelector('.platform-select');
+                    if (platformSelect && nextPlatformSelect) {
+                        platformSelect.value = nextPlatformSelect.value;
+                    }
+                    
+                    // チャンネルIDをコピー
+                    const channelInput = currentField.querySelector('input');
+                    const nextChannelInput = nextField.querySelector('input');
+                    if (channelInput && nextChannelInput) {
+                        channelInput.value = nextChannelInput.value;
+                    }
+                }
             }
             
             // 最後の表示されている入力フィールドを非表示にする
-            document.getElementById(`stream-input-${visibleStreamInputs}`).classList.add('hidden');
+            const lastInput = document.getElementById(`stream-input-${visibleStreamInputs}`);
+            if (lastInput) {
+                lastInput.classList.add('hidden');
+            }
             
             // 表示されている入力フィールドの数を1つ減らす
             visibleStreamInputs--;
@@ -381,6 +393,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (inlineInput) {
             inlineInput.remove();
         }
+
+        // メイン入力フィールドを非表示（配信2以降の場合）
+        const mainInput = document.getElementById(`stream-input-${streamId}`);
+        if (mainInput && streamId > 1) {
+            mainInput.classList.add('hidden');
+            
+            // 表示されている入力フィールドの数を更新
+            visibleStreamInputs = Array.from(document.querySelectorAll('.stream-input:not(.hidden)')).length;
+            
+            // 「追加」ボタンを再表示
+            if (visibleStreamInputs < 8) {
+                addStreamButton.classList.remove('hidden');
+            }
+        }
         
         // URLの正規化と埋め込みURL生成
         let embedUrl = '';
@@ -404,13 +430,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 // YouTubeの様々なURL形式に対応
                 let youtubeId = normalizedChannelId;
                 if (normalizedChannelId.includes('youtube.com/')) {
-                    const url = new URL(normalizedChannelId);
-                    if (normalizedChannelId.includes('youtube.com/watch')) {
-                        youtubeId = url.searchParams.get('v');
-                    } else if (normalizedChannelId.includes('youtube.com/live/')) {
-                        youtubeId = normalizedChannelId.split('youtube.com/live/')[1].split('?')[0];
-                    } else if (normalizedChannelId.includes('youtube.com/channel/')) {
-                        youtubeId = normalizedChannelId.split('youtube.com/channel/')[1].split('?')[0];
+                    try {
+                        const url = new URL(normalizedChannelId);
+                        if (normalizedChannelId.includes('youtube.com/watch')) {
+                            youtubeId = url.searchParams.get('v');
+                        } else if (normalizedChannelId.includes('youtube.com/live/')) {
+                            youtubeId = normalizedChannelId.split('youtube.com/live/')[1].split('?')[0];
+                        } else if (normalizedChannelId.includes('youtube.com/channel/')) {
+                            youtubeId = normalizedChannelId.split('youtube.com/channel/')[1].split('?')[0];
+                        }
+                    } catch (e) {
+                        console.error('Invalid YouTube URL:', e);
+                        alert('無効なYouTube URLです');
+                        return;
                     }
                 } else if (normalizedChannelId.includes('youtu.be/')) {
                     youtubeId = normalizedChannelId.split('youtu.be/')[1].split('?')[0];
