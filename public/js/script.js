@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
         streamMenu.classList.add('open');
         
         // メニューアイテムのフェードインアニメーション
-        const menuItems = streamMenu.querySelectorAll('h3, .layout-buttons, .stream-input, .add-stream-button');
+        const menuItems = streamMenu.querySelectorAll('h3, .layout-buttons, .stream-input, .add-stream-button, .url-help');
         menuItems.forEach((item, index) => {
             item.style.opacity = '0';
             item.style.transform = 'translateY(20px)';
