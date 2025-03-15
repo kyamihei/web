@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const urlInput = document.createElement('input');
         urlInput.type = 'text';
-        urlInput.placeholder = 'URLまたはチャンネルIDを入力を入力';
+        urlInput.placeholder = 'URLまたはチャンネルIDを入力';
         
         const buttonContainer = document.createElement('div');
         buttonContainer.className = 'button-container';
