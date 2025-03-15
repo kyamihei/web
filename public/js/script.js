@@ -456,7 +456,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateShareUrl() {
         const shareUrlInput = document.getElementById('share-url');
         if (shareUrlInput) {
-            shareUrlInput.value = window.location.href;
+            // 現在のURLからクエリパラメータを取得
+            const params = new URLSearchParams(window.location.search);
+            const stateParam = params.get('state');
+            
+            if (stateParam) {
+                // ステートパラメータのみを含む短いURLを生成
+                shareUrlInput.value = `${window.location.origin}${window.location.pathname}?state=${stateParam}`;
+            } else {
+                // ステートがない場合はベースURLのみ
+                shareUrlInput.value = `${window.location.origin}${window.location.pathname}`;
+            }
         }
     }
 
