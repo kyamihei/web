@@ -11,6 +11,166 @@ document.addEventListener('DOMContentLoaded', () => {
     // 現在表示されている配信入力フィールドの数
     let visibleStreamInputs = 1;
     
+    // 状態管理
+    let currentState = {
+        layout: 'layout-4x2',
+        streams: {}
+    };
+
+    // URLからステートを復元
+    function loadStateFromURL() {
+        const params = new URLSearchParams(window.location.search);
+        const stateParam = params.get('state');
+        if (stateParam) {
+            try {
+                const decodedState = JSON.parse(atob(stateParam));
+                currentState = decodedState;
+                applyState(currentState);
+            } catch (e) {
+                console.error('Failed to load state from URL:', e);
+            }
+        }
+    }
+
+    // ステートをURLに保存
+    function saveStateToURL() {
+        const stateString = btoa(JSON.stringify(currentState));
+        const newURL = `${window.location.pathname}?state=${stateString}`;
+        window.history.pushState({}, '', newURL);
+    }
+
+    // ステートを適用
+    function applyState(state) {
+        // レイアウトを適用
+        document.getElementById(state.layout).click();
+
+        // ストリームを読み込み
+        Object.entries(state.streams).forEach(([streamId, streamData]) => {
+            const platformSelect = document.getElementById(`platform-${streamId}`);
+            const channelInput = document.getElementById(`channel-${streamId}`);
+            
+            if (platformSelect && channelInput) {
+                platformSelect.value = streamData.platform;
+                channelInput.value = streamData.channelId;
+                loadStream(streamId, streamData.platform, streamData.channelId);
+            }
+        });
+    }
+
+    // ドラッグ&ドロップの実装
+    let draggedElement = null;
+
+    function enableDragAndDrop() {
+        const streamPlayers = document.querySelectorAll('.stream-player');
+        
+        streamPlayers.forEach(player => {
+            player.setAttribute('draggable', 'true');
+            
+            player.addEventListener('dragstart', (e) => {
+                draggedElement = player;
+                e.dataTransfer.setData('text/plain', player.id);
+                player.classList.add('dragging');
+            });
+
+            player.addEventListener('dragend', () => {
+                draggedElement.classList.remove('dragging');
+                draggedElement = null;
+            });
+
+            player.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                player.classList.add('drag-over');
+            });
+
+            player.addEventListener('dragleave', () => {
+                player.classList.remove('drag-over');
+            });
+
+            player.addEventListener('drop', (e) => {
+                e.preventDefault();
+                player.classList.remove('drag-over');
+                
+                if (draggedElement && draggedElement !== player) {
+                    // プレーヤーの位置を交換
+                    const draggedContent = draggedElement.innerHTML;
+                    const targetContent = player.innerHTML;
+                    
+                    player.innerHTML = draggedContent;
+                    draggedElement.innerHTML = targetContent;
+
+                    // ストリーム情報も交換
+                    const draggedId = draggedElement.id.split('-')[1];
+                    const targetId = player.id.split('-')[1];
+                    const tempStream = currentState.streams[draggedId];
+                    currentState.streams[draggedId] = currentState.streams[targetId];
+                    currentState.streams[targetId] = tempStream;
+
+                    saveStateToURL();
+                }
+            });
+
+            // インラインURL入力の実装
+            const placeholder = player.querySelector('.placeholder');
+            if (placeholder) {
+                placeholder.addEventListener('click', () => {
+                    const streamId = player.id.split('-')[1];
+                    createInlineUrlInput(player, streamId);
+                });
+            }
+        });
+    }
+
+    function createInlineUrlInput(player, streamId) {
+        const inputContainer = document.createElement('div');
+        inputContainer.className = 'inline-url-input';
+        
+        const platformSelect = document.createElement('select');
+        platformSelect.innerHTML = `
+            <option value="twitch">Twitch</option>
+            <option value="youtube">YouTube</option>
+            <option value="twitcasting">ツイキャス</option>
+            <option value="openrec">OPENREC</option>
+        `;
+        
+        const urlInput = document.createElement('input');
+        urlInput.type = 'text';
+        urlInput.placeholder = 'URLまたはチャンネルIDを入力';
+        
+        const loadButton = document.createElement('button');
+        loadButton.textContent = '読み込み';
+        loadButton.addEventListener('click', () => {
+            const platform = platformSelect.value;
+            const channelId = urlInput.value.trim();
+            
+            if (channelId) {
+                // メインの入力フィールドも更新
+                document.getElementById(`platform-${streamId}`).value = platform;
+                document.getElementById(`channel-${streamId}`).value = channelId;
+                
+                // ストリームを読み込み
+                loadStream(streamId, platform, channelId);
+                
+                // 状態を更新
+                currentState.streams[streamId] = { platform, channelId };
+                saveStateToURL();
+            }
+            
+            inputContainer.remove();
+        });
+        
+        inputContainer.appendChild(platformSelect);
+        inputContainer.appendChild(urlInput);
+        inputContainer.appendChild(loadButton);
+        
+        const placeholder = player.querySelector('.placeholder');
+        if (placeholder) {
+            placeholder.style.display = 'none';
+        }
+        player.appendChild(inputContainer);
+        
+        urlInput.focus();
+    }
+
     // 配信入力フィールドを追加する機能
     addStreamButton.addEventListener('click', () => {
         if (visibleStreamInputs < 8) {
@@ -88,45 +248,40 @@ document.addEventListener('DOMContentLoaded', () => {
             const layoutClass = button.id;
             streamsContainer.className = 'streams-container ' + layoutClass;
             
+            // 状態を更新
+            currentState.layout = layoutClass;
+            saveStateToURL();
+            
             // レイアウトに応じてストリームプレーヤーの表示/非表示を切り替え
             const streamPlayers = document.querySelectorAll('.stream-player');
             
             if (layoutClass === 'layout-1x2') {
-                // 1x2レイアウトの場合、最初の2つのプレーヤーのみ表示
                 streamPlayers.forEach((player, index) => {
                     player.style.display = index < 2 ? 'flex' : 'none';
                 });
             } else if (layoutClass === 'layout-2x1') {
-                // 2x1レイアウトの場合、最初の2つのプレーヤーのみ表示
                 streamPlayers.forEach((player, index) => {
                     player.style.display = index < 2 ? 'flex' : 'none';
                 });
             } else if (layoutClass === 'layout-1x3') {
-                // 1x3レイアウトの場合、最初の3つのプレーヤーのみ表示
                 streamPlayers.forEach((player, index) => {
                     player.style.display = index < 3 ? 'flex' : 'none';
                 });
             } else if (layoutClass === 'layout-3x1') {
-                // 3x1レイアウトの場合、最初の3つのプレーヤーのみ表示
                 streamPlayers.forEach((player, index) => {
                     player.style.display = index < 3 ? 'flex' : 'none';
                 });
-            } else if (layoutClass === 'layout-4x2') {
-                // 4x2レイアウトの場合、すべてのプレーヤーを表示
-                streamPlayers.forEach(player => {
-                    player.style.display = 'flex';
-                });
-            } else if (layoutClass === 'layout-2x4') {
-                // 2x4レイアウトの場合、すべてのプレーヤーを表示
+            } else if (layoutClass === 'layout-4x2' || layoutClass === 'layout-2x4') {
                 streamPlayers.forEach(player => {
                     player.style.display = 'flex';
                 });
             } else {
-                // 2x2レイアウトの場合、最初の4つのプレーヤーのみ表示
                 streamPlayers.forEach((player, index) => {
                     player.style.display = index < 4 ? 'flex' : 'none';
                 });
             }
+
+            enableDragAndDrop();
         });
     });
     
@@ -167,51 +322,42 @@ document.addEventListener('DOMContentLoaded', () => {
             placeholder.style.display = 'none';
         }
         
+        // インラインURL入力があれば削除
+        const inlineInput = streamContainer.querySelector('.inline-url-input');
+        if (inlineInput) {
+            inlineInput.remove();
+        }
+        
         // プラットフォームに応じた埋め込みURLを生成
         let embedUrl = '';
         
         switch (platform) {
             case 'twitch':
-                // Twitchの埋め込みURL
-                // チャンネル名かビデオIDかを判断
-                // localhostの場合は明示的にparentパラメータを設定
                 const parentParam = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
-                
                 if (channelId.startsWith('v')) {
-                    // ビデオID
                     embedUrl = `https://player.twitch.tv/?video=${channelId}&parent=${parentParam}`;
                 } else {
-                    // チャンネル名
                     embedUrl = `https://player.twitch.tv/?channel=${channelId}&parent=${parentParam}`;
                 }
                 break;
                 
             case 'youtube':
-                // YouTubeの埋め込みURL
-                // 動画IDの抽出（URLが貼られた場合に対応）
                 let youtubeId = channelId;
-                
-                // URLからIDを抽出
                 if (channelId.includes('youtube.com/watch?v=')) {
                     const url = new URL(channelId);
                     youtubeId = url.searchParams.get('v');
                 } else if (channelId.includes('youtu.be/')) {
                     youtubeId = channelId.split('youtu.be/')[1];
                 }
-                
                 embedUrl = `https://www.youtube.com/embed/${youtubeId}?autoplay=1`;
                 break;
                 
             case 'twitcasting':
-                // ツイキャスの埋め込みURL
                 embedUrl = `https://twitcasting.tv/${channelId}/embeddedplayer/live?auto_play=true`;
                 break;
                 
             case 'openrec':
-                // OPENRECの埋め込みURL
-                // チャンネル名か動画IDかを判断
                 if (channelId.includes('/')) {
-                    // 完全なURLが入力された場合
                     const match = channelId.match(/openrec\.tv\/(?:live|movie)\/([^\/]+)/);
                     if (match) {
                         embedUrl = `https://www.openrec.tv/embed/${match[1]}`;
@@ -220,7 +366,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         return;
                     }
                 } else {
-                    // IDのみが入力された場合
                     embedUrl = `https://www.openrec.tv/embed/${channelId}`;
                 }
                 break;
@@ -235,12 +380,15 @@ document.addEventListener('DOMContentLoaded', () => {
         iframe.src = embedUrl;
         iframe.setAttribute('allowfullscreen', 'true');
         
-        // Twitchの場合、追加の属性が必要
         if (platform === 'twitch') {
             iframe.setAttribute('allow', 'autoplay; fullscreen');
         }
         
         streamContainer.appendChild(iframe);
+        
+        // 状態を更新
+        currentState.streams[streamId] = { platform, channelId };
+        saveStateToURL();
     }
     
     // プラットフォームに応じたスタイルを適用
@@ -348,4 +496,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // 初期化
+    loadStateFromURL();
+    enableDragAndDrop();
 });

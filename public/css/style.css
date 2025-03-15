@@ -457,12 +457,23 @@ input[type="text"]::placeholder {
     box-shadow: var(--box-shadow);
     border: 1px solid rgba(255, 255, 255, 0.05);
     transition: all var(--transition-speed) ease;
+    cursor: move;
 }
 
 .stream-player:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     border-color: rgba(255, 255, 255, 0.1);
+}
+
+.stream-player.dragging {
+    opacity: 0.5;
+    border: 2px dashed var(--primary-color);
+}
+
+.stream-player.drag-over {
+    background-color: rgba(108, 92, 231, 0.1);
+    border: 2px dashed var(--primary-color);
 }
 
 .placeholder {
@@ -474,6 +485,17 @@ input[type="text"]::placeholder {
     align-items: center;
     justify-content: center;
     gap: 15px;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+}
+
+.placeholder:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.placeholder:hover .placeholder-icon {
+    transform: scale(1.1);
+    color: var(--primary-color);
 }
 
 .placeholder-icon {
@@ -695,4 +717,56 @@ iframe {
     border: 2px solid transparent;
     border-top-color: white;
     animation: loading 1s linear infinite;
+}
+
+/* インラインURL入力のスタイル */
+.inline-url-input {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--dark-surface);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 80%;
+    max-width: 400px;
+    z-index: 10;
+}
+
+.inline-url-input select,
+.inline-url-input input,
+.inline-url-input button {
+    width: 100%;
+    padding: 10px;
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--dark-surface-2);
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.inline-url-input select {
+    cursor: pointer;
+}
+
+.inline-url-input input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.inline-url-input button {
+    background: var(--primary-color);
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all var(--transition-speed) ease;
+}
+
+.inline-url-input button:hover {
+    background: var(--primary-light);
+    transform: translateY(-2px);
 }
