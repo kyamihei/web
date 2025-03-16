@@ -1312,14 +1312,17 @@ iframe {
 /* チャットサイズのスタイル */
 .chat-size-small {
     width: 20% !important;
+    height: 100% !important;
 }
 
 .chat-size-medium {
     width: 30% !important;
+    height: 100% !important;
 }
 
 .chat-size-large {
     width: 40% !important;
+    height: 100% !important;
 }
 
 /* チャットサイズに応じたiframeの調整 */
