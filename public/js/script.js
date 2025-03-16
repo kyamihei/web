@@ -887,51 +887,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 全体をリセットする関数
     function resetAll() {
-        // すべてのストリームをリセット
-        for (let i = 1; i <= 10; i++) {
-            resetStream(i);
-        }
+        // まず、すべてのチャットをOFFにする
+        const chatContainers = document.querySelectorAll('.chat-container');
+        const streamPlayers = document.querySelectorAll('.stream-player');
+        const toggleButtons = document.querySelectorAll('.toggle-chat');
         
-        // レイアウトを2x2に戻す
-        document.getElementById('layout-2x2').click();
-        
-        // すべての入力フィールドを非表示に
-        document.querySelectorAll('.stream-input').forEach(input => {
-            input.classList.add('hidden');
-            
-            // 入力フィールドの内容をリセット
-            const platformSelect = input.querySelector('.platform-select');
-            const channelInput = input.querySelector('input[type="text"]');
-            if (platformSelect) {
-                platformSelect.value = 'twitch';
-                platformSelect.disabled = false;
-            }
-            if (channelInput) {
-                channelInput.value = '';
+        chatContainers.forEach((container, index) => {
+            if (!container.classList.contains('hidden')) {
+                container.classList.add('hidden');
+                streamPlayers[index].classList.remove('with-chat');
+                toggleButtons[index].classList.remove('active');
             }
         });
         
-        // 表示されている入力フィールドの数を0に
-        visibleStreamInputs = 0;
-        
-        // 状態をリセット
-        currentState = {
-            layout: 'layout-2x2',
-            streams: {}
-        };
+        // 遅延を入れてからリセット処理を実行
+        setTimeout(() => {
+            // すべてのストリームをリセット
+            for (let i = 1; i <= 10; i++) {
+                resetStream(i);
+            }
+            
+            // レイアウトを2x2に戻す
+            document.getElementById('layout-2x2').click();
+            
+            // すべての入力フィールドを非表示に
+            document.querySelectorAll('.stream-input').forEach(input => {
+                input.classList.add('hidden');
+                
+                // 入力フィールドの内容をリセット
+                const platformSelect = input.querySelector('.platform-select');
+                const channelInput = input.querySelector('input[type="text"]');
+                if (platformSelect) {
+                    platformSelect.value = 'twitch';
+                    platformSelect.disabled = false;
+                }
+                if (channelInput) {
+                    channelInput.value = '';
+                }
+            });
+            
+            // 表示されている入力フィールドの数を0に
+            visibleStreamInputs = 0;
+            
+            // 状態をリセット
+            currentState = {
+                layout: 'layout-2x2',
+                streams: {}
+            };
 
-        // URLをクリア（クエリパラメータを削除）
-        const newURL = window.location.pathname;
-        window.history.pushState({}, '', newURL);
-        
-        // "追加"ボタンを表示
-        addStreamButton.classList.remove('hidden');
+            // URLをクリア（クエリパラメータを削除）
+            const newURL = window.location.pathname;
+            window.history.pushState({}, '', newURL);
+            
+            // "追加"ボタンを表示
+            addStreamButton.classList.remove('hidden');
 
-        // 共有URLを更新
-        updateShareUrl();
-        
-        // 表示されている入力フィールドの数を更新
-        updateVisibleStreamInputs();
+            // 共有URLを更新
+            updateShareUrl();
+            
+            // 表示されている入力フィールドの数を更新
+            updateVisibleStreamInputs();
+        }, 300); // 300ミリ秒の遅延
     }
 
     // 初期化時に共有URLコンテナを作成
