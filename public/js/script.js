@@ -23,6 +23,29 @@ document.addEventListener('DOMContentLoaded', () => {
         control.style.display = 'none';
     });
     
+    // 初期化時にチャットボタンを無効化する
+    document.querySelectorAll('.toggle-chat').forEach(button => {
+        disableChatButton(button);
+    });
+    
+    // チャットボタンを無効化する関数
+    function disableChatButton(button) {
+        button.style.opacity = '0.5';
+        button.style.cursor = 'not-allowed';
+        button.style.backgroundColor = '#888';
+        button.title = 'チャット機能は配信が読み込まれていません';
+        button.classList.add('disabled');
+    }
+    
+    // チャットボタンを有効化する関数
+    function enableChatButton(button) {
+        button.style.opacity = '1';
+        button.style.cursor = 'pointer';
+        button.style.backgroundColor = '';
+        button.title = 'チャットを表示/非表示';
+        button.classList.remove('disabled');
+    }
+    
     // 現在表示されている配信入力フィールドの数
     let visibleStreamInputs = 1;
     
@@ -271,11 +294,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
                     
                     if (toggleChatButton) {
-                        toggleChatButton.style.opacity = '0.5';
-                        toggleChatButton.style.cursor = 'not-allowed';
-                        toggleChatButton.style.backgroundColor = '#888';
+                        disableChatButton(toggleChatButton);
                         toggleChatButton.title = `${platform === 'twitcasting' ? 'ツイキャス' : 'OPENREC'}のチャット機能は現在無効化されています`;
-                        toggleChatButton.classList.add('disabled');
                     }
                     
                     if (opacityControl) {
@@ -347,6 +367,19 @@ document.addEventListener('DOMContentLoaded', () => {
             chatContainer.classList.remove('left-position');
             // チャットサイズをリセット
             chatContainer.classList.remove('chat-size-small', 'chat-size-medium', 'chat-size-large');
+        }
+        
+        // チャットボタンを無効化
+        if (toggleButton) {
+            disableChatButton(toggleButton);
+        }
+        
+        // チャット関連のボタンを非表示
+        if (positionButton) {
+            positionButton.style.display = 'none';
+        }
+        if (sizeButton) {
+            sizeButton.style.display = 'none';
         }
         
         // 入力フィールドをリセットして非表示にする
@@ -660,25 +693,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
             
             if (toggleChatButton) {
-                toggleChatButton.style.opacity = '0.5';
-                toggleChatButton.style.cursor = 'not-allowed';
-                toggleChatButton.style.backgroundColor = '#888';
+                disableChatButton(toggleChatButton);
                 toggleChatButton.title = `${platform === 'twitcasting' ? 'ツイキャス' : 'OPENREC'}のチャット機能は現在無効化されています`;
-                toggleChatButton.classList.add('disabled');
             }
             
             if (opacityControl) {
                 opacityControl.style.display = 'none';
             }
-        } else {
-            // 他のプラットフォームの場合は通常表示
+        } else if (platform === 'twitch' || platform === 'youtube') {
+            // TwitchまたはYouTubeの場合はチャットボタンを有効化
             const toggleChatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
             if (toggleChatButton) {
-                toggleChatButton.style.opacity = '1';
-                toggleChatButton.style.cursor = 'pointer';
-                toggleChatButton.style.backgroundColor = '';
-                toggleChatButton.title = 'チャットを表示/非表示';
-                toggleChatButton.classList.remove('disabled');
+                enableChatButton(toggleChatButton);
             }
         }
         
@@ -718,22 +744,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (select.value === 'twitcasting' || select.value === 'openrec') {
                 // ツイキャスまたはOPENRECの場合、チャットボタンをグレーアウト
                 if (toggleChatButton) {
-                    toggleChatButton.style.opacity = '0.5'; // 半透明に
-                    toggleChatButton.style.cursor = 'not-allowed'; // カーソルを変更
-                    toggleChatButton.style.backgroundColor = '#888'; // グレー背景
+                    disableChatButton(toggleChatButton);
                     toggleChatButton.title = `${select.value === 'twitcasting' ? 'ツイキャス' : 'OPENREC'}のチャット機能は現在無効化されています`;
-                    toggleChatButton.classList.add('disabled'); // 無効化クラスを追加
                 }
                 // 透過度コントロールは非表示のまま
                 if (opacityControl) opacityControl.style.display = 'none';
             } else {
                 // 他のプラットフォームの場合は通常表示
                 if (toggleChatButton) {
-                    toggleChatButton.style.opacity = '1';
-                    toggleChatButton.style.cursor = 'pointer';
-                    toggleChatButton.style.backgroundColor = '';
-                    toggleChatButton.title = 'チャットを表示/非表示';
-                    toggleChatButton.classList.remove('disabled'); // 無効化クラスを削除
+                    enableChatButton(toggleChatButton);
                 }
                 // 透過度コントロールはチャットが表示されている場合のみ表示
                 if (opacityControl) {
@@ -755,11 +774,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
             
             if (toggleChatButton) {
-                toggleChatButton.style.opacity = '0.5'; // 半透明に
-                toggleChatButton.style.cursor = 'not-allowed'; // カーソルを変更
-                toggleChatButton.style.backgroundColor = '#888'; // グレー背景
+                disableChatButton(toggleChatButton);
                 toggleChatButton.title = `${select.value === 'twitcasting' ? 'ツイキャス' : 'OPENREC'}のチャット機能は現在無効化されています`;
-                toggleChatButton.classList.add('disabled'); // 無効化クラスを追加
             }
             if (opacityControl) opacityControl.style.display = 'none';
         }
@@ -802,22 +818,31 @@ document.addEventListener('DOMContentLoaded', () => {
     // 全体をリセットする関数
     function resetAll() {
         // すべてのストリームをリセット
-        for (let i = 1; i <= 8; i++) {
+        for (let i = 1; i <= 10; i++) {
             resetStream(i);
         }
         
         // レイアウトを2x2に戻す
         document.getElementById('layout-2x2').click();
         
-        // 入力フィールドを初期状態に
-        visibleStreamInputs = 1;
-        document.querySelectorAll('.stream-input').forEach((input, index) => {
-            if (index === 0) {
-                input.classList.remove('hidden');
-            } else {
-                input.classList.add('hidden');
+        // すべての入力フィールドを非表示に
+        document.querySelectorAll('.stream-input').forEach(input => {
+            input.classList.add('hidden');
+            
+            // 入力フィールドの内容をリセット
+            const platformSelect = input.querySelector('.platform-select');
+            const channelInput = input.querySelector('input[type="text"]');
+            if (platformSelect) {
+                platformSelect.value = 'twitch';
+                platformSelect.disabled = false;
+            }
+            if (channelInput) {
+                channelInput.value = '';
             }
         });
+        
+        // 表示されている入力フィールドの数を0に
+        visibleStreamInputs = 0;
         
         // 状態をリセット
         currentState = {
@@ -834,6 +859,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 共有URLを更新
         updateShareUrl();
+        
+        // 表示されている入力フィールドの数を更新
+        updateVisibleStreamInputs();
     }
 
     // 初期化時に共有URLコンテナを作成
