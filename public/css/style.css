@@ -1151,7 +1151,7 @@ iframe {
 
 /* チャット透過度コントロール */
 .opacity-control {
-    display: flex;
+    display: none; /* 初期状態では非表示 */
     align-items: center;
     gap: 5px;
     background: linear-gradient(135deg, rgba(0, 206, 201, 0.2) 0%, rgba(0, 168, 163, 0.2) 100%);
@@ -1160,6 +1160,12 @@ iframe {
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all var(--transition-speed) ease;
     margin-left: 5px;
+    width: 80px;
+}
+
+/* チャットボタンがアクティブな時に透過度コントロールを表示 */
+.toggle-chat.active + .opacity-control {
+    display: flex;
 }
 
 .opacity-control:hover {
@@ -1174,7 +1180,7 @@ iframe {
 .chat-opacity {
     -webkit-appearance: none;
     appearance: none;
-    width: 80px;
+    width: 50px;
     height: 6px;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 3px;
@@ -1214,17 +1220,18 @@ iframe {
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
     .opacity-control {
-        width: 100%;
+        width: auto;
         justify-content: center;
-        margin-top: 10px;
-        margin-left: 0;
+        margin-top: 0;
+        margin-left: 5px;
     }
     
     .chat-opacity {
-        width: 100%;
+        width: 40px;
     }
     
     .input-group {
         flex-wrap: wrap;
+        justify-content: flex-start;
     }
 }

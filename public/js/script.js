@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const streamMenu = document.getElementById('stream-menu');
     const addStreamButton = document.getElementById('add-stream');
     
+    // 初期化時に透過度メニューを非表示にする
+    document.querySelectorAll('.opacity-control').forEach(control => {
+        control.style.display = 'none';
+    });
+    
     // 現在表示されている配信入力フィールドの数
     let visibleStreamInputs = 1;
     
@@ -71,6 +76,12 @@ document.addEventListener('DOMContentLoaded', () => {
                                 if (opacitySlider) {
                                     opacitySlider.value = streamData.chatOpacity;
                                     updateChatOpacity(streamId, streamData.chatOpacity);
+                                }
+                                
+                                // 透過度メニューを表示
+                                const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
+                                if (opacityControl) {
+                                    opacityControl.style.display = 'flex';
                                 }
                             }
                         }, 1000);
@@ -190,6 +201,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const channelInput = mainInput.querySelector('input');
             if (platformSelect) platformSelect.value = 'twitch';
             if (channelInput) channelInput.value = '';
+            
+            // 透過度メニューを非表示にする
+            const opacityControl = mainInput.querySelector(`.opacity-control[data-target="${streamId}"]`);
+            if (opacityControl) {
+                opacityControl.style.display = 'none';
+            }
             
             // 配信2以降の場合は非表示に
             if (streamId > 1) {
@@ -945,6 +962,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const streamPlayer = document.getElementById(`stream-${streamId}`);
         const chatContainer = document.getElementById(`chat-${streamId}`);
         const toggleButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
+        const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`) || 
+                              toggleButton.nextElementSibling;
         
         // 要素が存在するか確認
         if (!streamPlayer || !chatContainer || !toggleButton) {
@@ -999,6 +1018,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 streamPlayer.classList.add('with-chat');
                 toggleButton.classList.add('active');
                 
+                // 透過度コントロールを表示
+                if (opacityControl) {
+                    opacityControl.style.display = 'flex';
+                }
+                
                 // 透過度を設定
                 const opacitySlider = document.querySelector(`.chat-opacity[data-target="${streamId}"]`);
                 if (opacitySlider) {
@@ -1020,6 +1044,11 @@ document.addEventListener('DOMContentLoaded', () => {
             chatContainer.classList.add('hidden');
             streamPlayer.classList.remove('with-chat');
             toggleButton.classList.remove('active');
+            
+            // 透過度コントロールを非表示
+            if (opacityControl) {
+                opacityControl.style.display = 'none';
+            }
             
             // 状態を更新
             if (currentState.streams[streamId]) {
@@ -1043,8 +1072,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const chatContainer = document.getElementById(`chat-${streamId}`);
         if (!chatContainer) return;
         
-        // 透過度を計算（0.1〜1.0の範囲）
-        const opacity = Math.max(opacityValue / 100, 0.1);
+        // 透過度を計算（0.01〜1.0の範囲）
+        const opacity = Math.max(opacityValue / 100, 0.01);
         
         // 背景色の透過度を設定
         chatContainer.style.backgroundColor = `rgba(26, 26, 46, ${opacity})`;
@@ -1052,7 +1081,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // iframeの透過度も設定
         const iframe = chatContainer.querySelector('iframe');
         if (iframe) {
-            iframe.style.opacity = Math.max(opacity + 0.1, 0.5); // 最低でも0.5の透過度を保持
+            iframe.style.opacity = Math.max(opacity + 0.1, 0.1); // 最低でも0.1の透過度を保持
         }
         
         // 状態を保存
