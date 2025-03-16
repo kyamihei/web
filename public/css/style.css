@@ -495,6 +495,7 @@ iframe {
     width: 100%;
     height: 100%;
     border: none;
+    z-index: 1;
 }
 
 /* レスポンシブデザイン */
@@ -1004,7 +1005,7 @@ iframe {
     height: 100%;
     pointer-events: none;
     overflow: hidden;
-    z-index: 2;
+    z-index: 9999;
 }
 
 .comment {
@@ -1016,6 +1017,7 @@ iframe {
     animation: commentFlow 8s linear;
     pointer-events: none;
     will-change: transform;
+    z-index: 9999;
 }
 
 @keyframes commentFlow {
