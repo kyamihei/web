@@ -1059,6 +1059,11 @@ iframe {
     justify-content: center;
 }
 
+/* チャットボタンがアクティブな時に透過度コントロールを表示 */
+.toggle-chat.active:not(.disabled) + .opacity-control {
+    display: flex;
+}
+
 /* 無効化されたチャットボタンのスタイル */
 .toggle-chat.disabled {
     background: #888 !important;
@@ -1066,6 +1071,10 @@ iframe {
     cursor: not-allowed !important;
     box-shadow: none !important;
     pointer-events: none;
+}
+
+.toggle-chat.disabled + .opacity-control {
+    display: none !important;
 }
 
 .toggle-chat::before {
@@ -1237,11 +1246,6 @@ iframe {
     transition: all var(--transition-speed) ease;
     margin-left: 0; /* 3pxから0pxに変更 */
     width: 110px; /* 85pxから110pxに拡大 */
-}
-
-/* チャットボタンがアクティブな時に透過度コントロールを表示 */
-.toggle-chat.active + .opacity-control {
-    display: flex;
 }
 
 .opacity-control:hover {
