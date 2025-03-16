@@ -58,7 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function applyState(state) {
         // レイアウトを適用
         if (state.layout) {
-            const layoutButton = document.getElementById(`layout-${state.layout}`);
+            // レイアウト名の形式を確認し、必要に応じて修正
+            let layoutName = state.layout;
+            if (!layoutName.startsWith('layout-')) {
+                layoutName = `layout-${layoutName}`;
+            }
+            
+            const layoutButton = document.getElementById(layoutName);
             if (layoutButton) {
                 // 他のレイアウトボタンからactiveクラスを削除
                 document.querySelectorAll('.layout-buttons button').forEach(btn => {
@@ -74,8 +80,56 @@ document.addEventListener('DOMContentLoaded', () => {
                     // 既存のレイアウトクラスを削除
                     streamsContainer.className = 'streams-container';
                     // 新しいレイアウトクラスを追加
-                    streamsContainer.classList.add(`layout-${state.layout}`);
+                    streamsContainer.classList.add(layoutName);
+                    
+                    // レイアウトに応じてストリームプレーヤーの表示/非表示を切り替え
+                    const streamPlayers = document.querySelectorAll('.stream-player');
+                    
+                    switch (layoutName) {
+                        case 'layout-1x2':
+                        case 'layout-2x1':
+                            streamPlayers.forEach((player, index) => {
+                                player.style.display = index < 2 ? 'flex' : 'none';
+                            });
+                            break;
+                        case 'layout-1x3':
+                        case 'layout-3x1':
+                            streamPlayers.forEach((player, index) => {
+                                player.style.display = index < 3 ? 'flex' : 'none';
+                            });
+                            break;
+                        case 'layout-2x3':
+                        case 'layout-3x2':
+                            streamPlayers.forEach((player, index) => {
+                                player.style.display = index < 6 ? 'flex' : 'none';
+                            });
+                            break;
+                        case 'layout-1x4':
+                        case 'layout-4x1':
+                            streamPlayers.forEach((player, index) => {
+                                player.style.display = index < 4 ? 'flex' : 'none';
+                            });
+                            break;
+                        case 'layout-4x2':
+                        case 'layout-2x4':
+                            streamPlayers.forEach((player, index) => {
+                                player.style.display = index < 8 ? 'flex' : 'none';
+                            });
+                            break;
+                        case 'layout-5x2':
+                        case 'layout-2x5':
+                            streamPlayers.forEach((player, index) => {
+                                player.style.display = index < 10 ? 'flex' : 'none';
+                            });
+                            break;
+                        default:
+                            streamPlayers.forEach((player, index) => {
+                                player.style.display = index < 4 ? 'flex' : 'none';
+                            });
+                    }
                 }
+            } else {
+                console.error(`レイアウトボタンが見つかりません: ${layoutName}`);
             }
         }
         
@@ -670,6 +724,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 layout: currentState.layout,
                 streams: {}
             };
+            
+            // レイアウト名の形式を確認し、必要に応じて修正
+            if (shareState.layout && !shareState.layout.startsWith('layout-')) {
+                shareState.layout = `layout-${shareState.layout}`;
+            }
             
             // ストリーム情報は配信プラットフォームとチャンネルIDのみを含める
             Object.entries(currentState.streams).forEach(([streamId, streamData]) => {
