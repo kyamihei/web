@@ -1288,34 +1288,3 @@ iframe {
 .toggle-chat-position.left-active {
     background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
 }
-
-/* 視聴者数表示 */
-.viewer-count {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    z-index: 20;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
-}
-
-.viewer-count:hover {
-    opacity: 1;
-}
-
-.viewer-count i {
-    color: #ff5252;
-}
-
-.viewer-count.hidden {
-    display: none;
-}
