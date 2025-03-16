@@ -1011,6 +1011,9 @@ iframe {
     gap: 6px;
     position: relative;
     overflow: hidden;
+    width: 40px;
+    height: 36px;
+    justify-content: center;
 }
 
 .toggle-chat::before {
@@ -1156,6 +1159,7 @@ iframe {
     border-radius: var(--border-radius);
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all var(--transition-speed) ease;
+    margin-left: 5px;
 }
 
 .opacity-control:hover {
@@ -1213,9 +1217,14 @@ iframe {
         width: 100%;
         justify-content: center;
         margin-top: 10px;
+        margin-left: 0;
     }
     
     .chat-opacity {
         width: 100%;
+    }
+    
+    .input-group {
+        flex-wrap: wrap;
     }
 }

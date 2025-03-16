@@ -1044,7 +1044,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!chatContainer) return;
         
         // 透過度を計算（0.1〜1.0の範囲）
-        const opacity = opacityValue / 100;
+        const opacity = Math.max(opacityValue / 100, 0.1);
         
         // 背景色の透過度を設定
         chatContainer.style.backgroundColor = `rgba(26, 26, 46, ${opacity})`;
