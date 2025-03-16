@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 共有URLを更新
         updateShareUrl();
         
-        // メニューアイテムのフェードインアニメーション
+        // メニューアイテムのフェードイニメーション
         const menuItems = streamMenu.querySelectorAll('h3, .layout-buttons, .stream-input, .add-stream-button, .url-help, .share-url-container');
         menuItems.forEach((item, index) => {
             item.style.opacity = '0';
@@ -1163,32 +1163,59 @@ class TwitchCommentFetcher {
     constructor() {
         this.client = null;
         this.lastMessageIds = new Set();
+        this.messageHandlers = new Map();
     }
     
     async connect(channelId) {
-        if (!this.client) {
-            this.client = new tmi.Client({
-                connection: {
-                    secure: true,
-                    reconnect: true
-                },
-                channels: [channelId]
-            });
-            
+        if (this.client) {
+            // 既存の接続を切断
+            await this.client.disconnect();
+            this.client = null;
+        }
+        
+        // チャンネルIDからユーザー名を抽出
+        let username = channelId;
+        if (channelId.includes('/')) {
+            username = channelId.split('/').pop();
+        }
+        username = username.toLowerCase();
+        
+        this.client = new tmi.Client({
+            connection: {
+                secure: true,
+                reconnect: true
+            },
+            channels: [username]
+        });
+        
+        try {
             await this.client.connect();
+            console.log(`Connected to Twitch channel: ${username}`);
+        } catch (error) {
+            console.error('Failed to connect to Twitch:', error);
+            this.client = null;
         }
     }
     
     async fetchComments(channelId) {
         try {
-            await this.connect(channelId);
+            if (!this.client) {
+                await this.connect(channelId);
+            }
+            
+            // 既存のメッセージハンドラを削除
+            if (this.messageHandlers.has(channelId)) {
+                this.client.removeListener('message', this.messageHandlers.get(channelId));
+                this.messageHandlers.delete(channelId);
+            }
             
             return new Promise((resolve) => {
                 const newMessages = [];
                 
-                this.client.on('message', (channel, tags, message, self) => {
-                    const messageId = tags['id'];
+                const messageHandler = (channel, tags, message, self) => {
+                    if (self) return; // 自分のメッセージは無視
                     
+                    const messageId = tags['id'];
                     if (!this.lastMessageIds.has(messageId)) {
                         this.lastMessageIds.add(messageId);
                         
@@ -1199,17 +1226,23 @@ class TwitchCommentFetcher {
                         }
                         
                         newMessages.push({
-                            username: tags['display-name'],
+                            username: tags['display-name'] || tags['username'],
                             text: message,
                             time: new Date().toLocaleTimeString(),
                             userType: this.getUserType(tags),
                             emotes: tags['emotes']
                         });
                     }
-                });
+                };
+                
+                // メッセージハンドラを保存
+                this.messageHandlers.set(channelId, messageHandler);
+                this.client.on('message', messageHandler);
                 
                 // 100ms後に新しいメッセージを返す
-                setTimeout(() => resolve(newMessages), 100);
+                setTimeout(() => {
+                    resolve(newMessages);
+                }, 100);
             });
         } catch (error) {
             console.error('Twitch comment fetch error:', error);

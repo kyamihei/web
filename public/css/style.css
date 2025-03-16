@@ -1004,11 +1004,12 @@ iframe {
     height: 100vh;
     background: linear-gradient(135deg, var(--dark-surface) 0%, var(--dark-surface-2) 100%);
     box-shadow: -2px 0 20px rgba(0, 0, 0, 0.5);
-    z-index: 900;
+    z-index: 1000;
     transition: right var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
     border-left: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     flex-direction: column;
+    color: var(--text-primary);
 }
 
 .comment-panel.open {
@@ -1067,14 +1068,23 @@ iframe {
     flex: 1;
     overflow-y: auto;
     padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .comment-item {
-    margin-bottom: 15px;
+    margin-bottom: 8px;
     padding: 10px;
     background: rgba(0, 0, 0, 0.2);
     border-radius: var(--border-radius);
     border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all var(--transition-speed) ease;
+}
+
+.comment-item:hover {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .comment-meta {
@@ -1091,9 +1101,23 @@ iframe {
     color: var(--primary-light);
 }
 
+.comment-user.moderator {
+    color: #00ff00;
+}
+
+.comment-user.subscriber {
+    color: #9147ff;
+}
+
+.comment-time {
+    opacity: 0.7;
+    font-size: 0.9em;
+}
+
 .comment-text {
     color: var(--text-primary);
     word-break: break-word;
+    line-height: 1.4;
 }
 
 /* コメントトグルボタン */
@@ -1104,76 +1128,24 @@ iframe {
     transform: translateY(-50%);
     background: rgba(0, 0, 0, 0.5);
     border: none;
-    padding: 8px;
+    padding: 12px;
     border-radius: 4px 0 0 4px;
     color: white;
     cursor: pointer;
-    z-index: 901;
+    z-index: 1001;
     transition: all var(--transition-speed) ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .comment-toggle:hover {
     background: rgba(0, 0, 0, 0.7);
+    padding-right: 16px;
 }
 
 .comment-toggle i {
     font-size: 1.2em;
-}
-
-/* コメントオーバーレイ */
-.stream-player .comment-overlay {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 200px;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 10px;
-    overflow-y: auto;
-    transform: translateX(100%);
-    transition: transform var(--transition-speed) ease;
-}
-
-.stream-player.show-comments .comment-overlay {
-    transform: translateX(0);
-}
-
-.comment-toggle-stream {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    background: rgba(0, 0, 0, 0.5);
-    border: none;
-    padding: 5px;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
-    z-index: 2;
-    transition: all var(--transition-speed) ease;
-}
-
-.comment-toggle-stream:hover {
-    background: rgba(0, 0, 0, 0.7);
-}
-
-/* レスポンシブ対応 */
-@media (max-width: 768px) {
-    .comment-panel {
-        width: 100%;
-        right: -100%;
-    }
-    
-    .stream-player .comment-overlay {
-        width: 100%;
-        height: 30%;
-        bottom: 0;
-        right: 0;
-        transform: translateY(100%);
-    }
-    
-    .stream-player.show-comments .comment-overlay {
-        transform: translateY(0);
-    }
 }
 
 /* コメント設定パネル */
@@ -1181,12 +1153,6 @@ iframe {
     padding: 15px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(0, 0, 0, 0.2);
-}
-
-.comment-settings h4 {
-    margin-bottom: 15px;
-    font-size: 16px;
-    color: var(--text-primary);
 }
 
 .setting-group {
@@ -1197,220 +1163,36 @@ iframe {
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.setting-group label {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--text-secondary);
-    font-size: 14px;
+/* カスタム絵文字 */
+.custom-emoji {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    margin: 0 2px;
 }
 
-/* 表示形式切り替え */
-.button-group {
-    display: flex;
-    gap: 8px;
+/* Twemojiのスタイル調整 */
+.comment-text img.emoji {
+    height: 1.2em;
+    width: 1.2em;
+    margin: 0 .05em 0 .1em;
+    vertical-align: -0.1em;
 }
 
-.mode-button {
-    flex: 1;
-    padding: 8px;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--border-radius);
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all var(--transition-speed) ease;
+/* スクロールバーのカスタマイズ */
+.comment-content::-webkit-scrollbar {
+    width: 8px;
 }
 
-.mode-button:hover {
-    background: rgba(255, 255, 255, 0.1);
+.comment-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
 }
 
-.mode-button.active {
-    background: var(--primary-color);
-    color: var(--text-primary);
-    border-color: var(--primary-light);
-}
-
-/* 自動スクロール設定 */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 24px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.3);
-    transition: .4s;
-    border-radius: 24px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 16px;
-    width: 16px;
-    left: 4px;
-    bottom: 3px;
-    background-color: var(--text-secondary);
-    transition: .4s;
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: var(--primary-color);
-}
-
-input:checked + .slider:before {
-    transform: translateX(26px);
-    background-color: white;
-}
-
-/* 文字サイズ調整 */
-.size-control {
-    display: flex;
-    gap: 8px;
-}
-
-.size-button {
-    flex: 1;
-    padding: 8px;
-    background: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--border-radius);
-    color: var(--text-secondary);
-    cursor: pointer;
-    transition: all var(--transition-speed) ease;
-}
-
-.size-button:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.size-button.active {
-    background: var(--primary-color);
-    color: var(--text-primary);
-    border-color: var(--primary-light);
-}
-
-/* 透明度設定 */
-.slider-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.slider-container input[type="range"] {
-    flex: 1;
-    height: 4px;
-    -webkit-appearance: none;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 2px;
-}
-
-.slider-container input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    background: var(--primary-color);
-    border-radius: 50%;
-    cursor: pointer;
-}
-
-/* ユーザー種別の色分け */
-.color-toggles {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.color-toggle {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-}
-
-.color-sample {
-    width: 16px;
-    height: 16px;
+.comment-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 4px;
 }
 
-.color-sample.moderator {
-    background: var(--twitch-color);
-}
-
-.color-sample.subscriber {
-    background: var(--youtube-color);
-}
-
-.color-sample.member {
-    background: var(--success-color);
-}
-
-/* コメントスタイル */
-.comment-content {
-    transition: all var(--transition-speed) ease;
-}
-
-/* 通常表示 */
-.comment-content.normal .comment-item {
-    padding: 12px;
-    margin-bottom: 12px;
-}
-
-/* コンパクト表示 */
-.comment-content.compact .comment-item {
-    padding: 6px;
-    margin-bottom: 6px;
-    font-size: 0.9em;
-}
-
-.comment-content.compact .comment-meta {
-    font-size: 0.8em;
-}
-
-/* 文字サイズ */
-.comment-content.font-small {
-    font-size: 0.9em;
-}
-
-.comment-content.font-medium {
-    font-size: 1em;
-}
-
-.comment-content.font-large {
-    font-size: 1.2em;
-}
-
-/* ユーザー種別のスタイル */
-.comment-user.moderator {
-    color: var(--twitch-color);
-}
-
-.comment-user.subscriber {
-    color: var(--youtube-color);
-}
-
-.comment-user.member {
-    color: var(--success-color);
-}
-
-/* 自動スクロール中のスタイル */
-.comment-content.auto-scrolling {
-    scroll-behavior: smooth;
+.comment-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
