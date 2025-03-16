@@ -330,6 +330,17 @@ document.addEventListener('DOMContentLoaded', () => {
         urlInput.focus();
     }
 
+    // チャット関連のコントロールを非表示にする関数
+    function hideChatControls(streamId) {
+        const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
+        const positionButton = document.querySelector(`.toggle-chat-position[data-target="${streamId}"]`);
+        const sizeButton = document.querySelector(`.toggle-chat-size[data-target="${streamId}"]`);
+        
+        if (opacityControl) opacityControl.style.display = 'none';
+        if (positionButton) positionButton.style.display = 'none';
+        if (sizeButton) sizeButton.style.display = 'none';
+    }
+
     // ストリームをリセットする関数
     function resetStream(streamId) {
         const streamContainer = document.getElementById(`stream-${streamId}`);
@@ -355,8 +366,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // チャットコンテナを削除
         const chatContainer = document.getElementById(`chat-${streamId}`);
         const toggleButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
-        const positionButton = document.querySelector(`.toggle-chat-position[data-target="${streamId}"]`);
-        const sizeButton = document.querySelector(`.toggle-chat-size[data-target="${streamId}"]`);
         
         if (chatContainer) {
             chatContainer.classList.add('hidden');
@@ -374,13 +383,8 @@ document.addEventListener('DOMContentLoaded', () => {
             disableChatButton(toggleButton);
         }
         
-        // チャット関連のボタンを非表示
-        if (positionButton) {
-            positionButton.style.display = 'none';
-        }
-        if (sizeButton) {
-            sizeButton.style.display = 'none';
-        }
+        // チャット関連のコントロールを非表示
+        hideChatControls(streamId);
         
         // 入力フィールドをリセットして非表示にする
         const streamInput = document.getElementById(`stream-input-${streamId}`);
@@ -1556,20 +1560,8 @@ document.addEventListener('DOMContentLoaded', () => {
             streamPlayer.classList.remove('with-chat');
             toggleButton.classList.remove('active');
             
-            // 透過度コントロールを非表示
-            if (opacityControl) {
-                opacityControl.style.display = 'none';
-            }
-            
-            // チャット位置切替ボタンを非表示
-            if (positionButton) {
-                positionButton.style.display = 'none';
-            }
-            
-            // チャットサイズ切替ボタンを非表示
-            if (sizeButton) {
-                sizeButton.style.display = 'none';
-            }
+            // チャット関連のコントロールを非表示
+            hideChatControls(streamId);
             
             // 状態を更新
             if (currentState.streams[streamId]) {
