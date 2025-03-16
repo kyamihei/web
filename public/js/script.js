@@ -424,31 +424,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (channelId.includes('twitch.tv/')) {
                     normalizedChannelId = channelId.split('twitch.tv/')[1].split('/')[0];
                 }
-                
-                // Twitchプレーヤーの埋め込み方法を更新
-                // 直接iframeを作成せず、Twitch Embed APIを使用
-                streamContainer.innerHTML = `<div id="twitch-embed-${streamId}"></div>`;
-                
-                // Twitch Embed APIスクリプトが既に読み込まれているか確認
-                if (!window.Twitch) {
-                    const script = document.createElement('script');
-                    script.src = 'https://embed.twitch.tv/embed/v1.js';
-                    script.async = true;
-                    script.onload = () => {
-                        createTwitchEmbed(streamId, normalizedChannelId, parentParam);
-                    };
-                    document.body.appendChild(script);
+                if (normalizedChannelId.startsWith('v')) {
+                    embedUrl = `https://player.twitch.tv/?video=${normalizedChannelId}&parent=${parentParam}`;
                 } else {
-                    createTwitchEmbed(streamId, normalizedChannelId, parentParam);
+                    embedUrl = `https://player.twitch.tv/?channel=${normalizedChannelId}&parent=${parentParam}`;
                 }
-                
-                // チャットコンテナとリセットボタンを追加
-                addChatAndResetButtons(streamContainer, streamId);
-                
-                // メイン入力フィールドを更新
-                updateMainInputField(mainInput, platform, channelId, streamId, normalizedChannelId);
-                
-                return; // Twitchの場合は早期リターン
+                break;
                 
             case 'youtube':
                 // YouTubeの様々なURL形式に対応
@@ -498,51 +479,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
         }
         
-        // iframeを作成して埋め込み（Twitch以外のプラットフォーム用）
+        // iframeを作成して埋め込み
         const iframe = document.createElement('iframe');
         iframe.src = embedUrl;
         iframe.setAttribute('allowfullscreen', 'true');
         
-        if (platform === 'youtube') {
+        if (platform === 'twitch') {
             iframe.setAttribute('allow', 'autoplay; fullscreen');
         }
         
         streamContainer.appendChild(iframe);
         
-        // チャットコンテナとリセットボタンを追加
-        addChatAndResetButtons(streamContainer, streamId);
-        
-        // メイン入力フィールドを更新
-        updateMainInputField(mainInput, platform, channelId, streamId, normalizedChannelId);
-    }
-    
-    // Twitch Embedを作成する関数
-    function createTwitchEmbed(streamId, channelId, parentParam) {
-        try {
-            const options = {
-                width: '100%',
-                height: '100%',
-                channel: channelId,
-                parent: [parentParam],
-                autoplay: true
-            };
-            
-            // チャンネルIDがvから始まる場合はビデオIDとして扱う
-            if (channelId.startsWith('v')) {
-                delete options.channel;
-                options.video = channelId;
-            }
-            
-            new Twitch.Embed(`twitch-embed-${streamId}`, options);
-            console.log(`Twitch embed created for ${channelId} in stream-${streamId}`);
-        } catch (error) {
-            console.error('Twitch embed creation error:', error);
-            alert('Twitchプレーヤーの読み込みに失敗しました');
-        }
-    }
-    
-    // チャットコンテナとリセットボタンを追加する関数
-    function addChatAndResetButtons(streamContainer, streamId) {
         // チャットコンテナを追加
         const chatContainer = document.createElement('div');
         chatContainer.id = `chat-${streamId}`;
@@ -559,10 +506,8 @@ document.addEventListener('DOMContentLoaded', () => {
         resetButton.addEventListener('click', () => resetStream(streamId));
         resetButtonContainer.appendChild(resetButton);
         streamContainer.appendChild(resetButtonContainer);
-    }
-    
-    // メイン入力フィールドを更新する関数
-    function updateMainInputField(mainInput, platform, channelId, streamId, normalizedChannelId) {
+        
+        // メイン入力フィールドを更新
         if (mainInput) {
             const platformSelect = mainInput.querySelector('.platform-select');
             const channelInput = mainInput.querySelector('input');
