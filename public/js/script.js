@@ -349,62 +349,28 @@ document.addEventListener('DOMContentLoaded', () => {
             chatContainer.classList.remove('chat-size-small', 'chat-size-medium', 'chat-size-large');
         }
         
-        if (streamContainer) {
-            streamContainer.classList.remove('with-chat');
-        }
-        
-        if (toggleButton) {
-            toggleButton.classList.remove('active');
-        }
-        
-        if (positionButton) {
-            positionButton.classList.remove('left-active');
-            positionButton.title = 'チャット位置切替';
-            positionButton.style.display = 'none';
-        }
-        
-        if (sizeButton) {
-            sizeButton.innerHTML = '<i class="fas fa-text-height"></i><span>大</span>';
-            sizeButton.title = 'チャットサイズ変更';
-            sizeButton.style.display = 'none';
-        }
-        
-        // ハンバーガーメニューの入力フィールドをリセット
-        const platformSelect = document.getElementById(`platform-${streamId}`);
-        const channelInput = document.getElementById(`channel-${streamId}`);
-        
-        if (platformSelect) {
-            platformSelect.value = 'twitch'; // デフォルト値にリセット
-            platformSelect.disabled = false; // 選択可能に戻す
-        }
-        
-        if (channelInput) {
-            channelInput.value = ''; // 空にリセット
-        }
-        
-        // 配信2以降の場合は入力フィールドを非表示にする
-        if (streamId > 1) {
-            const streamInput = document.getElementById(`stream-input-${streamId}`);
-            if (streamInput && !streamInput.classList.contains('hidden')) {
-                streamInput.classList.add('hidden');
-                // 表示されている入力フィールドの数を更新
-                updateVisibleStreamInputs();
+        // 入力フィールドをリセットして非表示にする
+        const streamInput = document.getElementById(`stream-input-${streamId}`);
+        if (streamInput) {
+            const platformSelect = streamInput.querySelector('.platform-select');
+            const channelInput = streamInput.querySelector('input[type="text"]');
+            if (platformSelect) {
+                platformSelect.value = 'twitch';
+                platformSelect.disabled = false;
             }
-        }
-        
-        // 透過度コントロールを非表示
-        const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
-        if (opacityControl) {
-            opacityControl.style.display = 'none';
+            if (channelInput) {
+                channelInput.value = '';
+            }
+            streamInput.classList.add('hidden');
         }
         
         // 状態を更新
-        delete currentState.streams[streamId];
-        saveStateToURL();
-        updateShareUrl();
+        if (currentState.streams[streamId]) {
+            delete currentState.streams[streamId];
+            saveStateToURL();
+        }
         
-        // ドラッグ&ドロップを再有効化
-        initializeStreamPlayers();
+        updateVisibleStreamInputs();
     }
 
     // 表示されている入力フィールドの数を更新する関数
