@@ -1119,7 +1119,7 @@ iframe {
     opacity: 1;
 }
 
-/* .chat-container::before {
+.chat-container::before {
     content: '';
     position: absolute;
     top: 0;
@@ -1131,7 +1131,7 @@ iframe {
         rgba(0, 0, 0, 0) 50%, 
         rgba(253, 121, 168, 0.1) 100%);
     pointer-events: none;
-} */
+}
 
 .chat-container::after {
     content: '';
@@ -1312,24 +1312,20 @@ iframe {
 /* チャットサイズのスタイル */
 .chat-size-small {
     width: 20% !important;
-    transform: none !important;
 }
 
 .chat-size-medium {
     width: 30% !important;
-    transform: none !important;
 }
 
 .chat-size-large {
     width: 40% !important;
-    transform: none !important;
 }
 
 /* チャットサイズに応じたiframeの調整 */
 .chat-size-small .chat-iframe {
     width: 100% !important;
     height: 100% !important;
-    transform: scale(0.7);
     transform-origin: top right;
 }
 
@@ -1340,7 +1336,6 @@ iframe {
 .chat-size-medium .chat-iframe {
     width: 100% !important;
     height: 100% !important;
-    transform: scale(0.85);
     transform-origin: top right;
 }
 
@@ -1351,7 +1346,6 @@ iframe {
 .chat-size-large .chat-iframe {
     width: 100% !important;
     height: 100% !important;
-    transform: scale(1);
     transform-origin: top right;
 }
 
