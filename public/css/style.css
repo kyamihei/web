@@ -1,26 +1,25 @@
 /* 全体のスタイル */
 :root {
-    --primary-color: #7c5cff;
-    --primary-light: #9d89ff;
-    --primary-dark: #6345e4;
-    --secondary-color: #00e1db;
-    --accent-color: #ff6b9d;
-    --dark-bg: #0a0a1f;
-    --dark-surface: #12122a;
-    --dark-surface-2: #1a1a35;
+    --primary-color: #6c5ce7;
+    --primary-light: #a29bfe;
+    --primary-dark: #5641e5;
+    --secondary-color: #00cec9;
+    --accent-color: #fd79a8;
+    --dark-bg: #0f0f1a;
+    --dark-surface: #1a1a2e;
+    --dark-surface-2: #242538;
     --text-primary: #ffffff;
     --text-secondary: #b8b8d4;
     --twitch-color: #9146FF;
     --youtube-color: #FF0000;
     --twitcasting-color: #00a0dc;
     --openrec-color: #eb5528;
-    --success-color: #00d68f;
-    --danger-color: #ff6b6b;
-    --warning-color: #ffd93d;
-    --border-radius: 12px;
-    --box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+    --success-color: #00b894;
+    --danger-color: #ff7675;
+    --warning-color: #fdcb6e;
+    --border-radius: 8px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
     --transition-speed: 0.3s;
-    --glow-shadow: 0 0 20px rgba(124, 92, 255, 0.3);
 }
 
 /* タイトル */
@@ -42,7 +41,7 @@
 
 body {
     font-family: 'Noto Sans JP', 'Poppins', sans-serif;
-    background: radial-gradient(circle at top right, #1a1a4f 0%, var(--dark-bg) 100%);
+    background: linear-gradient(135deg, var(--dark-bg) 0%, #16162c 100%);
     color: var(--text-primary);
     line-height: 1.6;
     padding: 10px;
@@ -100,14 +99,13 @@ h1, h2, h3, h4, h5, h6 {
     right: -400px;
     width: 380px;
     height: 100%;
-    background: linear-gradient(135deg, rgba(18, 18, 42, 0.95) 0%, rgba(26, 26, 53, 0.95) 100%);
-    backdrop-filter: blur(10px);
+    background: linear-gradient(135deg, var(--dark-surface) 0%, var(--dark-surface-2) 100%);
     box-shadow: -2px 0 20px rgba(0, 0, 0, 0.5);
     z-index: 1000;
     overflow-y: auto;
     transition: right var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
     padding: 15px;
-    border-left: 1px solid rgba(124, 92, 255, 0.2);
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .stream-menu.open {
@@ -186,41 +184,28 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .layout-buttons button {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(124, 92, 255, 0.1) 100%);
+    background-color: rgba(255, 255, 255, 0.1);
     color: var(--text-primary);
-    border: 1px solid rgba(124, 92, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     padding: 8px 15px;
     border-radius: var(--border-radius);
     cursor: pointer;
-    transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all var(--transition-speed) ease;
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
     min-width: 60px;
 }
 
 .layout-buttons button:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(124, 92, 255, 0.15) 100%);
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 4px 12px rgba(124, 92, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .layout-buttons button.active {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    background-color: var(--primary-color);
     border-color: var(--primary-light);
-    box-shadow: 0 0 20px rgba(124, 92, 255, 0.4);
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(124, 92, 255, 0.4);
-    }
-    70% {
-        box-shadow: 0 0 0 10px rgba(124, 92, 255, 0);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(124, 92, 255, 0);
-    }
+    box-shadow: 0 0 15px rgba(108, 92, 231, 0.5);
 }
 
 /* ストリームコントロール */
@@ -281,16 +266,13 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 10px;
     padding: 12px;
     border-radius: var(--border-radius);
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(124, 92, 255, 0.1) 100%);
-    border: 1px solid rgba(124, 92, 255, 0.1);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all var(--transition-speed) ease;
 }
 
 .stream-input:hover {
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.25) 0%, rgba(124, 92, 255, 0.15) 100%);
-    border-color: rgba(124, 92, 255, 0.2);
-    transform: translateY(-2px);
+    background-color: rgba(0, 0, 0, 0.3);
 }
 
 .stream-label {
@@ -398,48 +380,21 @@ h1, h2, h3, h4, h5, h6 {
     padding: 10px 12px;
     border-radius: var(--border-radius);
     cursor: pointer;
-    transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all var(--transition-speed) ease;
     font-weight: 500;
     box-shadow: var(--box-shadow);
     display: flex;
     align-items: center;
     gap: 6px;
-    position: relative;
-    overflow: hidden;
 }
 
 .load-stream:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 8px 20px rgba(124, 92, 255, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
-.load-stream::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 70%);
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    pointer-events: none;
-}
-
-.load-stream:hover::after {
-    opacity: 1;
-    animation: ripple 1s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes ripple {
-    from {
-        transform: scale(0.8);
-        opacity: 1;
-    }
-    to {
-        transform: scale(2);
-        opacity: 0;
-    }
+.load-stream:active {
+    transform: translateY(0);
 }
 
 .delete-stream {
@@ -501,9 +456,8 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
     align-items: center;
     box-shadow: var(--box-shadow);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all var(--transition-speed) ease;
 }
 
 .stream-number {
@@ -523,43 +477,38 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .stream-player:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--glow-shadow), var(--box-shadow);
-    border-color: rgba(124, 92, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .placeholder {
     text-align: center;
     color: var(--text-secondary);
-    padding: 20px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 15px;
     cursor: pointer;
-    transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
-    background: linear-gradient(135deg, rgba(124, 92, 255, 0.1) 0%, rgba(0, 225, 219, 0.1) 100%);
-    border-radius: var(--border-radius);
+    transition: all var(--transition-speed) ease;
 }
 
 .placeholder:hover {
-    background: linear-gradient(135deg, rgba(124, 92, 255, 0.2) 0%, rgba(0, 225, 219, 0.2) 100%);
-    transform: scale(1.02);
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 .placeholder:hover .placeholder-icon {
-    transform: scale(1.2) rotate(5deg);
-    color: var(--primary-light);
-    text-shadow: 0 0 20px rgba(124, 92, 255, 0.5);
+    transform: scale(1.1);
+    color: var(--primary-color);
 }
 
 .placeholder-icon {
     font-size: 48px;
-    color: var(--primary-color);
-    opacity: 0.9;
+    color: var(--primary-light);
+    opacity: 0.7;
     margin-bottom: 10px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .placeholder p:first-of-type {
@@ -729,18 +678,17 @@ iframe {
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(124, 92, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(var(--primary-color), var(--primary-dark));
+    background: var(--primary-color);
     border-radius: 10px;
-    border: 2px solid rgba(0, 0, 0, 0.2);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(var(--primary-light), var(--primary-color));
+    background: var(--primary-light);
 }
 
 /* プラットフォームアイコン */
@@ -1092,13 +1040,13 @@ iframe {
 
 /* チャット関連のスタイル */
 .toggle-chat {
-    background: linear-gradient(135deg, var(--secondary-color) 0%, #00b4af 100%);
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #00a8a3 100%);
     color: white;
     border: none;
     padding: 8px 15px;
     border-radius: var(--border-radius);
     cursor: pointer;
-    transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all var(--transition-speed) ease;
     font-weight: 500;
     box-shadow: var(--box-shadow);
     display: flex;
@@ -1137,8 +1085,8 @@ iframe {
 }
 
 .toggle-chat:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 4px 12px rgba(0, 225, 219, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .toggle-chat:active {
@@ -1146,20 +1094,20 @@ iframe {
 }
 
 .toggle-chat.active {
-    background: linear-gradient(135deg, var(--accent-color) 0%, #ff4b8b 100%);
-    box-shadow: 0 0 20px rgba(255, 107, 157, 0.4);
+    background: linear-gradient(135deg, var(--accent-color) 0%, #e84393 100%);
+    box-shadow: 0 0 15px rgba(232, 67, 147, 0.5);
     animation: pulse-chat 2s infinite;
 }
 
 @keyframes pulse-chat {
     0% {
-        box-shadow: 0 0 0 0 rgba(255, 107, 157, 0.4);
+        box-shadow: 0 0 0 0 rgba(232, 67, 147, 0.5);
     }
     70% {
-        box-shadow: 0 0 0 10px rgba(255, 107, 157, 0);
+        box-shadow: 0 0 0 10px rgba(232, 67, 147, 0);
     }
     100% {
-        box-shadow: 0 0 0 0 rgba(255, 107, 157, 0);
+        box-shadow: 0 0 0 0 rgba(232, 67, 147, 0);
     }
 }
 
@@ -1263,8 +1211,8 @@ iframe {
 
 /* チャットトグルボタンのアクティブ状態 */
 .toggle-chat.active {
-    background: linear-gradient(135deg, var(--accent-color) 0%, #ff4b8b 100%);
-    box-shadow: 0 0 20px rgba(255, 107, 157, 0.4);
+    background: linear-gradient(135deg, var(--accent-color) 0%, #e84393 100%);
+    box-shadow: 0 0 10px rgba(232, 67, 147, 0.5);
 }
 
 /* レスポンシブ対応 */
