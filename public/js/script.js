@@ -185,6 +185,18 @@ document.addEventListener('DOMContentLoaded', () => {
                                     if (positionButton) {
                                         positionButton.classList.add('left-active');
                                         positionButton.title = '右側に表示';
+                                        positionButton.style.display = 'flex';
+                                    }
+                                }
+                                
+                                // チャットサイズを復元
+                                if (streamData.chatSize) {
+                                    applyChatSize(streamId, streamData.chatSize);
+                                    
+                                    // サイズボタンを表示
+                                    const sizeButton = document.querySelector(`.toggle-chat-size[data-target="${streamId}"]`);
+                                    if (sizeButton) {
+                                        sizeButton.style.display = 'flex';
                                     }
                                 }
                             }, 1000);
@@ -306,6 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const chatContainer = document.getElementById(`chat-${streamId}`);
         const toggleButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
         const positionButton = document.querySelector(`.toggle-chat-position[data-target="${streamId}"]`);
+        const sizeButton = document.querySelector(`.toggle-chat-size[data-target="${streamId}"]`);
         
         if (chatContainer) {
             chatContainer.classList.add('hidden');
@@ -314,6 +327,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             // チャット位置をリセット
             chatContainer.classList.remove('left-position');
+            // チャットサイズをリセット
+            chatContainer.classList.remove('chat-size-small', 'chat-size-medium', 'chat-size-large');
         }
         
         if (streamContainer) {
@@ -327,6 +342,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (positionButton) {
             positionButton.classList.remove('left-active');
             positionButton.title = 'チャット位置切替';
+            positionButton.style.display = 'none';
+        }
+        
+        if (sizeButton) {
+            sizeButton.innerHTML = '<i class="fas fa-text-height"></i><span>中</span>';
+            sizeButton.title = 'チャットサイズ変更';
+            sizeButton.style.display = 'none';
         }
         
         // ハンバーガーメニューの入力フィールドをリセット
@@ -638,7 +660,6 @@ document.addEventListener('DOMContentLoaded', () => {
             chatVisible: false // チャットの表示状態も保存
         };
         saveStateToURL();
-        updateShareUrl();
     }
     
     // プラットフォームに応じたスタイルを適用
@@ -736,7 +757,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     shareState.streams[streamId] = {
                         platform: streamData.platform,
                         channelId: streamData.channelId
-                        // チャット表示状態、透過度、位置などは含めない
+                        // チャット表示状態、透過度、位置、サイズなどは含めない
                     };
                 }
             });
@@ -1158,6 +1179,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('data-target属性が見つかりません');
             }
         });
+        
+        // 初期状態では非表示
+        button.style.display = 'none';
+    });
+
+    // チャットサイズ切替ボタンのイベントリスナーを追加
+    document.querySelectorAll('.toggle-chat-size').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
+            const streamId = button.getAttribute('data-target');
+            if (streamId) {
+                toggleChatSize(streamId);
+            } else {
+                console.error('data-target属性が見つかりません');
+            }
+        });
+        
+        // 初期状態では非表示
+        button.style.display = 'none';
     });
 
     // チャット表示を切り替える関数
@@ -1168,6 +1208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`) || 
                               toggleButton.nextElementSibling;
         const positionButton = document.querySelector(`.toggle-chat-position[data-target="${streamId}"]`);
+        const sizeButton = document.querySelector(`.toggle-chat-size[data-target="${streamId}"]`);
         
         // 要素が存在するか確認
         if (!streamPlayer || !chatContainer || !toggleButton) {
@@ -1324,9 +1365,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (positionButton) positionButton.classList.remove('left-active');
             }
             
+            // チャットサイズを適用
+            if (currentState.streams[streamId] && currentState.streams[streamId].chatSize) {
+                applyChatSize(streamId, currentState.streams[streamId].chatSize);
+            } else {
+                // デフォルトは中サイズ
+                applyChatSize(streamId, 'medium');
+            }
+            
             // 透過度コントロールを表示
             if (opacityControl) {
                 opacityControl.style.display = 'flex';
+            }
+            
+            // チャット位置切替ボタンを表示
+            if (positionButton) {
+                positionButton.style.display = 'flex';
+            }
+            
+            // チャットサイズ切替ボタンを表示
+            if (sizeButton) {
+                sizeButton.style.display = 'flex';
             }
             
             // 透過度を設定
@@ -1343,6 +1402,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!currentState.streams[streamId].hasOwnProperty('chatPosition')) {
                     currentState.streams[streamId].chatPosition = chatContainer.classList.contains('left-position') ? 'left' : 'right';
                 }
+                // チャットサイズの状態を保持
+                if (!currentState.streams[streamId].hasOwnProperty('chatSize')) {
+                    currentState.streams[streamId].chatSize = 'medium'; // デフォルトは中サイズ
+                }
                 saveStateToURL();
                 updateShareUrl();
             }
@@ -1355,6 +1418,16 @@ document.addEventListener('DOMContentLoaded', () => {
             // 透過度コントロールを非表示
             if (opacityControl) {
                 opacityControl.style.display = 'none';
+            }
+            
+            // チャット位置切替ボタンを非表示
+            if (positionButton) {
+                positionButton.style.display = 'none';
+            }
+            
+            // チャットサイズ切替ボタンを非表示
+            if (sizeButton) {
+                sizeButton.style.display = 'none';
             }
             
             // 状態を更新
@@ -1407,6 +1480,75 @@ document.addEventListener('DOMContentLoaded', () => {
         // 状態を保存
         saveStateToURL();
         updateShareUrl();
+    }
+
+    // チャットサイズを適用する関数
+    function applyChatSize(streamId, size) {
+        const chatContainer = document.getElementById(`chat-${streamId}`);
+        const sizeButton = document.querySelector(`.toggle-chat-size[data-target="${streamId}"]`);
+        
+        if (!chatContainer || !sizeButton) return;
+        
+        // 既存のサイズクラスを削除
+        chatContainer.classList.remove('chat-size-small', 'chat-size-medium', 'chat-size-large');
+        
+        // サイズに応じたクラスを追加
+        switch (size) {
+            case 'small':
+                chatContainer.classList.add('chat-size-small');
+                sizeButton.innerHTML = '<i class="fas fa-text-height"></i><span>小</span>';
+                sizeButton.title = '中サイズに変更';
+                break;
+            case 'medium':
+                chatContainer.classList.add('chat-size-medium');
+                sizeButton.innerHTML = '<i class="fas fa-text-height"></i><span>中</span>';
+                sizeButton.title = '大サイズに変更';
+                break;
+            case 'large':
+                chatContainer.classList.add('chat-size-large');
+                sizeButton.innerHTML = '<i class="fas fa-text-height"></i><span>大</span>';
+                sizeButton.title = '小サイズに変更';
+                break;
+        }
+        
+        // 状態を保存
+        if (currentState.streams[streamId]) {
+            currentState.streams[streamId].chatSize = size;
+            saveStateToURL();
+            updateShareUrl();
+        }
+    }
+
+    // チャットサイズを切り替える関数
+    function toggleChatSize(streamId) {
+        const chatContainer = document.getElementById(`chat-${streamId}`);
+        if (!chatContainer || chatContainer.classList.contains('hidden')) return;
+        
+        // 現在のサイズを取得
+        let currentSize = 'medium'; // デフォルト
+        
+        if (chatContainer.classList.contains('chat-size-small')) {
+            currentSize = 'small';
+        } else if (chatContainer.classList.contains('chat-size-large')) {
+            currentSize = 'large';
+        }
+        
+        // 次のサイズに切り替え
+        let nextSize;
+        switch (currentSize) {
+            case 'small':
+                nextSize = 'medium';
+                break;
+            case 'medium':
+                nextSize = 'large';
+                break;
+            case 'large':
+                nextSize = 'small';
+                break;
+        }
+        
+        // 新しいサイズを適用
+        applyChatSize(streamId, nextSize);
     }
 
     // チャット透過度スライダーのイベントリスナーを追加

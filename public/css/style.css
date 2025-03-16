@@ -1288,3 +1288,49 @@ iframe {
 .toggle-chat-position.left-active {
     background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
 }
+
+/* チャットサイズのスタイル */
+.chat-size-small {
+    width: 20% !important;
+}
+
+.chat-size-medium {
+    width: 30% !important; /* デフォルトサイズ */
+}
+
+.chat-size-large {
+    width: 40% !important;
+}
+
+/* チャットサイズ切替ボタン */
+.toggle-chat-size {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    font-weight: 500;
+    box-shadow: var(--box-shadow);
+    display: none; /* 初期状態では非表示 */
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-left: 5px;
+}
+
+.toggle-chat-size:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-chat-size:active {
+    transform: translateY(0);
+}
+
+.toggle-chat-size span {
+    font-size: 10px;
+    margin-left: 2px;
+}
