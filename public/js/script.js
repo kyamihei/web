@@ -387,12 +387,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (streamInput) {
             const platformSelect = streamInput.querySelector('.platform-select');
             const channelInput = streamInput.querySelector('input[type="text"]');
+            const loadButton = streamInput.querySelector('.load-stream');
+            
             if (platformSelect) {
                 platformSelect.value = 'twitch';
                 platformSelect.disabled = false;
             }
             if (channelInput) {
                 channelInput.value = '';
+                channelInput.disabled = false;
+            }
+            if (loadButton) {
+                loadButton.disabled = false;
+                loadButton.style.opacity = '1';
+                loadButton.style.cursor = 'pointer';
             }
             streamInput.classList.add('hidden');
         }
@@ -665,7 +673,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resetButtonContainer.className = 'reset-button-container';
         const resetButton = document.createElement('button');
         resetButton.className = 'stream-reset-button';
-        resetButton.innerHTML = '<i class="fas fa-undo"></i>';
+        resetButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
         resetButton.title = 'リセット';
         resetButton.addEventListener('click', () => resetStream(streamId));
         resetButtonContainer.appendChild(resetButton);
@@ -675,12 +683,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mainInput) {
             const platformSelect = mainInput.querySelector('.platform-select');
             const channelInput = mainInput.querySelector('input');
+            const loadButton = mainInput.querySelector('.load-stream');
+            
             if (platformSelect) {
                 platformSelect.value = platform;
                 // 読み込み後はプラットフォーム選択欄を変更不可に設定
                 platformSelect.disabled = true;
             }
-            if (channelInput) channelInput.value = channelId;
+            if (channelInput) {
+                channelInput.value = channelId;
+                // URL入力欄を変更不可に設定
+                channelInput.disabled = true;
+            }
+            if (loadButton) {
+                // 読み込みボタンを無効化
+                loadButton.disabled = true;
+                loadButton.style.opacity = '0.5';
+                loadButton.style.cursor = 'not-allowed';
+            }
             
             // 非表示状態を解除
             mainInput.classList.remove('hidden');
