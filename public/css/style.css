@@ -1079,6 +1079,8 @@ iframe {
     overflow: hidden;
     transform: translateX(0);
     opacity: 1;
+    display: flex;
+    justify-content: flex-end;
 }
 
 /* 左側表示のスタイル */
@@ -1088,6 +1090,7 @@ iframe {
     border-left: none;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
     transform: translateX(0);
+    justify-content: flex-start;
 }
 
 .chat-container.hidden {
@@ -1187,7 +1190,7 @@ iframe {
     border-radius: var(--border-radius);
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all var(--transition-speed) ease;
-    margin-left: 3px; /* 5pxから3pxに縮小 */
+    margin-left: 0; /* 3pxから0pxに変更 */
     width: 110px; /* 85pxから110pxに拡大 */
 }
 
@@ -1280,7 +1283,7 @@ iframe {
     justify-content: center;
     width: 32px; /* 36pxから32pxに縮小 */
     height: 36px;
-    margin-left: 3px; /* 5pxから3pxに縮小 */
+    margin-left: 0; /* 3pxから0pxに変更 */
 }
 
 .toggle-chat-position:hover {
@@ -1296,35 +1299,29 @@ iframe {
     background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
 }
 
+/* チャットコントロール */
+.chat-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-top: 8px;
+}
+
 /* チャットサイズのスタイル */
 .chat-size-small {
     width: 20% !important;
     transform: none !important;
-    transform-origin: top right;
-}
-
-.chat-container.left-position.chat-size-small {
-    transform-origin: top left;
 }
 
 .chat-size-medium {
     width: 30% !important;
     transform: none !important;
-    transform-origin: top right;
-}
-
-.chat-container.left-position.chat-size-medium {
-    transform-origin: top left;
 }
 
 .chat-size-large {
     width: 40% !important;
     transform: none !important;
-    transform-origin: top right;
-}
-
-.chat-container.left-position.chat-size-large {
-    transform-origin: top left;
 }
 
 /* チャットサイズに応じたiframeの調整 */
@@ -1372,12 +1369,12 @@ iframe {
     transition: all var(--transition-speed) ease;
     font-weight: 500;
     box-shadow: var(--box-shadow);
-    display: none; /* 初期状態では非表示 */
+    display: flex; /* 非表示から表示に変更 */
     align-items: center;
     justify-content: center;
     width: 32px; /* 36pxから32pxに縮小 */
     height: 36px;
-    margin-left: 3px; /* 5pxから3pxに縮小 */
+    margin-left: 0; /* 3pxから0pxに変更 */
 }
 
 .toggle-chat-size:hover {
