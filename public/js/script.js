@@ -986,58 +986,136 @@ document.addEventListener('DOMContentLoaded', () => {
         // チャットが既に表示されている場合は非表示にする
         if (chatContainer.classList.contains('hidden')) {
             // チャットが非表示の場合は表示する
-            if (platform === 'twitch' && channelValue) {
-                // チャンネルIDを抽出
-                let channelId = channelValue;
-                
-                // URLが入力された場合はチャンネルIDを抽出
-                if (channelValue.includes('twitch.tv/')) {
-                    const match = channelValue.match(/twitch\.tv\/([^\/\?]+)/);
-                    if (match && match[1]) {
-                        channelId = match[1];
+            let chatUrl = '';
+            let iframe = null;
+            
+            switch (platform) {
+                case 'twitch':
+                    if (!channelValue) {
+                        alert('Twitchのチャンネルが設定されていません。');
+                        return;
                     }
-                }
-                
-                // 親ドメインパラメータを取得
-                const parentParam = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
-                
-                // Twitchの公式埋め込みチャットを使用
-                const chatUrl = `https://www.twitch.tv/embed/${channelId}/chat?parent=${parentParam}`;
-                const iframe = document.createElement('iframe');
-                iframe.src = chatUrl;
-                iframe.classList.add('chat-iframe');
-                
-                // 既存のiframeがあれば削除
-                while (chatContainer.firstChild) {
-                    chatContainer.removeChild(chatContainer.firstChild);
-                }
-                
-                // 新しいiframeを追加
-                chatContainer.appendChild(iframe);
-                chatContainer.classList.remove('hidden');
-                streamPlayer.classList.add('with-chat');
-                toggleButton.classList.add('active');
-                
-                // 透過度コントロールを表示
-                if (opacityControl) {
-                    opacityControl.style.display = 'flex';
-                }
-                
-                // 透過度を設定
-                const opacitySlider = document.querySelector(`.chat-opacity[data-target="${streamId}"]`);
-                if (opacitySlider) {
-                    updateChatOpacity(streamId, opacitySlider.value);
-                }
-                
-                // 状態を更新
-                if (currentState.streams[streamId]) {
-                    currentState.streams[streamId].chatVisible = true;
-                    currentState.streams[streamId].chatOpacity = opacitySlider ? opacitySlider.value : 70;
-                    saveStateToURL();
-                    updateShareUrl();
-                }
-            } else {
-                alert('Twitchのチャンネルが設定されていません。');
+                    
+                    // チャンネルIDを抽出
+                    let twitchChannelId = channelValue;
+                    
+                    // URLが入力された場合はチャンネルIDを抽出
+                    if (channelValue.includes('twitch.tv/')) {
+                        const match = channelValue.match(/twitch\.tv\/([^\/\?]+)/);
+                        if (match && match[1]) {
+                            twitchChannelId = match[1];
+                        }
+                    }
+                    
+                    // 親ドメインパラメータを取得
+                    const parentParam = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
+                    
+                    // Twitchの公式埋め込みチャットを使用
+                    chatUrl = `https://www.twitch.tv/embed/${twitchChannelId}/chat?parent=${parentParam}`;
+                    break;
+                    
+                case 'youtube':
+                    if (!channelValue) {
+                        alert('YouTubeの動画IDが設定されていません。');
+                        return;
+                    }
+                    
+                    // YouTube動画IDを抽出
+                    let youtubeId = channelValue;
+                    
+                    if (channelValue.includes('youtube.com/')) {
+                        try {
+                            const url = new URL(channelValue);
+                            if (channelValue.includes('youtube.com/watch')) {
+                                youtubeId = url.searchParams.get('v');
+                            } else if (channelValue.includes('youtube.com/live/')) {
+                                youtubeId = channelValue.split('youtube.com/live/')[1].split('?')[0];
+                            }
+                        } catch (e) {
+                            console.error('Invalid YouTube URL:', e);
+                            alert('無効なYouTube URLです');
+                            return;
+                        }
+                    } else if (channelValue.includes('youtu.be/')) {
+                        youtubeId = channelValue.split('youtu.be/')[1].split('?')[0];
+                    }
+                    
+                    chatUrl = `https://www.youtube.com/live_chat?v=${youtubeId}&embed_domain=${window.location.hostname}`;
+                    break;
+                    
+                case 'twitcasting':
+                    if (!channelValue) {
+                        alert('ツイキャスのユーザー名が設定されていません。');
+                        return;
+                    }
+                    
+                    // ツイキャスのユーザー名を抽出
+                    let twitcastingUser = channelValue;
+                    
+                    if (channelValue.includes('twitcasting.tv/')) {
+                        twitcastingUser = channelValue.split('twitcasting.tv/')[1].split('/')[0];
+                    }
+                    
+                    chatUrl = `https://twitcasting.tv/${twitcastingUser}/embeddedcomments`;
+                    break;
+                    
+                case 'openrec':
+                    if (!channelValue) {
+                        alert('OPENRECの配信IDが設定されていません。');
+                        return;
+                    }
+                    
+                    // OPENRECの配信IDを抽出
+                    let openrecId = channelValue;
+                    
+                    if (channelValue.includes('openrec.tv/')) {
+                        const match = channelValue.match(/openrec\.tv\/(?:live|movie)\/([^\/\?]+)/);
+                        if (match) {
+                            openrecId = match[1];
+                        }
+                    }
+                    
+                    chatUrl = `https://www.openrec.tv/embed/chat/${openrecId}`;
+                    break;
+                    
+                default:
+                    alert('このプラットフォームのチャットはサポートされていません。');
+                    return;
+            }
+            
+            // iframeを作成
+            iframe = document.createElement('iframe');
+            iframe.src = chatUrl;
+            iframe.classList.add('chat-iframe');
+            
+            // 既存のiframeがあれば削除
+            while (chatContainer.firstChild) {
+                chatContainer.removeChild(chatContainer.firstChild);
+            }
+            
+            // 新しいiframeを追加
+            chatContainer.appendChild(iframe);
+            chatContainer.classList.remove('hidden');
+            streamPlayer.classList.add('with-chat');
+            toggleButton.classList.add('active');
+            
+            // 透過度コントロールを表示
+            if (opacityControl) {
+                opacityControl.style.display = 'flex';
+            }
+            
+            // 透過度を設定
+            const opacitySlider = document.querySelector(`.chat-opacity[data-target="${streamId}"]`);
+            if (opacitySlider) {
+                updateChatOpacity(streamId, opacitySlider.value);
+            }
+            
+            // 状態を更新
+            if (currentState.streams[streamId]) {
+                currentState.streams[streamId].chatVisible = true;
+                currentState.streams[streamId].chatOpacity = opacitySlider ? opacitySlider.value : 70;
+                saveStateToURL();
+                updateShareUrl();
             }
         } else {
             // チャットが表示されている場合は非表示にする
