@@ -896,11 +896,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Twitchチャットに接続
     function connectTwitchChat(streamId, channel) {
-        if (!channel || twitchClients.has(streamId)) return;
-
+        if (!channel) return;
+        
+        // 既存のクライアントを切断
+        disconnectTwitchClient(streamId);
+        
         const channelName = normalizeTwitchChannel(channel);
         if (!channelName) return;
-
+        
+        console.log(`Connecting to channel: ${channelName} for stream ${streamId}`);
+        
         const client = new tmi.Client({
             connection: {
                 secure: true,
@@ -908,14 +913,21 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             channels: [channelName]
         });
-
+        
         client.connect().catch(console.error);
-
+        
+        client.on('connected', () => {
+            console.log(`Connected to ${channelName}`);
+            // テスト用のコメントを送信
+            addComment(streamId, `Connected to ${channelName}'s chat`, {});
+        });
+        
         client.on('message', (channel, tags, message, self) => {
             if (!activeCommentSources.get(streamId)) return;
+            console.log(`Received message from ${channel}: ${message}`);
             addComment(streamId, message, tags);
         });
-
+        
         twitchClients.set(streamId, { client, channel: channelName });
     }
 
@@ -937,49 +949,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function addComment(streamId, text, tags) {
         const container = document.querySelector(`#stream-${streamId} .comment-container`);
         if (!container) return;
-
+        
         const comment = document.createElement('div');
         comment.className = 'comment';
         comment.textContent = text;
-        comment.style.opacity = 0.7; // デフォルトの透明度を設定
-
-        const lane = findAvailableLane(container);
-        if (lane === null) return;
-
-        comment.style.top = `${lane * 40}px`;
+        comment.style.opacity = 0.7;
+        
+        // ランダムな垂直位置を設定
+        const maxTop = container.clientHeight - 40; // コメントの高さを考慮
+        const randomTop = Math.floor(Math.random() * maxTop);
+        comment.style.top = `${randomTop}px`;
+        
         container.appendChild(comment);
-
+        
+        // アニメーション終了時にコメントを削除
         comment.addEventListener('animationend', () => {
             comment.remove();
-            releaseLane(container, lane);
         });
-    }
-
-    // 利用可能なレーンを探す
-    function findAvailableLane(container) {
-        const containerHeight = container.clientHeight;
-        const maxLanes = Math.floor(containerHeight / 40); // 40pxをコメントの高さとして計算
-        const lanes = new Array(maxLanes).fill(false);
-
-        // 既存のコメントが使用しているレーンをチェック
-        container.querySelectorAll('.comment').forEach(comment => {
-            const lane = Math.floor(parseInt(comment.style.top) / 40);
-            if (lane >= 0 && lane < maxLanes) {
-                lanes[lane] = true;
-            }
-        });
-
-        // 利用可能なレーンを探す
-        for (let i = 0; i < maxLanes; i++) {
-            if (!lanes[i]) return i;
-        }
-
-        return null; // 利用可能なレーンがない場合
-    }
-
-    // レーンを解放
-    function releaseLane(container, lane) {
-        // この関数は将来的な拡張のために予約
     }
 
     // 配信読み込み時にTwitchチャットに接続

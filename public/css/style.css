@@ -1175,21 +1175,24 @@ input:checked + .slider:before {
 
 .toggle-comments {
     padding: 8px 12px;
-    background: var(--accent-color);
+    background: rgba(255, 255, 255, 0.1);
     border: none;
     border-radius: 4px;
-    color: white;
+    color: var(--text-secondary);
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
     margin-left: 8px;
 }
 
 .toggle-comments:hover {
-    background: var(--accent-hover-color);
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
 }
 
 .toggle-comments.active {
-    background: var(--success-color);
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
 }
 
 .toggle-comments i {
