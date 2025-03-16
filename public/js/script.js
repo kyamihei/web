@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
             addStreamButton.classList.add('hidden');
         }
     }
-
+    
     // 配信入力フィールドを追加する機能
     addStreamButton.addEventListener('click', () => {
         if (visibleStreamInputs < 10) {
@@ -545,12 +545,45 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // プラットフォーム選択時にスタイルを更新
     document.querySelectorAll('.platform-select').forEach(select => {
-        select.addEventListener('change', applyPlatformStyles);
+        select.addEventListener('change', () => {
+            applyPlatformStyles();
+            
+            // ツイキャスが選択された場合、チャットボタンを非表示にする
+            const streamId = select.id.split('-')[1];
+            const toggleChatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
+            const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
+            
+            if (select.value === 'twitcasting') {
+                // ツイキャスの場合、チャットボタンと透過度コントロールを非表示
+                if (toggleChatButton) toggleChatButton.style.display = 'none';
+                if (opacityControl) opacityControl.style.display = 'none';
+            } else {
+                // 他のプラットフォームの場合は表示
+                if (toggleChatButton) toggleChatButton.style.display = '';
+                // 透過度コントロールはチャットが表示されている場合のみ表示
+                if (opacityControl) {
+                    const chatContainer = document.getElementById(`chat-${streamId}`);
+                    opacityControl.style.display = chatContainer && !chatContainer.classList.contains('hidden') ? 'flex' : 'none';
+                }
+            }
+        });
     });
     
     // 初期スタイルを適用
     applyPlatformStyles();
     
+    // 初期状態でツイキャスのチャットボタンを非表示にする
+    document.querySelectorAll('.platform-select').forEach(select => {
+        if (select.value === 'twitcasting') {
+            const streamId = select.id.split('-')[1];
+            const toggleChatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
+            const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
+            
+            if (toggleChatButton) toggleChatButton.style.display = 'none';
+            if (opacityControl) opacityControl.style.display = 'none';
+        }
+    });
+
     // 共有URLを更新する関数
     function updateShareUrl() {
         const shareUrlInput = document.getElementById('share-url');
@@ -993,6 +1026,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const platform = platformSelect.value;
         const channelValue = channelInput.value;
         
+        // ツイキャスの場合はチャット機能を無効化
+        if (platform === 'twitcasting') {
+            console.log('ツイキャスのチャット機能は現在無効化されています');
+            return;
+        }
+        
         // チャットが既に表示されている場合は非表示にする
         if (chatContainer.classList.contains('hidden')) {
             // チャットが非表示の場合は表示する
@@ -1086,8 +1125,31 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                     
-                    chatUrl = `https://www.openrec.tv/embed/chat/${openrecId}`;
-                    break;
+                    // 新しいAPIを使用してチャットを取得
+                    createOpenrecChatContainer(chatContainer, openrecId);
+                    chatContainer.classList.remove('hidden');
+                    streamPlayer.classList.add('with-chat');
+                    toggleButton.classList.add('active');
+                    
+                    // 透過度コントロールを表示
+                    if (opacityControl) {
+                        opacityControl.style.display = 'flex';
+                    }
+                    
+                    // 透過度を設定
+                    const opacitySlider = document.querySelector(`.chat-opacity[data-target="${streamId}"]`);
+                    if (opacitySlider) {
+                        updateChatOpacity(streamId, opacitySlider.value);
+                    }
+                    
+                    // 状態を更新
+                    if (currentState.streams[streamId]) {
+                        currentState.streams[streamId].chatVisible = true;
+                        currentState.streams[streamId].chatOpacity = opacitySlider ? opacitySlider.value : 70;
+                        saveStateToURL();
+                        updateShareUrl();
+                    }
+                    return;
                     
                 default:
                     alert('このプラットフォームのチャットはサポートされていません。');
@@ -1139,6 +1201,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 opacityControl.style.display = 'none';
             }
             
+            // OPENRECのチャット更新を停止
+            if (platform === 'openrec' && chatContainer.openrecChatInterval) {
+                clearInterval(chatContainer.openrecChatInterval);
+                chatContainer.openrecChatInterval = null;
+            }
+            
             // 状態を更新
             if (currentState.streams[streamId]) {
                 currentState.streams[streamId].chatVisible = false;
@@ -1146,6 +1214,120 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateShareUrl();
             }
         }
+    }
+
+    // OPENRECのチャットコンテナを作成する関数
+    function createOpenrecChatContainer(chatContainer, movieId) {
+        // 既存のコンテンツをクリア
+        while (chatContainer.firstChild) {
+            chatContainer.removeChild(chatContainer.firstChild);
+        }
+        
+        // チャットコンテナのスタイルを設定
+        chatContainer.style.overflow = 'auto';
+        chatContainer.style.padding = '10px';
+        
+        // チャットメッセージを表示するコンテナ
+        const messagesContainer = document.createElement('div');
+        messagesContainer.className = 'openrec-chat-messages';
+        messagesContainer.style.display = 'flex';
+        messagesContainer.style.flexDirection = 'column';
+        messagesContainer.style.gap = '8px';
+        chatContainer.appendChild(messagesContainer);
+        
+        // 最後に取得したチャットのID
+        let lastChatId = 0;
+        
+        // チャットを取得して表示する関数
+        const fetchAndDisplayChats = async () => {
+            try {
+                const response = await fetch(`https://public.openrec.tv/external/api/v5/movies/${movieId}/chats`);
+                if (!response.ok) {
+                    throw new Error(`APIエラー: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                if (data && Array.isArray(data.data)) {
+                    // 新しいチャットメッセージのみをフィルタリング
+                    const newChats = data.data.filter(chat => chat.id > lastChatId);
+                    
+                    if (newChats.length > 0) {
+                        // 最後のチャットIDを更新
+                        lastChatId = Math.max(...newChats.map(chat => chat.id));
+                        
+                        // 新しいチャットを表示
+                        newChats.forEach(chat => {
+                            const chatElement = createChatElement(chat);
+                            messagesContainer.appendChild(chatElement);
+                        });
+                        
+                        // 自動スクロール（最新のメッセージが見えるように）
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+                    }
+                }
+            } catch (error) {
+                console.error('OPENRECチャットの取得に失敗しました:', error);
+                
+                // エラーメッセージを表示
+                if (!document.querySelector('.openrec-chat-error')) {
+                    const errorElement = document.createElement('div');
+                    errorElement.className = 'openrec-chat-error';
+                    errorElement.textContent = 'チャットの取得に失敗しました。';
+                    errorElement.style.color = 'red';
+                    errorElement.style.padding = '10px';
+                    errorElement.style.textAlign = 'center';
+                    chatContainer.appendChild(errorElement);
+                }
+            }
+        };
+        
+        // 初回のチャット取得
+        fetchAndDisplayChats();
+        
+        // 定期的にチャットを更新（5秒ごと）
+        chatContainer.openrecChatInterval = setInterval(fetchAndDisplayChats, 5000);
+    }
+    
+    // チャットメッセージの要素を作成する関数
+    function createChatElement(chat) {
+        const chatElement = document.createElement('div');
+        chatElement.className = 'openrec-chat-message';
+        chatElement.style.padding = '8px';
+        chatElement.style.borderRadius = '4px';
+        chatElement.style.backgroundColor = 'rgba(255, 255, 255, 0.05)';
+        
+        // ユーザー名
+        const usernameElement = document.createElement('span');
+        usernameElement.className = 'openrec-chat-username';
+        usernameElement.textContent = chat.user ? chat.user.nickname : '匿名';
+        usernameElement.style.fontWeight = 'bold';
+        usernameElement.style.marginRight = '8px';
+        usernameElement.style.color = '#4a90e2';
+        
+        // メッセージ
+        const messageElement = document.createElement('span');
+        messageElement.className = 'openrec-chat-text';
+        messageElement.textContent = chat.message || '';
+        
+        // 時間
+        const timeElement = document.createElement('span');
+        timeElement.className = 'openrec-chat-time';
+        const chatTime = new Date(chat.created_at);
+        timeElement.textContent = `${chatTime.getHours().toString().padStart(2, '0')}:${chatTime.getMinutes().toString().padStart(2, '0')}`;
+        timeElement.style.fontSize = '0.8em';
+        timeElement.style.color = '#999';
+        timeElement.style.marginLeft = 'auto';
+        
+        // レイアウト
+        chatElement.style.display = 'flex';
+        chatElement.style.flexWrap = 'wrap';
+        chatElement.style.alignItems = 'center';
+        
+        chatElement.appendChild(usernameElement);
+        chatElement.appendChild(messageElement);
+        chatElement.appendChild(timeElement);
+        
+        return chatElement;
     }
 
     // チャット透過度スライダーのイベントリスナーを追加
