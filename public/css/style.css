@@ -1288,3 +1288,43 @@ iframe {
 .toggle-chat-position.left-active {
     background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-color) 100%);
 }
+
+/* 配信の同時接続数表示 */
+.viewer-count {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    z-index: 5;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.viewer-count:hover {
+    opacity: 1;
+}
+
+.viewer-count i {
+    font-size: 10px;
+    color: #ff5252;
+}
+
+/* 視聴者数が増えるほど色が変わる */
+.viewer-count.low {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.viewer-count.medium {
+    background-color: rgba(0, 128, 0, 0.5);
+}
+
+.viewer-count.high {
+    background-color: rgba(255, 0, 0, 0.5);
+}
