@@ -64,6 +64,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         // ストリームの読み込みが完了してからチャットを表示
                         setTimeout(() => {
                             toggleChat(streamId);
+                            
+                            // チャットの透過度を復元
+                            if (streamData.chatOpacity) {
+                                const opacitySlider = document.querySelector(`.chat-opacity[data-target="${streamId}"]`);
+                                if (opacitySlider) {
+                                    opacitySlider.value = streamData.chatOpacity;
+                                    updateChatOpacity(streamId, streamData.chatOpacity);
+                                }
+                            }
                         }, 1000);
                     }
                 }
@@ -990,9 +999,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 streamPlayer.classList.add('with-chat');
                 toggleButton.classList.add('active');
                 
+                // 透過度を設定
+                const opacitySlider = document.querySelector(`.chat-opacity[data-target="${streamId}"]`);
+                if (opacitySlider) {
+                    updateChatOpacity(streamId, opacitySlider.value);
+                }
+                
                 // 状態を更新
                 if (currentState.streams[streamId]) {
                     currentState.streams[streamId].chatVisible = true;
+                    currentState.streams[streamId].chatOpacity = opacitySlider ? opacitySlider.value : 70;
                     saveStateToURL();
                     updateShareUrl();
                 }
@@ -1011,6 +1027,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveStateToURL();
                 updateShareUrl();
             }
+        }
+    }
+
+    // チャット透過度スライダーのイベントリスナーを追加
+    document.querySelectorAll('.chat-opacity').forEach(slider => {
+        slider.addEventListener('input', () => {
+            const streamId = slider.getAttribute('data-target');
+            updateChatOpacity(streamId, slider.value);
+        });
+    });
+
+    // チャットの透過度を更新する関数
+    function updateChatOpacity(streamId, opacityValue) {
+        const chatContainer = document.getElementById(`chat-${streamId}`);
+        if (!chatContainer) return;
+        
+        // 透過度を計算（0.1〜1.0の範囲）
+        const opacity = opacityValue / 100;
+        
+        // 背景色の透過度を設定
+        chatContainer.style.backgroundColor = `rgba(26, 26, 46, ${opacity})`;
+        
+        // iframeの透過度も設定
+        const iframe = chatContainer.querySelector('iframe');
+        if (iframe) {
+            iframe.style.opacity = Math.max(opacity + 0.1, 0.5); // 最低でも0.5の透過度を保持
+        }
+        
+        // 状態を保存
+        if (currentState.streams[streamId]) {
+            currentState.streams[streamId].chatOpacity = opacityValue;
+            saveStateToURL();
+            updateShareUrl();
         }
     }
 });

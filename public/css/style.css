@@ -1145,3 +1145,77 @@ iframe {
         height: calc(100% - 10px);
     }
 }
+
+/* チャット透過度コントロール */
+.opacity-control {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(135deg, rgba(0, 206, 201, 0.2) 0%, rgba(0, 168, 163, 0.2) 100%);
+    padding: 5px 10px;
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all var(--transition-speed) ease;
+}
+
+.opacity-control:hover {
+    background: linear-gradient(135deg, rgba(0, 206, 201, 0.3) 0%, rgba(0, 168, 163, 0.3) 100%);
+}
+
+.opacity-control i {
+    color: var(--secondary-color);
+    font-size: 14px;
+}
+
+.chat-opacity {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 80px;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+.chat-opacity::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--secondary-color);
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.chat-opacity::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--secondary-color);
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    border: none;
+}
+
+.chat-opacity::-webkit-slider-thumb:hover,
+.chat-opacity::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    background: var(--accent-color);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .opacity-control {
+        width: 100%;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    
+    .chat-opacity {
+        width: 100%;
+    }
+}
