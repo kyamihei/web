@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Service Workerを無効化（エラー対策）
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for (let registration of registrations) {
+                registration.unregister();
+                console.log('Service Workerを無効化しました');
+            }
+        });
+    }
+
     // 要素の取得
     const streamsContainer = document.querySelector('.streams-container');
     const layoutButtons = document.querySelectorAll('.layout-controls button');
