@@ -1348,13 +1348,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // 現在のチャットサイズに応じてiframeの高さを設定
             if (chatContainer.classList.contains('chat-size-small')) {
                 iframe.style.height = '100%';
-                iframe.style.transform = 'scaleX(0.7)';
+                iframe.style.transform = 'scale(0.7)';
             } else if (chatContainer.classList.contains('chat-size-medium')) {
                 iframe.style.height = '100%';
-                iframe.style.transform = 'scaleX(0.85)';
+                iframe.style.transform = 'scale(0.85)';
             } else {
                 iframe.style.height = '100%';
-                iframe.style.transform = 'scaleX(1)';
+                iframe.style.transform = 'scale(1)';
             }
             
             // 既存のiframeがあれば削除
@@ -1524,20 +1524,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
         }
         
-        // iframeのスケールを設定（横幅のみ変更）
+        // iframeのスケールを設定
         const iframe = chatContainer.querySelector('iframe');
         if (iframe) {
             switch (size) {
                 case 'small':
-                    iframe.style.transform = 'scaleX(0.7)';
+                    iframe.style.transform = 'scale(0.7)';
                     iframe.style.height = '100%';
                     break;
                 case 'medium':
-                    iframe.style.transform = 'scaleX(0.85)';
+                    iframe.style.transform = 'scale(0.85)';
                     iframe.style.height = '100%';
                     break;
                 case 'large':
-                    iframe.style.transform = 'scaleX(1)';
+                    iframe.style.transform = 'scale(1)';
                     iframe.style.height = '100%';
                     break;
             }
@@ -1609,11 +1609,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // チャットサイズに応じたスケールを設定
             if (chatContainer.classList.contains('chat-size-small')) {
-                iframe.style.transform = 'scaleX(0.7)';
+                iframe.style.transform = 'scale(0.7)';
             } else if (chatContainer.classList.contains('chat-size-medium')) {
-                iframe.style.transform = 'scaleX(0.85)';
+                iframe.style.transform = 'scale(0.85)';
             } else {
-                iframe.style.transform = 'scaleX(1)';
+                iframe.style.transform = 'scale(1)';
             }
             
             // iframeの背景も透明に

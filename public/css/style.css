@@ -1119,7 +1119,7 @@ iframe {
     opacity: 1;
 }
 
-.chat-container::before {
+/* .chat-container::before {
     content: '';
     position: absolute;
     top: 0;
@@ -1142,7 +1142,7 @@ iframe {
     height: 5px;
     background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
     border-radius: var(--border-radius) var(--border-radius) 0 0;
-}
+} */
 
 .chat-container iframe {
     width: 100%;
@@ -1329,31 +1329,31 @@ iframe {
 .chat-size-small .chat-iframe {
     width: 100% !important;
     height: 100% !important;
-    transform-origin: center right;
+    transform-origin: top right;
 }
 
 .chat-container.left-position.chat-size-small .chat-iframe {
-    transform-origin: center left;
+    transform-origin: top left;
 }
 
 .chat-size-medium .chat-iframe {
     width: 100% !important;
     height: 100% !important;
-    transform-origin: center right;
+    transform-origin: top right;
 }
 
 .chat-container.left-position.chat-size-medium .chat-iframe {
-    transform-origin: center left;
+    transform-origin: top left;
 }
 
 .chat-size-large .chat-iframe {
     width: 100% !important;
     height: 100% !important;
-    transform-origin: center right;
+    transform-origin: top right;
 }
 
 .chat-container.left-position.chat-size-large .chat-iframe {
-    transform-origin: center left;
+    transform-origin: top left;
 }
 
 /* チャットサイズ切替ボタン */
