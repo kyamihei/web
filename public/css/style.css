@@ -1329,31 +1329,31 @@ iframe {
 .chat-size-small .chat-iframe {
     width: 100% !important;
     height: 100% !important;
-    transform-origin: top right;
+    transform-origin: center right;
 }
 
 .chat-container.left-position.chat-size-small .chat-iframe {
-    transform-origin: top left;
+    transform-origin: center left;
 }
 
 .chat-size-medium .chat-iframe {
     width: 100% !important;
     height: 100% !important;
-    transform-origin: top right;
+    transform-origin: center right;
 }
 
 .chat-container.left-position.chat-size-medium .chat-iframe {
-    transform-origin: top left;
+    transform-origin: center left;
 }
 
 .chat-size-large .chat-iframe {
     width: 100% !important;
     height: 100% !important;
-    transform-origin: top right;
+    transform-origin: center right;
 }
 
 .chat-container.left-position.chat-size-large .chat-iframe {
-    transform-origin: top left;
+    transform-origin: center left;
 }
 
 /* チャットサイズ切替ボタン */
