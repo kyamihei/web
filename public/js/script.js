@@ -1066,7 +1066,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         twitcastingUser = channelValue.split('twitcasting.tv/')[1].split('/')[0];
                     }
                     
-                    chatUrl = `https://twitcasting.tv/${twitcastingUser}/embeddedcomments`;
+                    // 修正：正しいチャット埋め込みURLフォーマットを使用
+                    chatUrl = `https://twitcasting.tv/${twitcastingUser}/embeddedplayer/comment?auto_play=false`;
                     break;
                     
                 case 'openrec':
