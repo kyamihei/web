@@ -1119,7 +1119,7 @@ iframe {
     opacity: 1;
 }
 
-.chat-container::before {
+/* .chat-container::before {
     content: '';
     position: absolute;
     top: 0;
@@ -1131,7 +1131,7 @@ iframe {
         rgba(0, 0, 0, 0) 50%, 
         rgba(253, 121, 168, 0.1) 100%);
     pointer-events: none;
-}
+} */
 
 .chat-container::after {
     content: '';
