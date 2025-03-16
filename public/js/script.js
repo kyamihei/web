@@ -1080,7 +1080,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const parentParam = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
                     
                     // Twitchの公式埋め込みチャットを使用
-                    chatUrl = `https://www.twitch.tv/embed/${twitchChannelId}/chat?parent=${parentParam}&parent=www.${parentParam}&darkpopout&mature=true`;
+                    chatUrl = `https://www.twitch.tv/embed/${twitchChannelId}/chat?parent=${parentParam}&parent=www.${parentParam}&darkpopout=true&transparent=true&mature=true`;
                     break;
                     
                 case 'youtube':
@@ -1158,6 +1158,10 @@ document.addEventListener('DOMContentLoaded', () => {
             iframe.src = chatUrl;
             iframe.classList.add('chat-iframe');
             
+            // 透明な背景を設定
+            iframe.style.backgroundColor = 'transparent';
+            iframe.setAttribute('allowtransparency', 'true');
+            
             // 既存のiframeがあれば削除
             while (chatContainer.firstChild) {
                 chatContainer.removeChild(chatContainer.firstChild);
@@ -1166,6 +1170,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 新しいiframeを追加
             chatContainer.appendChild(iframe);
             chatContainer.classList.remove('hidden');
+            chatContainer.style.backgroundColor = 'transparent';
             streamPlayer.classList.add('with-chat');
             toggleButton.classList.add('active');
             
@@ -1223,13 +1228,36 @@ document.addEventListener('DOMContentLoaded', () => {
         // 透過度を計算（0.01〜1.0の範囲）
         const opacity = Math.max(opacityValue / 100, 0.01);
         
-        // 背景色の透過度を設定
-        chatContainer.style.backgroundColor = `rgba(26, 26, 46, ${opacity})`;
+        // 背景色を完全に透明に設定
+        chatContainer.style.backgroundColor = `rgba(0, 0, 0, 0)`;
         
         // iframeの透過度も設定
         const iframe = chatContainer.querySelector('iframe');
         if (iframe) {
             iframe.style.opacity = Math.max(opacity + 0.1, 0.1); // 最低でも0.1の透過度を保持
+            
+            // iframeの背景も透明に
+            iframe.onload = function() {
+                try {
+                    // iframeの内部スタイルにアクセスして背景を透明に
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    
+                    // スタイルを注入
+                    const style = iframeDoc.createElement('style');
+                    style.textContent = `
+                        body, html, div, section {
+                            background: transparent !important;
+                            background-color: transparent !important;
+                        }
+                        .chat-line__message, .chat-line__status, .chat-author__display-name, .text-fragment, .chat-line__message--badges {
+                            text-shadow: 0 0 2px #000, 0 0 2px #000 !important;
+                        }
+                    `;
+                    iframeDoc.head.appendChild(style);
+                } catch (e) {
+                    console.log('iframeへのアクセスが制限されています:', e);
+                }
+            };
         }
         
         // 状態を保存
