@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateVisibleStreamInputs() {
         visibleStreamInputs = Array.from(document.querySelectorAll('.stream-input:not(.hidden)')).length;
         
-        // 「追加」ボタンの表示状態を更新
+        // "追加"ボタンの表示状態を更新
         if (visibleStreamInputs < 10) {
             addStreamButton.classList.remove('hidden');
         } else {
@@ -548,18 +548,31 @@ document.addEventListener('DOMContentLoaded', () => {
         select.addEventListener('change', () => {
             applyPlatformStyles();
             
-            // ツイキャスまたはOPENRECが選択された場合、チャットボタンを非表示にする
+            // ツイキャスまたはOPENRECが選択された場合、チャットボタンをグレーアウト
             const streamId = select.id.split('-')[1];
             const toggleChatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
             const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
             
             if (select.value === 'twitcasting' || select.value === 'openrec') {
-                // ツイキャスまたはOPENRECの場合、チャットボタンと透過度コントロールを非表示
-                if (toggleChatButton) toggleChatButton.style.display = 'none';
+                // ツイキャスまたはOPENRECの場合、チャットボタンをグレーアウト
+                if (toggleChatButton) {
+                    toggleChatButton.style.display = ''; // 表示する
+                    toggleChatButton.style.opacity = '0.5'; // 半透明に
+                    toggleChatButton.style.cursor = 'not-allowed'; // カーソルを変更
+                    toggleChatButton.style.backgroundColor = '#888'; // グレー背景
+                    toggleChatButton.title = `${select.value === 'twitcasting' ? 'ツイキャス' : 'OPENREC'}のチャット機能は現在無効化されています`;
+                }
+                // 透過度コントロールは非表示のまま
                 if (opacityControl) opacityControl.style.display = 'none';
             } else {
-                // 他のプラットフォームの場合は表示
-                if (toggleChatButton) toggleChatButton.style.display = '';
+                // 他のプラットフォームの場合は通常表示
+                if (toggleChatButton) {
+                    toggleChatButton.style.display = '';
+                    toggleChatButton.style.opacity = '1';
+                    toggleChatButton.style.cursor = 'pointer';
+                    toggleChatButton.style.backgroundColor = '';
+                    toggleChatButton.title = 'チャットを表示/非表示';
+                }
                 // 透過度コントロールはチャットが表示されている場合のみ表示
                 if (opacityControl) {
                     const chatContainer = document.getElementById(`chat-${streamId}`);
@@ -572,14 +585,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初期スタイルを適用
     applyPlatformStyles();
     
-    // 初期状態でツイキャスとOPENRECのチャットボタンを非表示にする
+    // 初期状態でツイキャスとOPENRECのチャットボタンをグレーアウト
     document.querySelectorAll('.platform-select').forEach(select => {
         if (select.value === 'twitcasting' || select.value === 'openrec') {
             const streamId = select.id.split('-')[1];
             const toggleChatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
             const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
             
-            if (toggleChatButton) toggleChatButton.style.display = 'none';
+            if (toggleChatButton) {
+                toggleChatButton.style.display = ''; // 表示する
+                toggleChatButton.style.opacity = '0.5'; // 半透明に
+                toggleChatButton.style.cursor = 'not-allowed'; // カーソルを変更
+                toggleChatButton.style.backgroundColor = '#888'; // グレー背景
+                toggleChatButton.title = `${select.value === 'twitcasting' ? 'ツイキャス' : 'OPENREC'}のチャット機能は現在無効化されています`;
+            }
             if (opacityControl) opacityControl.style.display = 'none';
         }
     });
@@ -632,7 +651,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const newURL = window.location.pathname;
         window.history.pushState({}, '', newURL);
         
-        // 「追加」ボタンを表示
+        // "追加"ボタンを表示
         addStreamButton.classList.remove('hidden');
 
         // 共有URLを更新
