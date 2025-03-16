@@ -265,6 +265,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 // ストリームを読み込み
                 loadStream(streamId, platform, channelId);
                 
+                // ツイキャスまたはOPENRECの場合、チャットボタンを無効化
+                if (platform === 'twitcasting' || platform === 'openrec') {
+                    const toggleChatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
+                    const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
+                    
+                    if (toggleChatButton) {
+                        toggleChatButton.style.opacity = '0.5';
+                        toggleChatButton.style.cursor = 'not-allowed';
+                        toggleChatButton.style.backgroundColor = '#888';
+                        toggleChatButton.title = `${platform === 'twitcasting' ? 'ツイキャス' : 'OPENREC'}のチャット機能は現在無効化されています`;
+                        toggleChatButton.classList.add('disabled');
+                    }
+                    
+                    if (opacityControl) {
+                        opacityControl.style.display = 'none';
+                    }
+                }
+                
                 // 状態を更新
                 currentState.streams[streamId] = { platform, channelId };
                 saveStateToURL();
@@ -656,6 +674,34 @@ document.addEventListener('DOMContentLoaded', () => {
             // 非表示状態を解除
             mainInput.classList.remove('hidden');
             updateVisibleStreamInputs();
+        }
+        
+        // ツイキャスまたはOPENRECの場合、チャットボタンを無効化
+        if (platform === 'twitcasting' || platform === 'openrec') {
+            const toggleChatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
+            const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
+            
+            if (toggleChatButton) {
+                toggleChatButton.style.opacity = '0.5';
+                toggleChatButton.style.cursor = 'not-allowed';
+                toggleChatButton.style.backgroundColor = '#888';
+                toggleChatButton.title = `${platform === 'twitcasting' ? 'ツイキャス' : 'OPENREC'}のチャット機能は現在無効化されています`;
+                toggleChatButton.classList.add('disabled');
+            }
+            
+            if (opacityControl) {
+                opacityControl.style.display = 'none';
+            }
+        } else {
+            // 他のプラットフォームの場合は通常表示
+            const toggleChatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
+            if (toggleChatButton) {
+                toggleChatButton.style.opacity = '1';
+                toggleChatButton.style.cursor = 'pointer';
+                toggleChatButton.style.backgroundColor = '';
+                toggleChatButton.title = 'チャットを表示/非表示';
+                toggleChatButton.classList.remove('disabled');
+            }
         }
         
         // 状態を更新
