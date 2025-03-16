@@ -425,10 +425,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     normalizedChannelId = channelId.split('twitch.tv/')[1].split('/')[0];
                 }
                 if (normalizedChannelId.startsWith('v')) {
-                    embedUrl = `https://player.twitch.tv/?video=${normalizedChannelId}&parent=${parentParam}&parent=www.${parentParam}&mature=true`;
+                    embedUrl = `https://player.twitch.tv/?video=${normalizedChannelId}&parent=${parentParam}&parent=www.${parentParam}&autoplay=true&muted=false&mature=true`;
                 } else {
                     // 複数のparentパラメータを追加して互換性を向上
-                    embedUrl = `https://player.twitch.tv/?channel=${normalizedChannelId}&parent=${parentParam}&parent=www.${parentParam}&mature=true`;
+                    embedUrl = `https://player.twitch.tv/?channel=${normalizedChannelId}&parent=${parentParam}&parent=www.${parentParam}&autoplay=true&muted=false&mature=true`;
                 }
                 break;
                 
@@ -1080,7 +1080,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const parentParam = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
                     
                     // Twitchの公式埋め込みチャットを使用
-                    chatUrl = `https://www.twitch.tv/embed/${twitchChannelId}/chat?parent=${parentParam}&parent=www.${parentParam}&mature=true`;
+                    chatUrl = `https://www.twitch.tv/embed/${twitchChannelId}/chat?parent=${parentParam}&parent=www.${parentParam}&darkpopout&mature=true`;
                     break;
                     
                 case 'youtube':
