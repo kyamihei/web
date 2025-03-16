@@ -1036,26 +1036,49 @@ iframe {
     overflow: hidden;
 }
 
+/* チャットオーバーレイスタイル - 半透明で前面に表示 */
+.chat-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* 半透明の背景 */
+    z-index: 10; /* 前面に表示 */
+    overflow: hidden;
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    transition: all var(--transition-speed) ease;
+}
+
 .chat-container iframe {
     width: 100%;
     height: 100%;
     border: none;
+    opacity: 0.9; /* iframeも少し透過 */
 }
 
-/* チャット表示時のストリームプレーヤーの調整 */
+/* チャット表示時のストリームプレーヤーの調整 - 幅を変更しない */
 .stream-player.with-chat .placeholder,
 .stream-player.with-chat iframe:not(.chat-iframe) {
-    width: 70%;
+    width: 100%; /* 幅を100%に保持 */
+}
+
+/* チャットの位置調整 */
+.stream-player.with-chat {
+    position: relative;
+}
+
+/* チャットトグルボタンのアクティブ状態 */
+.toggle-chat.active {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #e84393 100%);
+    box-shadow: 0 0 10px rgba(232, 67, 147, 0.5);
 }
 
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
     .chat-container {
-        width: 50%;
-    }
-    
-    .stream-player.with-chat .placeholder,
-    .stream-player.with-chat iframe:not(.chat-iframe) {
         width: 50%;
     }
 }
