@@ -388,9 +388,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // 配信入力フィールドを追加する機能
     addStreamButton.addEventListener('click', () => {
         if (visibleStreamInputs < 10) {
-            visibleStreamInputs++;
-            document.getElementById(`stream-input-${visibleStreamInputs}`).classList.remove('hidden');
-            updateVisibleStreamInputs();
+            // 非表示のストリーム入力フィールドを順番に探す（ストリーム1から優先）
+            for (let i = 1; i <= 10; i++) {
+                const streamInput = document.getElementById(`stream-input-${i}`);
+                if (streamInput && streamInput.classList.contains('hidden')) {
+                    streamInput.classList.remove('hidden');
+                    updateVisibleStreamInputs();
+                    break;
+                }
+            }
         }
     });
     
