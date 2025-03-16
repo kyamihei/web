@@ -970,8 +970,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
                 
-                // チャットiframeを作成
-                const chatUrl = `https://www.twitch.tv/popout/${channelId}/chat?popout=`;
+                // 親ドメインパラメータを取得
+                const parentParam = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
+                
+                // Twitchの公式埋め込みチャットを使用
+                const chatUrl = `https://www.twitch.tv/embed/${channelId}/chat?parent=${parentParam}`;
                 const iframe = document.createElement('iframe');
                 iframe.src = chatUrl;
                 iframe.classList.add('chat-iframe');
