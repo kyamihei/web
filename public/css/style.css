@@ -1072,8 +1072,6 @@ iframe {
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), 0 0 30px rgba(108, 92, 231, 0.2);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    backdrop-filter: blur(3px);
-    -webkit-backdrop-filter: blur(3px);
     transform: translateX(100%);
     opacity: 0;
 }
