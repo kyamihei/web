@@ -275,6 +275,15 @@ h1, h2, h3, h4, h5, h6 {
     background-color: rgba(0, 0, 0, 0.3);
 }
 
+.stream-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    padding-left: 5px;
+    border-left: 3px solid var(--accent-color);
+    opacity: 0.8;
+}
+
 .input-group {
     display: flex;
     flex-wrap: wrap;
