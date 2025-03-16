@@ -1160,7 +1160,7 @@ iframe {
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all var(--transition-speed) ease;
     margin-left: 5px;
-    width: 80px;
+    width: 120px;
 }
 
 /* チャットボタンがアクティブな時に透過度コントロールを表示 */
@@ -1180,7 +1180,7 @@ iframe {
 .chat-opacity {
     -webkit-appearance: none;
     appearance: none;
-    width: 50px;
+    width: 80px;
     height: 6px;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 3px;
@@ -1227,7 +1227,7 @@ iframe {
     }
     
     .chat-opacity {
-        width: 40px;
+        width: 60px;
     }
     
     .input-group {
