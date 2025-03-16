@@ -1347,10 +1347,10 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // 現在のチャットサイズに応じてiframeの高さを設定
             if (chatContainer.classList.contains('chat-size-small')) {
-                iframe.style.height = '143%'; // 100% ÷ 0.7 ≈ 143%
+                iframe.style.height = '70%'; // 100% ÷ 0.7 ≈ 70%
                 iframe.style.transform = 'scale(0.7)';
             } else if (chatContainer.classList.contains('chat-size-medium')) {
-                iframe.style.height = '118%'; // 100% ÷ 0.85 ≈ 118%
+                iframe.style.height = '85%'; // 100% ÷ 0.85 ≈ 85%
                 iframe.style.transform = 'scale(0.85)';
             } else {
                 iframe.style.height = '100%';
@@ -1530,11 +1530,11 @@ document.addEventListener('DOMContentLoaded', () => {
             switch (size) {
                 case 'small':
                     iframe.style.transform = 'scale(0.7)';
-                    iframe.style.height = '143%'; // 100% ÷ 0.7 ≈ 143%
+                    iframe.style.height = '70%'; // 100% ÷ 0.7 ≈ 70%
                     break;
                 case 'medium':
                     iframe.style.transform = 'scale(0.85)';
-                    iframe.style.height = '118%'; // 100% ÷ 0.85 ≈ 118%
+                    iframe.style.height = '85%'; // 100% ÷ 0.85 ≈ 85%
                     break;
                 case 'large':
                     iframe.style.transform = 'scale(1)';
