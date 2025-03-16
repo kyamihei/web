@@ -641,6 +641,12 @@ document.addEventListener('DOMContentLoaded', () => {
             iframe.setAttribute('allow', 'autoplay; fullscreen');
         }
         
+        // ストリーム番号を表示する要素を追加
+        const streamNumber = document.createElement('div');
+        streamNumber.className = 'stream-number';
+        streamNumber.textContent = `ストリーム ${streamId}`;
+        streamContainer.appendChild(streamNumber);
+        
         streamContainer.appendChild(iframe);
         
         // チャットコンテナを追加
