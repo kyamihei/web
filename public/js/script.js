@@ -1529,11 +1529,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (iframe) {
             switch (size) {
                 case 'small':
-                    iframe.style.transform = 'scale(0.7)';
+                    iframe.style.transform = 'scale(1)';
                     iframe.style.height = '100%';
                     break;
                 case 'medium':
-                    iframe.style.transform = 'scale(0.85)';
+                    iframe.style.transform = 'scale(1)';
                     iframe.style.height = '100%';
                     break;
                 case 'large':
