@@ -340,71 +340,104 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // ストリームを読み込む関数
     function loadStream(streamId, platform, channelId) {
+        if (!channelId) return;
+        
         const streamContainer = document.getElementById(`stream-${streamId}`);
-        const mainInput = document.getElementById(`stream-input-${streamId}`);
+        if (!streamContainer) return;
         
-        // 既存のコンテンツをクリアしてiframeを追加
-        streamContainer.innerHTML = '';
+        // プレースホルダーを非表示
+        const placeholder = streamContainer.querySelector('.placeholder');
+        if (placeholder) {
+            placeholder.style.display = 'none';
+        }
         
-        // URLの正規化と埋め込みURL生成
+        // インラインURL入力を削除
+        const inlineInput = streamContainer.querySelector('.inline-url-input');
+        if (inlineInput) {
+            inlineInput.remove();
+        }
+        
+        // 既存のiframeを削除
+        const existingIframe = streamContainer.querySelector('iframe');
+        if (existingIframe) {
+            existingIframe.remove();
+        }
+        
+        // コメントコンテナを確保または作成
+        let commentContainer = streamContainer.querySelector('.comment-container');
+        if (!commentContainer) {
+            commentContainer = document.createElement('div');
+            commentContainer.className = 'comment-container';
+            streamContainer.appendChild(commentContainer);
+        }
+        
+        // iframeを作成
+        const iframe = document.createElement('iframe');
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.border = 'none';
+        iframe.style.zIndex = '1';
+        iframe.allow = 'autoplay; fullscreen';
+        
+        // プラットフォームに応じたURLを設定
         let embedUrl = '';
-        let normalizedChannelId = channelId;
         
         switch (platform) {
             case 'twitch':
-                const parentParam = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
-                // Twitchの完全なURLからチャンネル名を抽出
-                if (channelId.includes('twitch.tv/')) {
-                    normalizedChannelId = channelId.split('twitch.tv/')[1].split('/')[0];
-                }
-                if (normalizedChannelId.startsWith('v')) {
-                    embedUrl = `https://player.twitch.tv/?video=${normalizedChannelId}&parent=${parentParam}`;
-                } else {
-                    embedUrl = `https://player.twitch.tv/?channel=${normalizedChannelId}&parent=${parentParam}`;
+                // Twitchの場合
+                const twitchChannel = normalizeTwitchChannel(channelId);
+                if (twitchChannel) {
+                    embedUrl = `https://player.twitch.tv/?channel=${twitchChannel}&parent=${window.location.hostname}`;
+                    
+                    // コメントトグルが有効な場合はTwitchチャットに接続
+                    const commentToggle = document.querySelector(`.toggle-comments[data-target="${streamId}"]`);
+                    if (commentToggle && commentToggle.classList.contains('active')) {
+                        connectTwitchChat(streamId, twitchChannel);
+                    }
                 }
                 break;
                 
             case 'youtube':
                 // YouTubeの様々なURL形式に対応
-                let youtubeId = normalizedChannelId;
-                if (normalizedChannelId.includes('youtube.com/')) {
+                let youtubeId = channelId;
+                if (channelId.includes('youtube.com/')) {
                     try {
-                        const url = new URL(normalizedChannelId);
-                        if (normalizedChannelId.includes('youtube.com/watch')) {
+                        const url = new URL(channelId);
+                        if (channelId.includes('youtube.com/watch')) {
                     youtubeId = url.searchParams.get('v');
-                        } else if (normalizedChannelId.includes('youtube.com/live/')) {
-                            youtubeId = normalizedChannelId.split('youtube.com/live/')[1].split('?')[0];
-                        } else if (normalizedChannelId.includes('youtube.com/channel/')) {
-                            youtubeId = normalizedChannelId.split('youtube.com/channel/')[1].split('?')[0];
+                        } else if (channelId.includes('youtube.com/live/')) {
+                            youtubeId = channelId.split('youtube.com/live/')[1].split('?')[0];
+                        } else if (channelId.includes('youtube.com/channel/')) {
+                            youtubeId = channelId.split('youtube.com/channel/')[1].split('?')[0];
                         }
                     } catch (e) {
                         console.error('Invalid YouTube URL:', e);
                         alert('無効なYouTube URLです');
                         return;
                     }
-                } else if (normalizedChannelId.includes('youtu.be/')) {
-                    youtubeId = normalizedChannelId.split('youtu.be/')[1].split('?')[0];
+                } else if (channelId.includes('youtu.be/')) {
+                    youtubeId = channelId.split('youtu.be/')[1].split('?')[0];
                 }
                 embedUrl = `https://www.youtube.com/embed/${youtubeId}?autoplay=1`;
                 break;
                 
             case 'twitcasting':
                 // ツイキャスの完全なURLからユーザー名を抽出
-                if (normalizedChannelId.includes('twitcasting.tv/')) {
-                    normalizedChannelId = normalizedChannelId.split('twitcasting.tv/')[1].split('/')[0];
+                if (channelId.includes('twitcasting.tv/')) {
+                    channelId = channelId.split('twitcasting.tv/')[1].split('/')[0];
                 }
-                embedUrl = `https://twitcasting.tv/${normalizedChannelId}/embeddedplayer/live?auto_play=true`;
+                embedUrl = `https://twitcasting.tv/${channelId}/embeddedplayer/live?auto_play=true`;
                 break;
                 
             case 'openrec':
                 // OPENRECの完全なURLから配信IDを抽出
-                if (normalizedChannelId.includes('openrec.tv/')) {
-                    const match = normalizedChannelId.match(/openrec\.tv\/(?:live|movie)\/([^\/\?]+)/);
+                if (channelId.includes('openrec.tv/')) {
+                    const match = channelId.match(/openrec\.tv\/(?:live|movie)\/([^\/\?]+)/);
                     if (match) {
-                        normalizedChannelId = match[1];
+                        channelId = match[1];
                     }
                 }
-                embedUrl = `https://www.openrec.tv/embed/${normalizedChannelId}`;
+                embedUrl = `https://www.openrec.tv/embed/${channelId}`;
                 break;
                 
             default:
@@ -412,43 +445,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
         }
         
-        // iframeを作成して埋め込み
-        const iframe = document.createElement('iframe');
-        iframe.src = embedUrl;
-        iframe.setAttribute('allowfullscreen', 'true');
-        
-        if (platform === 'twitch') {
-            iframe.setAttribute('allow', 'autoplay; fullscreen');
-        }
-        
-        streamContainer.appendChild(iframe);
-        
-        // リセットボタンを追加
-        const resetButtonContainer = document.createElement('div');
-        resetButtonContainer.className = 'reset-button-container';
-        const resetButton = document.createElement('button');
-        resetButton.className = 'stream-reset-button';
-        resetButton.innerHTML = '<i class="fas fa-undo"></i>';
-        resetButton.title = 'リセット';
-        resetButton.addEventListener('click', () => resetStream(streamId));
-        resetButtonContainer.appendChild(resetButton);
-        streamContainer.appendChild(resetButtonContainer);
-        
-        // メイン入力フィールドを更新
-        if (mainInput) {
-            const platformSelect = mainInput.querySelector('.platform-select');
-            const channelInput = mainInput.querySelector('input');
-            if (platformSelect) platformSelect.value = platform;
-            if (channelInput) channelInput.value = channelId;
+        if (embedUrl) {
+            iframe.src = embedUrl;
+            streamContainer.insertBefore(iframe, commentContainer);
             
-            // 非表示状態を解除
-            mainInput.classList.remove('hidden');
-            updateVisibleStreamInputs();
+            // 状態を更新
+            currentState.streams[streamId] = { platform, channelId };
+            saveStateToURL();
         }
-        
-        // 状態を更新
-        currentState.streams[streamId] = { platform, channelId: normalizedChannelId };
-        saveStateToURL();
     }
     
     // プラットフォームに応じたスタイルを適用
@@ -885,6 +889,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const isActive = button.classList.toggle('active');
                 activeCommentSources.set(streamId, isActive);
                 
+                console.log(`Comment toggle for stream ${streamId} set to ${isActive}`);
+                
                 if (isActive) {
                     connectTwitchChatIfNeeded(streamId);
                 } else {
@@ -914,12 +920,21 @@ document.addEventListener('DOMContentLoaded', () => {
             channels: [channelName]
         });
         
-        client.connect().catch(console.error);
+        client.connect().catch(error => {
+            console.error(`Error connecting to Twitch chat: ${error}`);
+            // エラーメッセージをコメントとして表示
+            addComment(streamId, `Error connecting to chat: ${error.message}`, {});
+        });
         
         client.on('connected', () => {
             console.log(`Connected to ${channelName}`);
             // テスト用のコメントを送信
             addComment(streamId, `Connected to ${channelName}'s chat`, {});
+            
+            // 接続成功を視覚的に示すためのテストコメントを複数表示
+            setTimeout(() => addComment(streamId, "テストコメント1: コメント表示テスト中", {}), 500);
+            setTimeout(() => addComment(streamId, "テストコメント2: 正常に表示されていますか？", {}), 1500);
+            setTimeout(() => addComment(streamId, "テストコメント3: コメントが流れるかテスト", {}), 2500);
         });
         
         client.on('message', (channel, tags, message, self) => {
@@ -948,7 +963,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // コメントを追加
     function addComment(streamId, text, tags) {
         const container = document.querySelector(`#stream-${streamId} .comment-container`);
-        if (!container) return;
+        if (!container) {
+            console.error(`Comment container not found for stream ${streamId}`);
+            return;
+        }
         
         const comment = document.createElement('div');
         comment.className = 'comment';
@@ -960,11 +978,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const randomTop = Math.floor(Math.random() * maxTop);
         comment.style.top = `${randomTop}px`;
         
+        // 右から左へのアニメーションを明示的に設定
+        comment.style.right = '-100%';
+        comment.style.animation = 'commentFlow 8s linear forwards';
+        
         container.appendChild(comment);
+        console.log(`Comment added to stream ${streamId}: ${text}`);
         
         // アニメーション終了時にコメントを削除
         comment.addEventListener('animationend', () => {
             comment.remove();
+            console.log(`Comment removed from stream ${streamId}`);
         });
     }
 

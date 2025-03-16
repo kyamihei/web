@@ -1012,20 +1012,23 @@ iframe {
     position: absolute;
     white-space: nowrap;
     color: #fff;
+    font-size: 18px;
     font-weight: 600;
     text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
-    animation: commentFlow 8s linear;
+    animation: commentFlow 8s linear forwards;
     pointer-events: none;
     will-change: transform;
     z-index: 9999;
+    right: -100%;
+    transform: translateX(0);
 }
 
 @keyframes commentFlow {
     from {
-        transform: translateX(100%);
+        transform: translateX(0);
     }
     to {
-        transform: translateX(-100%);
+        transform: translateX(-200%);
     }
 }
 
