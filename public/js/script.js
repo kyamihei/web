@@ -275,6 +275,34 @@ document.addEventListener('DOMContentLoaded', () => {
             positionButton.title = 'チャット位置切替';
         }
         
+        // ハンバーガーメニューの入力フィールドをリセット
+        const platformSelect = document.getElementById(`platform-${streamId}`);
+        const channelInput = document.getElementById(`channel-${streamId}`);
+        
+        if (platformSelect) {
+            platformSelect.value = 'twitch'; // デフォルト値にリセット
+        }
+        
+        if (channelInput) {
+            channelInput.value = ''; // 空にリセット
+        }
+        
+        // 配信2以降の場合は入力フィールドを非表示にする
+        if (streamId > 1) {
+            const streamInput = document.getElementById(`stream-input-${streamId}`);
+            if (streamInput && !streamInput.classList.contains('hidden')) {
+                streamInput.classList.add('hidden');
+                // 表示されている入力フィールドの数を更新
+                updateVisibleStreamInputs();
+            }
+        }
+        
+        // 透過度コントロールを非表示
+        const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
+        if (opacityControl) {
+            opacityControl.style.display = 'none';
+        }
+        
         // 状態を更新
         delete currentState.streams[streamId];
         saveStateToURL();
