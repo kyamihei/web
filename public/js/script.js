@@ -665,17 +665,28 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateShareUrl() {
         const shareUrlInput = document.getElementById('share-url');
         if (shareUrlInput) {
-            // 現在のURLからクエリパラメータを取得
-            const params = new URLSearchParams(window.location.search);
-            const stateParam = params.get('state');
+            // 現在の状態から共有用の簡略化された状態を作成
+            const shareState = {
+                layout: currentState.layout,
+                streams: {}
+            };
             
-            if (stateParam) {
-                // ステートパラメータのみを含む短いURLを生成
-                shareUrlInput.value = `${window.location.origin}${window.location.pathname}?state=${stateParam}`;
-            } else {
-                // ステートがない場合はベースURLのみ
-                shareUrlInput.value = `${window.location.origin}${window.location.pathname}`;
-            }
+            // ストリーム情報は配信プラットフォームとチャンネルIDのみを含める
+            Object.entries(currentState.streams).forEach(([streamId, streamData]) => {
+                if (streamData.platform && streamData.channelId) {
+                    shareState.streams[streamId] = {
+                        platform: streamData.platform,
+                        channelId: streamData.channelId
+                        // チャット表示状態、透過度、位置などは含めない
+                    };
+                }
+            });
+            
+            // 簡略化された状態をエンコード
+            const stateString = btoa(JSON.stringify(shareState));
+            
+            // 共有用URLを生成
+            shareUrlInput.value = `${window.location.origin}${window.location.pathname}?state=${stateString}`;
         }
     }
 
