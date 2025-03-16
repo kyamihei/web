@@ -381,16 +381,16 @@ input[type="text"]::placeholder {
     background: linear-gradient(135deg, var(--danger-color) 0%, #e17055 100%);
     color: white;
     border: none;
-    padding: 8px 12px;
+    padding: 10px 12px;
     border-radius: var(--border-radius);
     cursor: pointer;
     transition: all var(--transition-speed) ease;
-    align-self: flex-end;
     font-weight: 500;
     box-shadow: var(--box-shadow);
     display: flex;
     align-items: center;
     gap: 6px;
+    margin-left: auto;
 }
 
 .delete-stream:hover {
@@ -1306,6 +1306,7 @@ iframe {
     gap: 8px;
     align-items: center;
     margin-top: 8px;
+    justify-content: space-between;
 }
 
 /* チャットサイズのスタイル */
@@ -1405,20 +1406,7 @@ iframe {
     }
 }
 
-/* 削除ボタンコンテナ */
+/* 削除ボタンコンテナは不要になったので削除 */
 .delete-button-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 5px;
-}
-
-.delete-button-container .delete-stream {
-    background: linear-gradient(135deg, var(--danger-color) 0%, #e17055 100%);
-    box-shadow: var(--box-shadow);
-}
-
-.delete-button-container .delete-stream:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    background: linear-gradient(135deg, #ff8787 0%, var(--danger-color) 100%);
+    display: none;
 }
