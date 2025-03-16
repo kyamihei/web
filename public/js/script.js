@@ -427,7 +427,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (normalizedChannelId.startsWith('v')) {
                     embedUrl = `https://player.twitch.tv/?video=${normalizedChannelId}&parent=${parentParam}`;
                 } else {
-                    embedUrl = `https://player.twitch.tv/?channel=${normalizedChannelId}&parent=${parentParam}`;
+                    // 複数のparentパラメータを追加して互換性を向上
+                    embedUrl = `https://player.twitch.tv/?channel=${normalizedChannelId}&parent=${parentParam}&parent=www.${parentParam}`;
                 }
                 break;
                 
@@ -1079,7 +1080,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const parentParam = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
                     
                     // Twitchの公式埋め込みチャットを使用
-                    chatUrl = `https://www.twitch.tv/embed/${twitchChannelId}/chat?parent=${parentParam}`;
+                    chatUrl = `https://www.twitch.tv/embed/${twitchChannelId}/chat?parent=${parentParam}&parent=www.${parentParam}`;
                     break;
                     
                 case 'youtube':
