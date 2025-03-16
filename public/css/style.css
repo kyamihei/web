@@ -1188,7 +1188,7 @@ iframe {
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all var(--transition-speed) ease;
     margin-left: 3px; /* 5pxから3pxに縮小 */
-    width: 85px; /* さらに5px縮小 */
+    width: 110px; /* 85pxから110pxに拡大 */
 }
 
 /* チャットボタンがアクティブな時に透過度コントロールを表示 */
@@ -1208,7 +1208,7 @@ iframe {
 .chat-opacity {
     -webkit-appearance: none;
     appearance: none;
-    width: 50px; /* 80pxから50pxに短縮 */
+    width: 75px; /* 50pxから75pxに拡大 */
     height: 6px;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 3px;
@@ -1299,7 +1299,7 @@ iframe {
 /* チャットサイズのスタイル */
 .chat-size-small {
     width: 20% !important;
-    transform: scale(0.7) !important;
+    transform: none !important;
     transform-origin: top right;
 }
 
@@ -1309,7 +1309,7 @@ iframe {
 
 .chat-size-medium {
     width: 30% !important;
-    transform: scale(0.85) !important;
+    transform: none !important;
     transform-origin: top right;
 }
 
@@ -1319,7 +1319,7 @@ iframe {
 
 .chat-size-large {
     width: 40% !important;
-    transform: scale(1) !important;
+    transform: none !important;
     transform-origin: top right;
 }
 
@@ -1329,18 +1329,36 @@ iframe {
 
 /* チャットサイズに応じたiframeの調整 */
 .chat-size-small .chat-iframe {
-    width: 143% !important; /* 100/0.7 */
-    height: 143% !important;
+    width: 100% !important;
+    height: 100% !important;
+    transform: scale(0.7);
+    transform-origin: top right;
+}
+
+.chat-container.left-position.chat-size-small .chat-iframe {
+    transform-origin: top left;
 }
 
 .chat-size-medium .chat-iframe {
-    width: 118% !important; /* 100/0.85 */
-    height: 118% !important;
+    width: 100% !important;
+    height: 100% !important;
+    transform: scale(0.85);
+    transform-origin: top right;
+}
+
+.chat-container.left-position.chat-size-medium .chat-iframe {
+    transform-origin: top left;
 }
 
 .chat-size-large .chat-iframe {
     width: 100% !important;
     height: 100% !important;
+    transform: scale(1);
+    transform-origin: top right;
+}
+
+.chat-container.left-position.chat-size-large .chat-iframe {
+    transform-origin: top left;
 }
 
 /* チャットサイズ切替ボタン */
@@ -1388,4 +1406,22 @@ iframe {
     .load-stream span, .delete-stream span {
         display: none;
     }
+}
+
+/* 削除ボタンコンテナ */
+.delete-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5px;
+}
+
+.delete-button-container .delete-stream {
+    background: linear-gradient(135deg, var(--danger-color) 0%, #e17055 100%);
+    box-shadow: var(--box-shadow);
+}
+
+.delete-button-container .delete-stream:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #ff8787 0%, var(--danger-color) 100%);
 }
