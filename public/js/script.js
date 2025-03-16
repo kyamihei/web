@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         visibleStreamInputs = Array.from(document.querySelectorAll('.stream-input:not(.hidden)')).length;
         
         // 「追加」ボタンの表示状態を更新
-        if (visibleStreamInputs < 8) {
+        if (visibleStreamInputs < 10) {
             addStreamButton.classList.remove('hidden');
         } else {
             addStreamButton.classList.add('hidden');
@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 配信入力フィールドを追加する機能
     addStreamButton.addEventListener('click', () => {
-        if (visibleStreamInputs < 8) {
+        if (visibleStreamInputs < 10) {
             visibleStreamInputs++;
             document.getElementById(`stream-input-${visibleStreamInputs}`).classList.remove('hidden');
             updateVisibleStreamInputs();
@@ -266,30 +266,47 @@ document.addEventListener('DOMContentLoaded', () => {
             // レイアウトに応じてストリームプレーヤーの表示/非表示を切り替え
             const streamPlayers = document.querySelectorAll('.stream-player');
             
-            if (layoutClass === 'layout-1x2') {
-                streamPlayers.forEach((player, index) => {
-                    player.style.display = index < 2 ? 'flex' : 'none';
-                });
-            } else if (layoutClass === 'layout-2x1') {
-                streamPlayers.forEach((player, index) => {
-                    player.style.display = index < 2 ? 'flex' : 'none';
-                });
-            } else if (layoutClass === 'layout-1x3') {
-                streamPlayers.forEach((player, index) => {
-                    player.style.display = index < 3 ? 'flex' : 'none';
-                });
-            } else if (layoutClass === 'layout-3x1') {
-                streamPlayers.forEach((player, index) => {
-                    player.style.display = index < 3 ? 'flex' : 'none';
-                });
-            } else if (layoutClass === 'layout-4x2' || layoutClass === 'layout-2x4') {
-                streamPlayers.forEach(player => {
-                    player.style.display = 'flex';
-                });
-            } else {
-                streamPlayers.forEach((player, index) => {
-                    player.style.display = index < 4 ? 'flex' : 'none';
-                });
+            switch (layoutClass) {
+                case 'layout-1x2':
+                case 'layout-2x1':
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 2 ? 'flex' : 'none';
+                    });
+                    break;
+                case 'layout-1x3':
+                case 'layout-3x1':
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 3 ? 'flex' : 'none';
+                    });
+                    break;
+                case 'layout-2x3':
+                case 'layout-3x2':
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 6 ? 'flex' : 'none';
+                    });
+                    break;
+                case 'layout-1x4':
+                case 'layout-4x1':
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 4 ? 'flex' : 'none';
+                    });
+                    break;
+                case 'layout-4x2':
+                case 'layout-2x4':
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 8 ? 'flex' : 'none';
+                    });
+                    break;
+                case 'layout-5x2':
+                case 'layout-2x5':
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 10 ? 'flex' : 'none';
+                    });
+                    break;
+                default:
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 4 ? 'flex' : 'none';
+                    });
             }
 
             initializeStreamPlayers();
@@ -645,6 +662,42 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="grid-cell"></div>
                 </div>
             </button>
+            <button id="layout-2x3" title="2x3レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-3x2" title="3x2レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-1x4" title="1x4レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-4x1" title="4x1レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
             <button id="layout-4x2" title="4x2レイアウト">
                 <div class="layout-icon">
                     <div class="grid-cell"></div>
@@ -659,6 +712,34 @@ document.addEventListener('DOMContentLoaded', () => {
             </button>
             <button id="layout-2x4" title="2x4レイアウト">
                 <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-5x2" title="5x2レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-2x5" title="2x5レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
                     <div class="grid-cell"></div>
                     <div class="grid-cell"></div>
                     <div class="grid-cell"></div>
@@ -691,30 +772,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 // レイアウトに応じてストリームプレーヤーの表示/非表示を切り替え
                 const streamPlayers = document.querySelectorAll('.stream-player');
                 
-                if (layoutClass === 'layout-1x2') {
-                    streamPlayers.forEach((player, index) => {
-                        player.style.display = index < 2 ? 'flex' : 'none';
-                    });
-                } else if (layoutClass === 'layout-2x1') {
-                    streamPlayers.forEach((player, index) => {
-                        player.style.display = index < 2 ? 'flex' : 'none';
-                    });
-                } else if (layoutClass === 'layout-1x3') {
-                    streamPlayers.forEach((player, index) => {
-                        player.style.display = index < 3 ? 'flex' : 'none';
-                    });
-                } else if (layoutClass === 'layout-3x1') {
-                    streamPlayers.forEach((player, index) => {
-                        player.style.display = index < 3 ? 'flex' : 'none';
-                    });
-                } else if (layoutClass === 'layout-4x2' || layoutClass === 'layout-2x4') {
-                    streamPlayers.forEach(player => {
-                        player.style.display = 'flex';
-                    });
-                } else {
-                    streamPlayers.forEach((player, index) => {
-                        player.style.display = index < 4 ? 'flex' : 'none';
-                    });
+                switch (layoutClass) {
+                    case 'layout-1x2':
+                    case 'layout-2x1':
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 2 ? 'flex' : 'none';
+                        });
+                        break;
+                    case 'layout-1x3':
+                    case 'layout-3x1':
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 3 ? 'flex' : 'none';
+                        });
+                        break;
+                    case 'layout-2x3':
+                    case 'layout-3x2':
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 6 ? 'flex' : 'none';
+                        });
+                        break;
+                    case 'layout-1x4':
+                    case 'layout-4x1':
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 4 ? 'flex' : 'none';
+                        });
+                        break;
+                    case 'layout-4x2':
+                    case 'layout-2x4':
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 8 ? 'flex' : 'none';
+                        });
+                        break;
+                    case 'layout-5x2':
+                    case 'layout-2x5':
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 10 ? 'flex' : 'none';
+                        });
+                        break;
+                    default:
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 4 ? 'flex' : 'none';
+                        });
                 }
 
                 initializeStreamPlayers();
