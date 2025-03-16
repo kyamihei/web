@@ -17,6 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
         streams: {}
     };
 
+    // コメント関連の変数
+    let isCommentEnabled = false;
+    let commentOpacity = 0.7;
+    let activeCommentSources = new Set([1]);
+    let commentLanes = new Map(); // コメントレーンの管理
+
     // URLからステートを復元
     function loadStateFromURL() {
         const params = new URLSearchParams(window.location.search);
@@ -871,5 +877,114 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         }
     });
+
+    // コメントの設定を初期化
+    function initializeCommentSettings() {
+        const commentToggle = document.getElementById('comment-toggle');
+        const opacitySlider = document.getElementById('comment-opacity');
+        const opacityValue = document.getElementById('opacity-value');
+        
+        // コメント表示切り替え
+        commentToggle.addEventListener('change', (e) => {
+            isCommentEnabled = e.target.checked;
+            document.querySelectorAll('.comment-container').forEach(container => {
+                container.style.display = isCommentEnabled ? 'block' : 'none';
+            });
+        });
+        
+        // 透明度設定
+        opacitySlider.addEventListener('input', (e) => {
+            commentOpacity = e.target.value / 100;
+            opacityValue.textContent = `${e.target.value}%`;
+            document.querySelectorAll('.comment').forEach(comment => {
+                comment.style.opacity = commentOpacity;
+            });
+        });
+        
+        // コメントソース選択
+        for (let i = 1; i <= 10; i++) {
+            const sourceCheckbox = document.getElementById(`comment-source-${i}`);
+            sourceCheckbox.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    activeCommentSources.add(i);
+                } else {
+                    activeCommentSources.delete(i);
+                }
+            });
+        }
+    }
+
+    // コメントを追加する関数
+    function addComment(streamId, text) {
+        if (!isCommentEnabled || !activeCommentSources.has(streamId)) return;
+        
+        const container = document.querySelector(`#stream-${streamId} .comment-container`);
+        if (!container) return;
+        
+        const comment = document.createElement('div');
+        comment.className = 'comment';
+        comment.textContent = text;
+        comment.style.opacity = commentOpacity;
+        
+        // コメントの縦位置を決定（レーン管理）
+        const lane = findAvailableLane(container);
+        comment.style.top = `${lane * 40}px`; // コメント間の縦の間隔は40px
+        
+        container.appendChild(comment);
+        
+        // アニメーション終了時にコメントを削除
+        comment.addEventListener('animationend', () => {
+            container.removeChild(comment);
+            releaseLane(container, lane);
+        });
+    }
+
+    // 利用可能なレーンを見つける
+    function findAvailableLane(container) {
+        if (!commentLanes.has(container)) {
+            commentLanes.set(container, new Set());
+        }
+        
+        const lanes = commentLanes.get(container);
+        let lane = 0;
+        while (lanes.has(lane)) {
+            lane++;
+        }
+        
+        lanes.add(lane);
+        return lane;
+    }
+
+    // レーンを解放する
+    function releaseLane(container, lane) {
+        const lanes = commentLanes.get(container);
+        if (lanes) {
+            lanes.delete(lane);
+        }
+    }
+
+    // テスト用のダミーコメント生成（開発時のみ使用）
+    function generateTestComments() {
+        const testComments = [
+            'こんにちは！', 'わっ！', 'すごい！', '面白い！', 'いいね！',
+            'www', '888888', 'かわいい', 'なるほど', 'おもしろい'
+        ];
+        
+        setInterval(() => {
+            if (!isCommentEnabled) return;
+            
+            const activeStreams = Array.from(activeCommentSources);
+            if (activeStreams.length === 0) return;
+            
+            const streamId = activeStreams[Math.floor(Math.random() * activeStreams.length)];
+            const text = testComments[Math.floor(Math.random() * testComments.length)];
+            
+            addComment(streamId, text);
+        }, 1000); // 1秒ごとにランダムなコメントを生成
+    }
+
+    // 初期化時に実行
+    initializeCommentSettings();
+    generateTestComments(); // 開発時のテスト用
 });
 
