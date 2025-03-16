@@ -111,6 +111,76 @@ document.addEventListener('DOMContentLoaded', () => {
                     createInlineUrlInput(player, streamId);
                 });
             }
+            
+            // チャットコントロールを追加
+            const streamId = player.id.split('-')[1];
+            
+            // 既存のコントロールを削除
+            const existingControls = player.querySelector('.chat-controls');
+            if (existingControls) {
+                existingControls.remove();
+            }
+            
+            // チャットコントロールを作成
+            const chatControls = document.createElement('div');
+            chatControls.className = 'chat-controls';
+            
+            // チャット表示切り替えボタン
+            const toggleChatButton = document.createElement('button');
+            toggleChatButton.className = 'toggle-chat';
+            toggleChatButton.setAttribute('data-target', streamId);
+            toggleChatButton.innerHTML = '<i class="fas fa-comments"></i>';
+            toggleChatButton.title = 'チャットを表示/非表示';
+            toggleChatButton.addEventListener('click', () => toggleChat(streamId));
+            
+            // チャット位置切り替えボタン
+            const togglePositionButton = document.createElement('button');
+            togglePositionButton.className = 'toggle-chat-position';
+            togglePositionButton.setAttribute('data-target', streamId);
+            togglePositionButton.innerHTML = '<i class="fas fa-arrow-right"></i>';
+            togglePositionButton.title = 'チャットを右側に表示';
+            togglePositionButton.addEventListener('click', () => {
+                const currentPosition = currentState.streams[streamId]?.chatPosition || 'right';
+                const newPosition = currentPosition === 'right' ? 'left' : 'right';
+                setChatPosition(streamId, newPosition);
+                updateChatPositionButtonIcon(streamId, newPosition);
+            });
+            
+            // 透過度コントロール
+            const opacityControl = document.createElement('div');
+            opacityControl.className = 'opacity-control';
+            opacityControl.setAttribute('data-target', streamId);
+            
+            const opacityIcon = document.createElement('i');
+            opacityIcon.className = 'fas fa-adjust';
+            
+            const opacitySlider = document.createElement('input');
+            opacitySlider.type = 'range';
+            opacitySlider.min = '0';
+            opacitySlider.max = '100';
+            opacitySlider.value = '70';
+            opacitySlider.className = 'chat-opacity';
+            opacitySlider.setAttribute('data-target', streamId);
+            opacitySlider.addEventListener('input', () => updateChatOpacity(streamId, opacitySlider.value));
+            
+            opacityControl.appendChild(opacityIcon);
+            opacityControl.appendChild(opacitySlider);
+            
+            // コントロールをコンテナに追加
+            chatControls.appendChild(toggleChatButton);
+            chatControls.appendChild(togglePositionButton);
+            chatControls.appendChild(opacityControl);
+            
+            // コントロールをプレーヤーに追加
+            player.appendChild(chatControls);
+            
+            // チャットコンテナがなければ作成
+            if (!document.getElementById(`chat-${streamId}`)) {
+                const chatContainer = document.createElement('div');
+                chatContainer.id = `chat-${streamId}`;
+                chatContainer.className = 'chat-container hidden';
+                player.appendChild(chatContainer);
+            }
         });
     }
 
@@ -1025,39 +1095,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const streamPlayer = document.getElementById(`stream-${streamId}`);
         const chatContainer = document.getElementById(`chat-${streamId}`);
         const toggleButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
-        const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`) || 
-                              toggleButton.nextElementSibling;
         
-        // 要素が存在するか確認
-        if (!streamPlayer || !chatContainer || !toggleButton) {
-            console.error(`要素が見つかりません: stream-${streamId}, chat-${streamId}, または toggle-chat[data-target="${streamId}"]`);
-            return;
-        }
-        
-        // 現在のストリーム情報を取得
-        const platformSelect = document.getElementById(`platform-${streamId}`);
-        const channelInput = document.getElementById(`channel-${streamId}`);
-        
-        if (!platformSelect || !channelInput) {
-            console.error(`プラットフォームまたはチャンネル入力が見つかりません: platform-${streamId}, channel-${streamId}`);
-            return;
-        }
-        
-        const platform = platformSelect.value;
-        const channelValue = channelInput.value;
-        
-        // ツイキャスまたはOPENRECの場合はチャット機能を無効化
-        if (platform === 'twitcasting' || platform === 'openrec') {
-            console.log(`${platform === 'twitcasting' ? 'ツイキャス' : 'OPENREC'}のチャット機能は現在無効化されています`);
-            return;
-        }
+        if (!streamPlayer || !chatContainer || !toggleButton) return;
         
         // チャットが既に表示されている場合は非表示にする
         if (chatContainer.classList.contains('hidden')) {
-            // チャットが非表示の場合は表示する
-            let chatUrl = '';
-            let iframe = null;
+            // プラットフォームとチャンネルIDを取得
+            const platform = document.getElementById(`platform-${streamId}`).value;
+            const channelValue = document.getElementById(`channel-${streamId}`).value;
             
+            if (!channelValue) {
+                alert('チャンネルが設定されていません。');
+                return;
+            }
+            
+            let chatUrl = '';
+            
+            // プラットフォームに応じたチャットURLを設定
             switch (platform) {
                 case 'twitch':
                     if (!channelValue) {
@@ -1171,45 +1225,91 @@ document.addEventListener('DOMContentLoaded', () => {
             chatContainer.appendChild(iframe);
             chatContainer.classList.remove('hidden');
             chatContainer.style.backgroundColor = 'transparent';
+            
+            // チャットの位置を設定（デフォルトは右側）
+            const chatPosition = currentState.streams[streamId]?.chatPosition || 'right';
+            setChatPosition(streamId, chatPosition);
+            
             streamPlayer.classList.add('with-chat');
             toggleButton.classList.add('active');
             
-            // 透過度コントロールを表示
-            if (opacityControl) {
-                opacityControl.style.display = 'flex';
-            }
+            // チャットの透過度を設定
+            const opacityValue = document.querySelector(`.chat-opacity[data-target="${streamId}"]`).value;
+            updateChatOpacity(streamId, opacityValue);
             
-            // 透過度を設定
-            const opacitySlider = document.querySelector(`.chat-opacity[data-target="${streamId}"]`);
-            if (opacitySlider) {
-                updateChatOpacity(streamId, opacitySlider.value);
+            // 状態を保存
+            if (!currentState.streams[streamId]) {
+                currentState.streams[streamId] = {};
             }
-            
-            // 状態を更新
-            if (currentState.streams[streamId]) {
-                currentState.streams[streamId].chatVisible = true;
-                currentState.streams[streamId].chatOpacity = opacitySlider ? opacitySlider.value : 70;
-                saveStateToURL();
-                updateShareUrl();
-            }
+            currentState.streams[streamId].chatVisible = true;
+            saveStateToURL();
+            updateShareUrl();
         } else {
-            // チャットが表示されている場合は非表示にする
+            // チャットを非表示にする
             chatContainer.classList.add('hidden');
             streamPlayer.classList.remove('with-chat');
             toggleButton.classList.remove('active');
             
-            // 透過度コントロールを非表示
-            if (opacityControl) {
-                opacityControl.style.display = 'none';
-            }
-            
-            // 状態を更新
+            // 状態を保存
             if (currentState.streams[streamId]) {
                 currentState.streams[streamId].chatVisible = false;
                 saveStateToURL();
                 updateShareUrl();
             }
         }
+    }
+
+    // チャットの位置を設定する関数
+    function setChatPosition(streamId, position) {
+        const chatContainer = document.getElementById(`chat-${streamId}`);
+        if (!chatContainer) return;
+        
+        // 既存のポジションクラスを削除
+        chatContainer.classList.remove('chat-position-right', 'chat-position-left');
+        
+        // 新しいポジションクラスを追加
+        chatContainer.classList.add(`chat-position-${position}`);
+        
+        // 状態を保存
+        if (currentState.streams[streamId]) {
+            currentState.streams[streamId].chatPosition = position;
+            saveStateToURL();
+            updateShareUrl();
+        }
+    }
+
+    // チャット位置切り替えボタンのイベントリスナーを設定
+    function setupChatPositionToggle() {
+        const chatPositionButtons = document.querySelectorAll('.toggle-chat-position');
+        
+        chatPositionButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const streamId = this.getAttribute('data-target');
+                const currentPosition = currentState.streams[streamId]?.chatPosition || 'right';
+                const newPosition = currentPosition === 'right' ? 'left' : 'right';
+                
+                setChatPosition(streamId, newPosition);
+                
+                // ボタンのアイコンを更新
+                updateChatPositionButtonIcon(streamId, newPosition);
+            });
+        });
+    }
+
+    // チャット位置ボタンのアイコンを更新
+    function updateChatPositionButtonIcon(streamId, position) {
+        const button = document.querySelector(`.toggle-chat-position[data-target="${streamId}"]`);
+        if (!button) return;
+        
+        // アイコンを更新
+        button.innerHTML = position === 'right' ? 
+            '<i class="fas fa-arrow-right"></i>' : 
+            '<i class="fas fa-arrow-left"></i>';
+        
+        // ツールチップを更新
+        button.title = position === 'right' ? 
+            'チャットを右側に表示' : 
+            'チャットを左側に表示';
     }
 
     // チャット透過度スライダーのイベントリスナーを追加
@@ -1267,4 +1367,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateShareUrl();
         }
     }
+
+    // 初期化時にチャット位置切り替えボタンのイベントリスナーを設定
+    setupChatPositionToggle();
 });

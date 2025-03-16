@@ -1059,10 +1059,10 @@ iframe {
     }
 }
 
+/* チャットコンテナのスタイル */
 .chat-container {
     position: absolute;
     top: 0;
-    right: 0;
     width: 30%;
     height: 100%;
     background-color: transparent;
@@ -1077,6 +1077,26 @@ iframe {
 .chat-container.hidden {
     transform: translateX(100%);
     opacity: 0;
+}
+
+.chat-container.chat-position-right {
+    right: 0;
+    transform: translateX(0);
+}
+
+.chat-container.chat-position-right.hidden {
+    transform: translateX(100%);
+}
+
+.chat-container.chat-position-left {
+    left: 0;
+    transform: translateX(0);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: none;
+}
+
+.chat-container.chat-position-left.hidden {
+    transform: translateX(-100%);
 }
 
 .chat-iframe {
@@ -1237,4 +1257,81 @@ iframe {
         flex-wrap: wrap;
         justify-content: flex-start;
     }
+}
+
+/* チャットコントロール */
+.chat-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+    z-index: 20;
+}
+
+.toggle-chat, .toggle-chat-position {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #00a8a3 100%);
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+    font-weight: 500;
+    box-shadow: var(--box-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+}
+
+.toggle-chat:hover, .toggle-chat-position:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-chat:active, .toggle-chat-position:active {
+    transform: translateY(0);
+}
+
+.toggle-chat.active {
+    background: linear-gradient(135deg, var(--accent-color) 0%, #e84393 100%);
+    box-shadow: 0 0 15px rgba(232, 67, 147, 0.5);
+}
+
+/* チャット位置 */
+.chat-position-right {
+    right: 0;
+    left: auto;
+}
+
+.chat-position-left {
+    left: 0;
+    right: auto;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-left: none;
+}
+
+/* チャット表示時のストリームプレーヤーの調整 */
+.stream-player.with-chat .placeholder,
+.stream-player.with-chat iframe:not(.chat-iframe) {
+    width: 100%;
+}
+
+/* チャット透過度コントロール */
+.opacity-control {
+    display: none;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(135deg, rgba(0, 206, 201, 0.2) 0%, rgba(0, 168, 163, 0.2) 100%);
+    padding: 5px 10px;
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all var(--transition-speed) ease;
+}
+
+/* チャットボタンがアクティブな時に透過度コントロールを表示 */
+.toggle-chat.active + .toggle-chat-position + .opacity-control {
+    display: flex;
 }
