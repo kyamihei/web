@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Sitemap: https://fukumado.com/sitemap.xml
+Sitemap: https://hukumadokun.netlify.app/sitemap.xml
 
 # 不要なディレクトリへのアクセスを制限
 Disallow: /js/
