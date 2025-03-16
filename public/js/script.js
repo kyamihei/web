@@ -42,19 +42,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // ステートを適用
     function applyState(state) {
         // レイアウトを適用
-        document.getElementById(state.layout).click();
+        if (state.layout) {
+            document.getElementById(state.layout).click();
+        }
 
         // ストリームを読み込み
-        Object.entries(state.streams).forEach(([streamId, streamData]) => {
-            const platformSelect = document.getElementById(`platform-${streamId}`);
-            const channelInput = document.getElementById(`channel-${streamId}`);
-            
-            if (platformSelect && channelInput) {
-                platformSelect.value = streamData.platform;
-                channelInput.value = streamData.channelId;
-                loadStream(streamId, streamData.platform, streamData.channelId);
-            }
-        });
+        if (state.streams) {
+            Object.entries(state.streams).forEach(([streamId, streamData]) => {
+                const platformSelect = document.getElementById(`platform-${streamId}`);
+                const channelInput = document.getElementById(`channel-${streamId}`);
+                
+                if (platformSelect && channelInput) {
+                    platformSelect.value = streamData.platform;
+                    channelInput.value = streamData.channelId;
+                    
+                    // ストリームを読み込む
+                    loadStream(streamId, streamData.platform, streamData.channelId);
+                    
+                    // チャットの表示状態を復元
+                    if (streamData.chatVisible) {
+                        // ストリームの読み込みが完了してからチャットを表示
+                        setTimeout(() => {
+                            toggleChat(streamId);
+                        }, 1000);
+                    }
+                }
+            });
+        }
     }
 
     // インラインURL入力の実装
@@ -440,6 +454,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         streamContainer.appendChild(iframe);
         
+        // チャットコンテナを追加
+        const chatContainer = document.createElement('div');
+        chatContainer.id = `chat-${streamId}`;
+        chatContainer.className = 'chat-container hidden';
+        streamContainer.appendChild(chatContainer);
+        
         // リセットボタンを追加
         const resetButtonContainer = document.createElement('div');
         resetButtonContainer.className = 'reset-button-container';
@@ -464,8 +484,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         // 状態を更新
-        currentState.streams[streamId] = { platform, channelId: normalizedChannelId };
+        currentState.streams[streamId] = { 
+            platform, 
+            channelId: normalizedChannelId,
+            chatVisible: false // チャットの表示状態も保存
+        };
         saveStateToURL();
+        updateShareUrl();
     }
     
     // プラットフォームに応じたスタイルを適用
@@ -895,9 +920,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // チャットトグルボタンのイベントリスナーを追加
     document.querySelectorAll('.toggle-chat').forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (e) => {
+            e.preventDefault();
             const streamId = button.getAttribute('data-target');
-            toggleChat(streamId);
+            if (streamId) {
+                toggleChat(streamId);
+            } else {
+                console.error('data-target属性が見つかりません');
+            }
         });
     });
 
@@ -907,20 +937,34 @@ document.addEventListener('DOMContentLoaded', () => {
         const chatContainer = document.getElementById(`chat-${streamId}`);
         const toggleButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
         
+        // 要素が存在するか確認
+        if (!streamPlayer || !chatContainer || !toggleButton) {
+            console.error(`要素が見つかりません: stream-${streamId}, chat-${streamId}, または toggle-chat[data-target="${streamId}"]`);
+            return;
+        }
+        
         // 現在のストリーム情報を取得
-        const platform = document.getElementById(`platform-${streamId}`).value;
-        const channelInput = document.getElementById(`channel-${streamId}`).value;
+        const platformSelect = document.getElementById(`platform-${streamId}`);
+        const channelInput = document.getElementById(`channel-${streamId}`);
+        
+        if (!platformSelect || !channelInput) {
+            console.error(`プラットフォームまたはチャンネル入力が見つかりません: platform-${streamId}, channel-${streamId}`);
+            return;
+        }
+        
+        const platform = platformSelect.value;
+        const channelValue = channelInput.value;
         
         // チャットが既に表示されている場合は非表示にする
         if (chatContainer.classList.contains('hidden')) {
             // チャットが非表示の場合は表示する
-            if (platform === 'twitch' && channelInput) {
+            if (platform === 'twitch' && channelValue) {
                 // チャンネルIDを抽出
-                let channelId = channelInput;
+                let channelId = channelValue;
                 
                 // URLが入力された場合はチャンネルIDを抽出
-                if (channelInput.includes('twitch.tv/')) {
-                    const match = channelInput.match(/twitch\.tv\/([^\/\?]+)/);
+                if (channelValue.includes('twitch.tv/')) {
+                    const match = channelValue.match(/twitch\.tv\/([^\/\?]+)/);
                     if (match && match[1]) {
                         channelId = match[1];
                     }
@@ -942,6 +986,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 chatContainer.classList.remove('hidden');
                 streamPlayer.classList.add('with-chat');
                 toggleButton.classList.add('active');
+                
+                // 状態を更新
+                if (currentState.streams[streamId]) {
+                    currentState.streams[streamId].chatVisible = true;
+                    saveStateToURL();
+                    updateShareUrl();
+                }
             } else {
                 alert('Twitchのチャンネルが設定されていません。');
             }
@@ -950,6 +1001,13 @@ document.addEventListener('DOMContentLoaded', () => {
             chatContainer.classList.add('hidden');
             streamPlayer.classList.remove('with-chat');
             toggleButton.classList.remove('active');
+            
+            // 状態を更新
+            if (currentState.streams[streamId]) {
+                currentState.streams[streamId].chatVisible = false;
+                saveStateToURL();
+                updateShareUrl();
+            }
         }
     }
 });
