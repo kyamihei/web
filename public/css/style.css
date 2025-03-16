@@ -278,7 +278,7 @@ h1, h2, h3, h4, h5, h6 {
 .input-group {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
     align-items: center;
 }
 
@@ -289,7 +289,7 @@ h1, h2, h3, h4, h5, h6 {
     padding: 10px;
     border-radius: var(--border-radius);
     flex: 1;
-    min-width: 100px;
+    min-width: 90px;
     font-family: 'Noto Sans JP', sans-serif;
     transition: all var(--transition-speed) ease;
     cursor: pointer;
@@ -337,7 +337,7 @@ input[type="text"] {
     padding: 10px 15px;
     border-radius: var(--border-radius);
     flex: 2;
-    min-width: 120px;
+    min-width: 110px;
     font-family: 'Noto Sans JP', sans-serif;
     transition: all var(--transition-speed) ease;
 }
@@ -357,7 +357,7 @@ input[type="text"]::placeholder {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
     color: white;
     border: none;
-    padding: 10px 15px;
+    padding: 10px 12px;
     border-radius: var(--border-radius);
     cursor: pointer;
     transition: all var(--transition-speed) ease;
@@ -381,7 +381,7 @@ input[type="text"]::placeholder {
     background: linear-gradient(135deg, var(--danger-color) 0%, #e17055 100%);
     color: white;
     border: none;
-    padding: 8px 15px;
+    padding: 8px 12px;
     border-radius: var(--border-radius);
     cursor: pointer;
     transition: all var(--transition-speed) ease;
@@ -742,24 +742,31 @@ iframe {
     font-weight: 500;
     transition: all var(--transition-speed) ease;
     color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .load-button {
-    background: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    box-shadow: var(--box-shadow);
 }
 
 .load-button:hover {
-    background: var(--primary-light);
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
     transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .reset-button {
-    background: var(--danger-color);
+    background: linear-gradient(135deg, var(--danger-color) 0%, #e17055 100%);
+    box-shadow: var(--box-shadow);
 }
 
 .reset-button:hover {
-    background: #ff8787;
+    background: linear-gradient(135deg, #ff8787 0%, var(--danger-color) 100%);
     transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* ストリームプレーヤーのリセットボタン */
@@ -1011,7 +1018,7 @@ iframe {
     gap: 6px;
     position: relative;
     overflow: hidden;
-    width: 40px;
+    width: 32px; /* 40pxから32pxに縮小 */
     height: 36px;
     justify-content: center;
 }
@@ -1174,14 +1181,14 @@ iframe {
 .opacity-control {
     display: none; /* 初期状態では非表示 */
     align-items: center;
-    gap: 5px;
+    gap: 3px; /* 5pxから3pxに縮小 */
     background: linear-gradient(135deg, rgba(0, 206, 201, 0.2) 0%, rgba(0, 168, 163, 0.2) 100%);
-    padding: 5px 10px;
+    padding: 5px 8px; /* 左右のパディングを10pxから8pxに縮小 */
     border-radius: var(--border-radius);
     border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all var(--transition-speed) ease;
-    margin-left: 5px;
-    width: 120px;
+    margin-left: 3px; /* 5pxから3pxに縮小 */
+    width: 85px; /* さらに5px縮小 */
 }
 
 /* チャットボタンがアクティブな時に透過度コントロールを表示 */
@@ -1201,7 +1208,7 @@ iframe {
 .chat-opacity {
     -webkit-appearance: none;
     appearance: none;
-    width: 80px;
+    width: 50px; /* 80pxから50pxに短縮 */
     height: 6px;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 3px;
@@ -1244,7 +1251,7 @@ iframe {
         width: auto;
         justify-content: center;
         margin-top: 0;
-        margin-left: 5px;
+        margin-left: 3px;
     }
     
     .chat-opacity {
@@ -1271,9 +1278,9 @@ iframe {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
+    width: 32px; /* 36pxから32pxに縮小 */
     height: 36px;
-    margin-left: 5px;
+    margin-left: 3px; /* 5pxから3pxに縮小 */
 }
 
 .toggle-chat-position:hover {
@@ -1292,14 +1299,48 @@ iframe {
 /* チャットサイズのスタイル */
 .chat-size-small {
     width: 20% !important;
+    transform: scale(0.7) !important;
+    transform-origin: top right;
+}
+
+.chat-container.left-position.chat-size-small {
+    transform-origin: top left;
 }
 
 .chat-size-medium {
-    width: 30% !important; /* デフォルトサイズ */
+    width: 30% !important;
+    transform: scale(0.85) !important;
+    transform-origin: top right;
+}
+
+.chat-container.left-position.chat-size-medium {
+    transform-origin: top left;
 }
 
 .chat-size-large {
     width: 40% !important;
+    transform: scale(1) !important;
+    transform-origin: top right;
+}
+
+.chat-container.left-position.chat-size-large {
+    transform-origin: top left;
+}
+
+/* チャットサイズに応じたiframeの調整 */
+.chat-size-small .chat-iframe {
+    width: 143% !important; /* 100/0.7 */
+    height: 143% !important;
+}
+
+.chat-size-medium .chat-iframe {
+    width: 118% !important; /* 100/0.85 */
+    height: 118% !important;
+}
+
+.chat-size-large .chat-iframe {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 /* チャットサイズ切替ボタン */
@@ -1316,9 +1357,9 @@ iframe {
     display: none; /* 初期状態では非表示 */
     align-items: center;
     justify-content: center;
-    width: 36px;
+    width: 32px; /* 36pxから32pxに縮小 */
     height: 36px;
-    margin-left: 5px;
+    margin-left: 3px; /* 5pxから3pxに縮小 */
 }
 
 .toggle-chat-size:hover {
@@ -1333,4 +1374,18 @@ iframe {
 .toggle-chat-size span {
     font-size: 10px;
     margin-left: 2px;
+}
+
+/* 読込ボタンと削除ボタンのテキスト表示を調整 */
+@media (max-width: 1200px) {
+    .load-stream span, .delete-stream span {
+        display: none;
+    }
+}
+
+/* 小さい画面ではボタンテキストを非表示 */
+@media (max-width: 992px) {
+    .load-stream span, .delete-stream span {
+        display: none;
+    }
 }

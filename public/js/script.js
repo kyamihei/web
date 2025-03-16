@@ -243,11 +243,11 @@ document.addEventListener('DOMContentLoaded', () => {
         buttonContainer.className = 'button-container';
         
         const loadButton = document.createElement('button');
-        loadButton.textContent = '読み込み';
+        loadButton.innerHTML = '<i class="fas fa-play"></i>';
         loadButton.className = 'load-button';
         
         const resetButton = document.createElement('button');
-        resetButton.textContent = 'リセット';
+        resetButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
         resetButton.className = 'reset-button';
         
         buttonContainer.appendChild(loadButton);
@@ -346,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         if (sizeButton) {
-            sizeButton.innerHTML = '<i class="fas fa-text-height"></i><span>中</span>';
+            sizeButton.innerHTML = '<i class="fas fa-text-height"></i><span>大</span>';
             sizeButton.title = 'チャットサイズ変更';
             sizeButton.style.display = 'none';
         }
@@ -1188,6 +1188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.toggle-chat-size').forEach(button => {
         button.addEventListener('click', (e) => {
             e.preventDefault();
+            e.stopPropagation(); // イベントの伝播を停止
             const streamId = button.getAttribute('data-target');
             if (streamId) {
                 toggleChatSize(streamId);
@@ -1369,8 +1370,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentState.streams[streamId] && currentState.streams[streamId].chatSize) {
                 applyChatSize(streamId, currentState.streams[streamId].chatSize);
             } else {
-                // デフォルトは中サイズ
-                applyChatSize(streamId, 'medium');
+                // デフォルトは大サイズ
+                applyChatSize(streamId, 'large');
             }
             
             // 透過度コントロールを表示
@@ -1404,7 +1405,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 // チャットサイズの状態を保持
                 if (!currentState.streams[streamId].hasOwnProperty('chatSize')) {
-                    currentState.streams[streamId].chatSize = 'medium'; // デフォルトは中サイズ
+                    currentState.streams[streamId].chatSize = 'large'; // デフォルトは大サイズ
                 }
                 saveStateToURL();
                 updateShareUrl();
