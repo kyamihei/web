@@ -1382,8 +1382,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentState.streams[streamId] && currentState.streams[streamId].chatSize) {
                 applyChatSize(streamId, currentState.streams[streamId].chatSize);
             } else {
-                // デフォルトは中サイズ
-                applyChatSize(streamId, 'medium');
+                // デフォルトは大サイズ
+                applyChatSize(streamId, 'large');
             }
             
             // 透過度コントロールを表示
@@ -1417,7 +1417,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 // チャットサイズの状態を保持
                 if (!currentState.streams[streamId].hasOwnProperty('chatSize')) {
-                    currentState.streams[streamId].chatSize = 'medium'; // デフォルトは中サイズ
+                    currentState.streams[streamId].chatSize = 'large'; // デフォルトは大サイズ
                 }
                 saveStateToURL();
                 updateShareUrl();
