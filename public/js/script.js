@@ -424,65 +424,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (channelId.includes('twitch.tv/')) {
                     normalizedChannelId = channelId.split('twitch.tv/')[1].split('/')[0];
                 }
-                
-                // Twitch Embed APIを使用するためのdivを作成
-                const twitchEmbedDiv = document.createElement('div');
-                twitchEmbedDiv.id = `twitch-embed-${streamId}`;
-                twitchEmbedDiv.style.width = '100%';
-                twitchEmbedDiv.style.height = '100%';
-                streamContainer.appendChild(twitchEmbedDiv);
-                
-                // Twitch Embed APIスクリプトが既に読み込まれているか確認
-                if (!window.Twitch) {
-                    const script = document.createElement('script');
-                    script.src = 'https://embed.twitch.tv/embed/v1.js';
-                    script.onload = () => {
-                        createTwitchEmbed(streamId, normalizedChannelId, parentParam);
-                    };
-                    document.body.appendChild(script);
+                if (normalizedChannelId.startsWith('v')) {
+                    embedUrl = `https://player.twitch.tv/?video=${normalizedChannelId}&parent=${parentParam}&parent=www.${parentParam}&mature=true`;
                 } else {
-                    createTwitchEmbed(streamId, normalizedChannelId, parentParam);
+                    // 複数のparentパラメータを追加して互換性を向上
+                    embedUrl = `https://player.twitch.tv/?channel=${normalizedChannelId}&parent=${parentParam}&parent=www.${parentParam}&mature=true`;
                 }
-                
-                // リセットボタンを追加
-                const resetButtonContainer = document.createElement('div');
-                resetButtonContainer.className = 'reset-button-container';
-                const resetButton = document.createElement('button');
-                resetButton.className = 'stream-reset-button';
-                resetButton.innerHTML = '<i class="fas fa-undo"></i>';
-                resetButton.title = 'リセット';
-                resetButton.addEventListener('click', () => resetStream(streamId));
-                resetButtonContainer.appendChild(resetButton);
-                streamContainer.appendChild(resetButtonContainer);
-                
-                // チャットコンテナを追加
-                const chatContainer = document.createElement('div');
-                chatContainer.id = `chat-${streamId}`;
-                chatContainer.className = 'chat-container hidden';
-                streamContainer.appendChild(chatContainer);
-                
-                // メイン入力フィールドを更新
-                if (mainInput) {
-                    const platformSelect = mainInput.querySelector('.platform-select');
-                    const channelInput = mainInput.querySelector('input');
-                    if (platformSelect) platformSelect.value = platform;
-                    if (channelInput) channelInput.value = channelId;
-                    
-                    // 非表示状態を解除
-                    mainInput.classList.remove('hidden');
-                    updateVisibleStreamInputs();
-                }
-                
-                // 状態を更新
-                currentState.streams[streamId] = { 
-                    platform, 
-                    channelId: normalizedChannelId,
-                    chatVisible: false // チャットの表示状態も保存
-                };
-                saveStateToURL();
-                updateShareUrl();
-                
-                return; // Twitch処理後は関数を終了
+                break;
                 
             case 'youtube':
                 // YouTubeの様々なURL形式に対応
@@ -532,12 +480,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
         }
         
-        // Twitch以外のプラットフォームの場合はiframeを作成
+        // iframeを作成して埋め込み
         const iframe = document.createElement('iframe');
         iframe.src = embedUrl;
         iframe.setAttribute('allowfullscreen', 'true');
         
-        if (platform === 'youtube') {
+        if (platform === 'twitch') {
             iframe.setAttribute('allow', 'autoplay; fullscreen');
         }
         
@@ -580,33 +528,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         saveStateToURL();
         updateShareUrl();
-    }
-    
-    // Twitch Embed APIを使用して埋め込みを作成する関数
-    function createTwitchEmbed(streamId, channelId, parentParam) {
-        const embedOptions = {
-            width: '100%',
-            height: '100%',
-            channel: channelId,
-            parent: [parentParam, `www.${parentParam}`],
-            autoplay: true,
-            muted: false,
-            allowfullscreen: true
-        };
-        
-        // チャンネルIDがビデオIDの場合
-        if (channelId.startsWith('v')) {
-            delete embedOptions.channel;
-            embedOptions.video = channelId;
-        }
-        
-        try {
-            new Twitch.Embed(`twitch-embed-${streamId}`, embedOptions);
-            console.log(`Twitch embed created for ${channelId} in stream-${streamId}`);
-        } catch (error) {
-            console.error('Error creating Twitch embed:', error);
-            alert(`Twitchの埋め込みに失敗しました: ${error.message}`);
-        }
     }
     
     // プラットフォームに応じたスタイルを適用
@@ -1159,7 +1080,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const parentParam = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
                     
                     // Twitchの公式埋め込みチャットを使用
-                    chatUrl = `https://www.twitch.tv/embed/${twitchChannelId}/chat?parent=${parentParam}&parent=www.${parentParam}&mature=true&darkpopout=true`;
+                    chatUrl = `https://www.twitch.tv/embed/${twitchChannelId}/chat?parent=${parentParam}&parent=www.${parentParam}&mature=true`;
                     break;
                     
                 case 'youtube':
