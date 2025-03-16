@@ -18,10 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // コメント関連の変数
-    let isCommentEnabled = false;
-    let commentOpacity = 70;
-    let activeCommentSources = new Set([1]);
-    let twitchClients = new Map(); // チャンネルごとのTMIクライアントを管理
+    let activeCommentSources = new Map(); // streamId -> boolean のマップ
+    let twitchClients = new Map(); // streamId -> TMIクライアント のマップ
 
     // URLからステートを復元
     function loadStateFromURL() {
@@ -878,51 +876,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // コメントの設定を初期化
-    function initializeCommentSettings() {
-        const commentToggle = document.getElementById('comment-toggle');
-        const opacitySlider = document.getElementById('comment-opacity');
-        const opacityValue = document.getElementById('opacity-value');
-        
-        commentToggle.addEventListener('change', (e) => {
-            isCommentEnabled = e.target.checked;
-            if (!isCommentEnabled) {
-                disconnectAllTwitchClients();
-            } else {
-                reconnectActiveTwitchClients();
-            }
-        });
-        
-        opacitySlider.addEventListener('input', (e) => {
-            commentOpacity = e.target.value;
-            opacityValue.textContent = `${commentOpacity}%`;
-            document.querySelectorAll('.comment').forEach(comment => {
-                comment.style.opacity = commentOpacity / 100;
-            });
-        });
-        
-        // コメントソースの選択を監視
-        for (let i = 1; i <= 10; i++) {
-            const sourceCheckbox = document.getElementById(`comment-source-${i}`);
-            sourceCheckbox.addEventListener('change', (e) => {
-                if (e.target.checked) {
-                    activeCommentSources.add(i);
-                    if (isCommentEnabled) {
-                        connectTwitchChatIfNeeded(i);
-                    }
+    // コメントトグルボタンの初期化
+    function initializeCommentToggles() {
+        document.querySelectorAll('.toggle-comments').forEach(button => {
+            const streamId = parseInt(button.dataset.target);
+            
+            button.addEventListener('click', () => {
+                const isActive = button.classList.toggle('active');
+                activeCommentSources.set(streamId, isActive);
+                
+                if (isActive) {
+                    connectTwitchChatIfNeeded(streamId);
                 } else {
-                    activeCommentSources.delete(i);
-                    disconnectTwitchClient(i);
+                    disconnectTwitchClient(streamId);
                 }
             });
-        }
+        });
     }
 
     // Twitchチャットに接続
     function connectTwitchChat(streamId, channel) {
         if (!channel || twitchClients.has(streamId)) return;
 
-        // チャンネル名を正規化（URLの場合はチャンネル名を抽出）
         const channelName = normalizeTwitchChannel(channel);
         if (!channelName) return;
 
@@ -937,7 +912,7 @@ document.addEventListener('DOMContentLoaded', () => {
         client.connect().catch(console.error);
 
         client.on('message', (channel, tags, message, self) => {
-            if (!isCommentEnabled || !activeCommentSources.has(streamId)) return;
+            if (!activeCommentSources.get(streamId)) return;
             addComment(streamId, message, tags);
         });
 
@@ -966,17 +941,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const comment = document.createElement('div');
         comment.className = 'comment';
         comment.textContent = text;
-        comment.style.opacity = commentOpacity / 100;
+        comment.style.opacity = 0.7; // デフォルトの透明度を設定
 
-        // コメントの位置を設定
         const lane = findAvailableLane(container);
-        if (lane === null) return; // レーンが見つからない場合は表示しない
+        if (lane === null) return;
 
-        comment.style.top = `${lane * 40}px`; // コメントの高さを40pxとして計算
-
+        comment.style.top = `${lane * 40}px`;
         container.appendChild(comment);
 
-        // アニメーション終了時にコメントを削除
         comment.addEventListener('animationend', () => {
             comment.remove();
             releaseLane(container, lane);
@@ -1028,15 +1000,6 @@ document.addEventListener('DOMContentLoaded', () => {
         twitchClients.clear();
     }
 
-    // アクティブなTwitchクライアントを再接続
-    function reconnectActiveTwitchClients() {
-        for (let i = 1; i <= 10; i++) {
-            if (activeCommentSources.has(i)) {
-                connectTwitchChatIfNeeded(i);
-            }
-        }
-    }
-
     // 特定のストリームのTwitchクライアントを切断
     function disconnectTwitchClient(streamId) {
         const clientInfo = twitchClients.get(streamId);
@@ -1046,15 +1009,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 既存のイベントリスナーに追加
+    // 既存のイベントリスナーを更新
     document.addEventListener('DOMContentLoaded', () => {
-        initializeCommentSettings();
+        initializeCommentToggles();
         
         // 配信読み込みボタンのイベントリスナーを修正
         document.querySelectorAll('.load-stream').forEach(button => {
             button.addEventListener('click', () => {
                 const streamId = parseInt(button.dataset.target);
-                if (isCommentEnabled && activeCommentSources.has(streamId)) {
+                if (activeCommentSources.get(streamId)) {
                     connectTwitchChatIfNeeded(streamId);
                 }
             });

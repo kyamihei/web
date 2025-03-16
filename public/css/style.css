@@ -1172,3 +1172,35 @@ input:checked + .slider {
 input:checked + .slider:before {
     transform: translateX(26px);
 }
+
+.toggle-comments {
+    padding: 8px 12px;
+    background: var(--accent-color);
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 8px;
+}
+
+.toggle-comments:hover {
+    background: var(--accent-hover-color);
+}
+
+.toggle-comments.active {
+    background: var(--success-color);
+}
+
+.toggle-comments i {
+    font-size: 16px;
+}
+
+/* 削除：不要なコメント設定のスタイル */
+.comment-settings,
+.comment-controls,
+.comment-toggle,
+.opacity-control,
+.comment-source-select {
+    display: none;
+}
