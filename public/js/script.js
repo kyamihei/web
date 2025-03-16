@@ -176,9 +176,30 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         
+        // チャットをリセット
+        const chatContainer = document.getElementById(`chat-${streamId}`);
+        const streamPlayer = document.getElementById(`stream-${streamId}`);
+        const toggleButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
+        
+        if (chatContainer) {
+            chatContainer.classList.add('hidden');
+            while (chatContainer.firstChild) {
+                chatContainer.removeChild(chatContainer.firstChild);
+            }
+        }
+        
+        if (streamPlayer) {
+            streamPlayer.classList.remove('with-chat');
+        }
+        
+        if (toggleButton) {
+            toggleButton.classList.remove('active');
+        }
+        
         // 状態を更新
         delete currentState.streams[streamId];
         saveStateToURL();
+        updateShareUrl();
         
         // ドラッグ&ドロップを再有効化
         initializeStreamPlayers();
@@ -871,5 +892,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         }
     });
+
+    // チャットトグルボタンのイベントリスナーを追加
+    document.querySelectorAll('.toggle-chat').forEach(button => {
+        button.addEventListener('click', () => {
+            const streamId = button.getAttribute('data-target');
+            toggleChat(streamId);
+        });
+    });
+
+    // チャット表示を切り替える関数
+    function toggleChat(streamId) {
+        const streamPlayer = document.getElementById(`stream-${streamId}`);
+        const chatContainer = document.getElementById(`chat-${streamId}`);
+        const toggleButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
+        
+        // 現在のストリーム情報を取得
+        const platform = document.getElementById(`platform-${streamId}`).value;
+        const channelInput = document.getElementById(`channel-${streamId}`).value;
+        
+        // チャットが既に表示されている場合は非表示にする
+        if (chatContainer.classList.contains('hidden')) {
+            // チャットが非表示の場合は表示する
+            if (platform === 'twitch' && channelInput) {
+                // チャンネルIDを抽出
+                let channelId = channelInput;
+                
+                // URLが入力された場合はチャンネルIDを抽出
+                if (channelInput.includes('twitch.tv/')) {
+                    const match = channelInput.match(/twitch\.tv\/([^\/\?]+)/);
+                    if (match && match[1]) {
+                        channelId = match[1];
+                    }
+                }
+                
+                // チャットiframeを作成
+                const chatUrl = `https://www.twitch.tv/popout/${channelId}/chat?popout=`;
+                const iframe = document.createElement('iframe');
+                iframe.src = chatUrl;
+                iframe.classList.add('chat-iframe');
+                
+                // 既存のiframeがあれば削除
+                while (chatContainer.firstChild) {
+                    chatContainer.removeChild(chatContainer.firstChild);
+                }
+                
+                // 新しいiframeを追加
+                chatContainer.appendChild(iframe);
+                chatContainer.classList.remove('hidden');
+                streamPlayer.classList.add('with-chat');
+                toggleButton.classList.add('active');
+            } else {
+                alert('Twitchのチャンネルが設定されていません。');
+            }
+        } else {
+            // チャットが表示されている場合は非表示にする
+            chatContainer.classList.add('hidden');
+            streamPlayer.classList.remove('with-chat');
+            toggleButton.classList.remove('active');
+        }
+    }
 });
 
