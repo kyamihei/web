@@ -1665,18 +1665,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (iframe) {
             switch (size) {
                 case 'small':
-                    iframe.style.transform = 'scale(1)';
-                    iframe.style.height = '100%';
+                    chatContainer.style.width = '20%';
                     break;
                 case 'medium':
-                    iframe.style.transform = 'scale(1)';
-                    iframe.style.height = '100%';
+                    chatContainer.style.width = '25%';
                     break;
                 case 'large':
-                    iframe.style.transform = 'scale(1)';
-                    iframe.style.height = '100%';
+                    chatContainer.style.width = '30%';
                     break;
             }
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
         }
         
         // 状態を保存
@@ -1742,15 +1741,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const iframe = chatContainer.querySelector('iframe');
         if (iframe) {
             iframe.style.opacity = Math.max(opacity + 0.1, 0.1); // 最低でも0.1の透過度を保持
-            
-            // チャットサイズに応じたスケールを設定
-            if (chatContainer.classList.contains('chat-size-small')) {
-                iframe.style.transform = 'scale(0.7)';
-            } else if (chatContainer.classList.contains('chat-size-medium')) {
-                iframe.style.transform = 'scale(0.85)';
-            } else {
-                iframe.style.transform = 'scale(1)';
-            }
             
             // iframeの背景も透明に
             iframe.onload = function() {
