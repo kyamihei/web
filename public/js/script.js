@@ -871,5 +871,487 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         }
     });
+
+    // コメント機能の実装
+    class CommentManager {
+        constructor() {
+            this.commentPanel = document.getElementById('comment-panel');
+            this.commentTabs = document.getElementById('comment-tabs');
+            this.commentContent = document.getElementById('comment-content');
+            this.commentToggle = document.getElementById('comment-toggle');
+            this.closeComments = document.getElementById('close-comments');
+            
+            // 設定要素
+            this.displayModeButtons = document.querySelectorAll('.mode-button');
+            this.autoScrollToggle = document.getElementById('autoscroll-toggle');
+            this.sizeButtons = document.querySelectorAll('.size-button');
+            this.opacitySlider = document.getElementById('comment-opacity');
+            this.userColorToggles = document.querySelectorAll('.color-toggle input');
+            
+            // 状態管理
+            this.activeTab = null;
+            this.autoScroll = true;
+            this.displayMode = 'normal';
+            this.fontSize = 'medium';
+            this.opacity = 70;
+            
+            // 設定の読み込み
+            this.loadSettings();
+            
+            // イベントリスナーの設定
+            this.setupEventListeners();
+            
+            // コメントの自動更新
+            setInterval(() => this.updateComments(), 1000);
+            
+            // プラットフォーム別のコメント取得インスタンス
+            this.commentFetchers = {
+                twitch: new TwitchCommentFetcher()
+            };
+            
+            // 絵文字変換用のマッピング
+            this.emojiMap = new Map([
+                [':smile:', '😊'],
+                [':laugh:', '😄'],
+                [':cry:', '😢'],
+                [':heart:', '❤️'],
+                [':fire:', '🔥'],
+                [':clap:', '👏']
+            ]);
+            
+            // カスタム絵文字のキャッシュ
+            this.customEmojis = new Map();
+        }
+        
+        loadSettings() {
+            // LocalStorageから設定を読み込む
+            const settings = JSON.parse(localStorage.getItem('commentSettings') || '{}');
+            this.displayMode = settings.displayMode || 'normal';
+            this.fontSize = settings.fontSize || 'medium';
+            this.opacity = settings.opacity || 70;
+            this.autoScroll = settings.autoScroll !== undefined ? settings.autoScroll : true;
+            
+            // 設定を適用
+            this.applySettings();
+        }
+        
+        saveSettings() {
+            // 設定をLocalStorageに保存
+            const settings = {
+                displayMode: this.displayMode,
+                fontSize: this.fontSize,
+                opacity: this.opacity,
+                autoScroll: this.autoScroll
+            };
+            localStorage.setItem('commentSettings', JSON.stringify(settings));
+        }
+        
+        applySettings() {
+            // 表示モード
+            this.displayModeButtons.forEach(button => {
+                button.classList.toggle('active', button.dataset.mode === this.displayMode);
+            });
+            this.commentContent.className = `comment-content ${this.displayMode} font-${this.fontSize}`;
+            
+            // 自動スクロール
+            this.autoScrollToggle.checked = this.autoScroll;
+            
+            // 文字サイズ
+            this.sizeButtons.forEach(button => {
+                button.classList.toggle('active', button.dataset.size === this.fontSize);
+            });
+            
+            // 透明度
+            this.opacitySlider.value = this.opacity;
+            this.commentPanel.style.opacity = this.opacity / 100;
+        }
+        
+        setupEventListeners() {
+            // パネルの開閉
+            this.commentToggle.addEventListener('click', () => {
+                this.commentPanel.classList.toggle('open');
+            });
+            
+            this.closeComments.addEventListener('click', () => {
+                this.commentPanel.classList.remove('open');
+            });
+            
+            // 表示モードの切り替え
+            this.displayModeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    this.displayMode = button.dataset.mode;
+                    this.applySettings();
+                    this.saveSettings();
+                });
+            });
+            
+            // 自動スクロール設定
+            this.autoScrollToggle.addEventListener('change', () => {
+                this.autoScroll = this.autoScrollToggle.checked;
+                this.saveSettings();
+            });
+            
+            // 文字サイズ設定
+            this.sizeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    this.fontSize = button.dataset.size;
+                    this.applySettings();
+                    this.saveSettings();
+                });
+            });
+            
+            // 透明度設定
+            this.opacitySlider.addEventListener('input', () => {
+                this.opacity = this.opacitySlider.value;
+                this.applySettings();
+            });
+            
+            this.opacitySlider.addEventListener('change', () => {
+                this.saveSettings();
+            });
+            
+            // ユーザー種別の色分け設定
+            this.userColorToggles.forEach(toggle => {
+                toggle.addEventListener('change', () => {
+                    const userType = toggle.closest('.color-toggle').querySelector('.color-sample').classList[1];
+                    document.querySelectorAll(`.comment-user.${userType}`).forEach(user => {
+                        user.style.opacity = toggle.checked ? '1' : '0.5';
+                    });
+                });
+            });
+        }
+        
+        createTab(streamId, platform) {
+            const tab = document.createElement('button');
+            tab.className = 'comment-tab';
+            tab.dataset.streamId = streamId;
+            tab.textContent = `配信${streamId}`;
+            
+            tab.addEventListener('click', () => {
+                this.activateTab(streamId);
+            });
+            
+            this.commentTabs.appendChild(tab);
+            
+            // 最初のタブを自動的にアクティブにする
+            if (!this.activeTab) {
+                this.activateTab(streamId);
+            }
+        }
+        
+        removeTab(streamId) {
+            const tab = this.commentTabs.querySelector(`[data-stream-id="${streamId}"]`);
+            if (tab) {
+                tab.remove();
+                
+                // アクティブなタブが削除された場合、最初のタブをアクティブにする
+                if (this.activeTab === streamId) {
+                    const firstTab = this.commentTabs.querySelector('.comment-tab');
+                    if (firstTab) {
+                        this.activateTab(firstTab.dataset.streamId);
+                    } else {
+                        this.activeTab = null;
+                        this.commentContent.innerHTML = '';
+                    }
+                }
+            }
+        }
+        
+        activateTab(streamId) {
+            this.commentTabs.querySelectorAll('.comment-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.streamId === streamId);
+            });
+            this.activeTab = streamId;
+            this.updateComments();
+        }
+        
+        addComment(streamId, comment) {
+            if (this.activeTab !== streamId) return;
+            
+            const commentElement = document.createElement('div');
+            commentElement.className = 'comment-item';
+            
+            const meta = document.createElement('div');
+            meta.className = 'comment-meta';
+            
+            const user = document.createElement('span');
+            user.className = `comment-user ${comment.userType || ''}`;
+            user.textContent = comment.username;
+            
+            const time = document.createElement('span');
+            time.className = 'comment-time';
+            time.textContent = comment.time;
+            
+            const text = document.createElement('div');
+            text.className = 'comment-text';
+            text.textContent = comment.text;
+            
+            meta.appendChild(user);
+            meta.appendChild(time);
+            commentElement.appendChild(meta);
+            commentElement.appendChild(text);
+            
+            this.commentContent.appendChild(commentElement);
+            
+            // 自動スクロール
+            if (this.autoScroll) {
+                this.commentContent.scrollTop = this.commentContent.scrollHeight;
+            }
+        }
+        
+        async updateComments() {
+            if (!this.activeTab) return;
+            
+            const streamId = this.activeTab;
+            const platform = document.getElementById(`platform-${streamId}`).value;
+            const channelId = document.getElementById(`channel-${streamId}`).value;
+            
+            // Twitchのコメントのみ取得
+            if (platform === 'twitch') {
+                try {
+                    const comments = await this.commentFetchers.twitch.fetchComments(channelId);
+                    comments.forEach(comment => {
+                        comment.text = this.processEmojis(comment.text);
+                        this.addComment(streamId, comment);
+                    });
+                } catch (error) {
+                    console.error(`Error fetching comments for Twitch:`, error);
+                }
+            }
+        }
+        
+        processEmojis(text) {
+            // 標準絵文字の変換
+            for (const [code, emoji] of this.emojiMap) {
+                text = text.replace(new RegExp(code, 'g'), emoji);
+            }
+            
+            // カスタム絵文字の変換
+            for (const [code, url] of this.customEmojis) {
+                text = text.replace(new RegExp(code, 'g'), `<img src="${url}" class="custom-emoji" alt="${code}">`);
+            }
+            
+            // Unicode絵文字の処理
+            text = twemoji.parse(text);
+            
+            return text;
+        }
+    }
+
+    // コメントマネージャーのインスタンスを作成
+    const commentManager = new CommentManager();
+
+    // ストリーム関連のイベントとコメント機能の連携
+    document.querySelectorAll('.load-stream').forEach(button => {
+        button.addEventListener('click', () => {
+            const streamId = button.dataset.target;
+            const platform = document.getElementById(`platform-${streamId}`).value;
+            commentManager.createTab(streamId, platform);
+        });
+    });
+
+    document.querySelectorAll('.delete-stream').forEach(button => {
+        button.addEventListener('click', () => {
+            const streamId = button.dataset.target;
+            commentManager.removeTab(streamId);
+        });
+    });
 });
+
+// Twitchコメント取得クラス
+class TwitchCommentFetcher {
+    constructor() {
+        this.client = null;
+        this.lastMessageIds = new Set();
+    }
+    
+    async connect(channelId) {
+        if (!this.client) {
+            this.client = new tmi.Client({
+                connection: {
+                    secure: true,
+                    reconnect: true
+                },
+                channels: [channelId]
+            });
+            
+            await this.client.connect();
+        }
+    }
+    
+    async fetchComments(channelId) {
+        try {
+            await this.connect(channelId);
+            
+            return new Promise((resolve) => {
+                const newMessages = [];
+                
+                this.client.on('message', (channel, tags, message, self) => {
+                    const messageId = tags['id'];
+                    
+                    if (!this.lastMessageIds.has(messageId)) {
+                        this.lastMessageIds.add(messageId);
+                        
+                        // 最大1000件までメッセージIDを保持
+                        if (this.lastMessageIds.size > 1000) {
+                            const [firstId] = this.lastMessageIds;
+                            this.lastMessageIds.delete(firstId);
+                        }
+                        
+                        newMessages.push({
+                            username: tags['display-name'],
+                            text: message,
+                            time: new Date().toLocaleTimeString(),
+                            userType: this.getUserType(tags),
+                            emotes: tags['emotes']
+                        });
+                    }
+                });
+                
+                // 100ms後に新しいメッセージを返す
+                setTimeout(() => resolve(newMessages), 100);
+            });
+        } catch (error) {
+            console.error('Twitch comment fetch error:', error);
+            return [];
+        }
+    }
+    
+    getUserType(tags) {
+        if (tags.mod) return 'moderator';
+        if (tags.subscriber) return 'subscriber';
+        return '';
+    }
+}
+
+// YouTubeコメント取得クラス
+class YouTubeCommentFetcher {
+    constructor() {
+        this.lastCommentTime = new Date();
+    }
+    
+    async fetchComments(videoId) {
+        try {
+            // YouTube Data APIを使用してライブチャットIDを取得
+            const response = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=liveStreamingDetails&id=${videoId}&key=${YOUTUBE_API_KEY}`);
+            const data = await response.json();
+            
+            if (data.items && data.items[0] && data.items[0].liveStreamingDetails) {
+                const chatId = data.items[0].liveStreamingDetails.activeLiveChatId;
+                
+                // ライブチャットメッセージを取得
+                const chatResponse = await fetch(`https://www.googleapis.com/youtube/v3/liveChat/messages?liveChatId=${chatId}&part=snippet,authorDetails&key=${YOUTUBE_API_KEY}`);
+                const chatData = await chatResponse.json();
+                
+                return chatData.items.map(item => ({
+                    username: item.authorDetails.displayName,
+                    text: item.snippet.displayMessage,
+                    time: new Date(item.snippet.publishedAt).toLocaleTimeString(),
+                    userType: this.getUserType(item.authorDetails)
+                }));
+            }
+            
+            return [];
+        } catch (error) {
+            console.error('YouTube comment fetch error:', error);
+            return [];
+        }
+    }
+    
+    getUserType(authorDetails) {
+        if (authorDetails.isChatOwner) return 'moderator';
+        if (authorDetails.isChatSponsor) return 'member';
+        return '';
+    }
+}
+
+// ツイキャスコメント取得クラス
+class TwitcastingCommentFetcher {
+    constructor() {
+        this.lastCommentId = null;
+    }
+    
+    async fetchComments(userId) {
+        try {
+            const response = await fetch(`https://apiv2.twitcasting.tv/users/${userId}/current_live/comments?limit=50`, {
+                headers: {
+                    'Authorization': `Bearer ${TWITCASTING_API_KEY}`
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.comments) {
+                return data.comments
+                    .filter(comment => !this.lastCommentId || comment.id > this.lastCommentId)
+                    .map(comment => {
+                        this.lastCommentId = Math.max(this.lastCommentId || 0, comment.id);
+                        return {
+                            username: comment.author.name,
+                            text: comment.message,
+                            time: new Date(comment.created * 1000).toLocaleTimeString(),
+                            userType: ''
+                        };
+                    });
+            }
+            
+            return [];
+        } catch (error) {
+            console.error('Twitcasting comment fetch error:', error);
+            return [];
+        }
+    }
+}
+
+// OPENRECコメント取得クラス
+class OpenrecCommentFetcher {
+    constructor() {
+        this.lastCommentTime = new Date();
+        this.socket = null;
+    }
+    
+    async connect(movieId) {
+        if (!this.socket) {
+            this.socket = new WebSocket('wss://chat.openrec.tv/socket.io/?EIO=3&transport=websocket');
+            
+            this.socket.onopen = () => {
+                this.socket.send(`42["join_movie","${movieId}"]`);
+            };
+        }
+    }
+    
+    async fetchComments(movieId) {
+        try {
+            await this.connect(movieId);
+            
+            return new Promise((resolve) => {
+                const newMessages = [];
+                
+                this.socket.onmessage = (event) => {
+                    if (event.data.startsWith('42["message"')) {
+                        const messageData = JSON.parse(event.data.substr(2))[1];
+                        
+                        newMessages.push({
+                            username: messageData.user.name,
+                            text: messageData.message,
+                            time: new Date().toLocaleTimeString(),
+                            userType: this.getUserType(messageData.user)
+                        });
+                    }
+                };
+                
+                setTimeout(() => resolve(newMessages), 100);
+            });
+        } catch (error) {
+            console.error('OPENREC comment fetch error:', error);
+            return [];
+        }
+    }
+    
+    getUserType(user) {
+        if (user.is_moderator) return 'moderator';
+        if (user.is_premium) return 'subscriber';
+        return '';
+    }
+}
 

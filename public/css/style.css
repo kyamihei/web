@@ -994,3 +994,423 @@ iframe {
 .stream-player:nth-child(n+11) {
     display: none;
 }
+
+/* コメントパネル */
+.comment-panel {
+    position: fixed;
+    top: 0;
+    right: -350px;
+    width: 330px;
+    height: 100vh;
+    background: linear-gradient(135deg, var(--dark-surface) 0%, var(--dark-surface-2) 100%);
+    box-shadow: -2px 0 20px rgba(0, 0, 0, 0.5);
+    z-index: 900;
+    transition: right var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border-left: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-panel.open {
+    right: 0;
+}
+
+.comment-header {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.comment-header h3 {
+    margin: 0;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.comment-header h3 i {
+    color: var(--secondary-color);
+}
+
+.comment-tabs {
+    display: flex;
+    gap: 5px;
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    overflow-x: auto;
+}
+
+.comment-tab {
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border: none;
+    border-radius: var(--border-radius);
+    color: var(--text-secondary);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition-speed) ease;
+}
+
+.comment-tab:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.comment-tab.active {
+    background: var(--primary-color);
+    color: var(--text-primary);
+}
+
+.comment-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.comment-item {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.comment-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.comment-user {
+    font-weight: 500;
+    color: var(--primary-light);
+}
+
+.comment-text {
+    color: var(--text-primary);
+    word-break: break-word;
+}
+
+/* コメントトグルボタン */
+.comment-toggle {
+    position: fixed;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    padding: 8px;
+    border-radius: 4px 0 0 4px;
+    color: white;
+    cursor: pointer;
+    z-index: 901;
+    transition: all var(--transition-speed) ease;
+}
+
+.comment-toggle:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.comment-toggle i {
+    font-size: 1.2em;
+}
+
+/* コメントオーバーレイ */
+.stream-player .comment-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 200px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform var(--transition-speed) ease;
+}
+
+.stream-player.show-comments .comment-overlay {
+    transform: translateX(0);
+}
+
+.comment-toggle-stream {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    padding: 5px;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    z-index: 2;
+    transition: all var(--transition-speed) ease;
+}
+
+.comment-toggle-stream:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .comment-panel {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .stream-player .comment-overlay {
+        width: 100%;
+        height: 30%;
+        bottom: 0;
+        right: 0;
+        transform: translateY(100%);
+    }
+    
+    .stream-player.show-comments .comment-overlay {
+        transform: translateY(0);
+    }
+}
+
+/* コメント設定パネル */
+.comment-settings {
+    padding: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.comment-settings h4 {
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: var(--text-primary);
+}
+
+.setting-group {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* 表示形式切り替え */
+.button-group {
+    display: flex;
+    gap: 8px;
+}
+
+.mode-button {
+    flex: 1;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+}
+
+.mode-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.mode-button.active {
+    background: var(--primary-color);
+    color: var(--text-primary);
+    border-color: var(--primary-light);
+}
+
+/* 自動スクロール設定 */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    transition: .4s;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 3px;
+    background-color: var(--text-secondary);
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+    background-color: white;
+}
+
+/* 文字サイズ調整 */
+.size-control {
+    display: flex;
+    gap: 8px;
+}
+
+.size-button {
+    flex: 1;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+}
+
+.size-button:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.size-button.active {
+    background: var(--primary-color);
+    color: var(--text-primary);
+    border-color: var(--primary-light);
+}
+
+/* 透明度設定 */
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.slider-container input[type="range"] {
+    flex: 1;
+    height: 4px;
+    -webkit-appearance: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+
+.slider-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* ユーザー種別の色分け */
+.color-toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.color-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.color-sample {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.color-sample.moderator {
+    background: var(--twitch-color);
+}
+
+.color-sample.subscriber {
+    background: var(--youtube-color);
+}
+
+.color-sample.member {
+    background: var(--success-color);
+}
+
+/* コメントスタイル */
+.comment-content {
+    transition: all var(--transition-speed) ease;
+}
+
+/* 通常表示 */
+.comment-content.normal .comment-item {
+    padding: 12px;
+    margin-bottom: 12px;
+}
+
+/* コンパクト表示 */
+.comment-content.compact .comment-item {
+    padding: 6px;
+    margin-bottom: 6px;
+    font-size: 0.9em;
+}
+
+.comment-content.compact .comment-meta {
+    font-size: 0.8em;
+}
+
+/* 文字サイズ */
+.comment-content.font-small {
+    font-size: 0.9em;
+}
+
+.comment-content.font-medium {
+    font-size: 1em;
+}
+
+.comment-content.font-large {
+    font-size: 1.2em;
+}
+
+/* ユーザー種別のスタイル */
+.comment-user.moderator {
+    color: var(--twitch-color);
+}
+
+.comment-user.subscriber {
+    color: var(--youtube-color);
+}
+
+.comment-user.member {
+    color: var(--success-color);
+}
+
+/* 自動スクロール中のスタイル */
+.comment-content.auto-scrolling {
+    scroll-behavior: smooth;
+}
