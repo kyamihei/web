@@ -850,10 +850,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 透過度コントロールは非表示のまま
                 if (opacityControl) opacityControl.style.display = 'none';
             } else {
-                // 他のプラットフォームの場合は通常表示
-                if (toggleChatButton) {
-                    enableChatButton(toggleChatButton);
-                }
+                // TwitchまたはYouTubeでも、ストリームが読み込まれるまでは有効化しない
+                // チャットボタンは loadStream 関数内で有効化されるので、ここでは何もしない
+                
                 // 透過度コントロールはチャットが表示されている場合のみ表示
                 if (opacityControl) {
                     const chatContainer = document.getElementById(`chat-${streamId}`);
@@ -866,19 +865,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初期スタイルを適用
     applyPlatformStyles();
     
-    // 初期状態でツイキャスとOPENRECのチャットボタンをグレーアウト
+    // 初期状態ですべてのチャットボタンをグレーアウト（プラットフォームに関わらず）
     document.querySelectorAll('.platform-select').forEach(select => {
+        const streamId = select.id.split('-')[1];
+        const toggleChatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
+        const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
+        
+        // ツイキャスとOPENRECは特別なメッセージを表示
         if (select.value === 'twitcasting' || select.value === 'openrec') {
-            const streamId = select.id.split('-')[1];
-            const toggleChatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
-            const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
-            
             if (toggleChatButton) {
                 disableChatButton(toggleChatButton);
                 toggleChatButton.title = `${select.value === 'twitcasting' ? 'ツイキャス' : 'OPENREC'}のチャット機能は現在無効化されています`;
             }
-            if (opacityControl) opacityControl.style.display = 'none';
+        } else {
+            // TwitchとYouTubeも初期状態では無効化
+            if (toggleChatButton) {
+                disableChatButton(toggleChatButton);
+                toggleChatButton.title = 'チャット機能は配信が読み込まれるまで使用できません';
+            }
         }
+        
+        // 透過度コントロールは非表示
+        if (opacityControl) opacityControl.style.display = 'none';
     });
 
     // 共有URLを更新する関数
