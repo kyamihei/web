@@ -1531,7 +1531,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 applyChatSize(streamId, currentState.streams[streamId].chatSize);
             } else {
                 // デフォルトは大サイズ
-                applyChatSize(streamId, 'large');
+                applyChatSize(streamId, 'medium');
             }
             
             // 透過度コントロールを表示
