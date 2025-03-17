@@ -778,7 +778,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (platform === 'twitch' || platform === 'youtube') {
             // TwitchまたはYouTubeの場合はチャットボタンを有効化
             const toggleChatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
-            if (toggleChatButton) {
+            if (toggleChatButton && channelInput.value && channelInput.disabled) {
                 enableChatButton(toggleChatButton);
             }
         }
@@ -825,10 +825,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 透過度コントロールは非表示のまま
                 if (opacityControl) opacityControl.style.display = 'none';
             } else {
-                // 他のプラットフォームの場合は通常表示
+                // 配信が読み込まれているかチェック
+                const channelInput = document.getElementById(`channel-${streamId}`);
+                const isStreamLoaded = channelInput && channelInput.value && channelInput.disabled;
+                
+                // 配信が読み込まれている場合のみチャットボタンを有効化
                 if (toggleChatButton) {
-                    enableChatButton(toggleChatButton);
+                    if (isStreamLoaded) {
+                        enableChatButton(toggleChatButton);
+                    } else {
+                        disableChatButton(toggleChatButton);
+                        toggleChatButton.title = '配信を読み込んでからチャットを表示できます';
+                    }
                 }
+                
                 // 透過度コントロールはチャットが表示されている場合のみ表示
                 if (opacityControl) {
                     const chatContainer = document.getElementById(`chat-${streamId}`);
