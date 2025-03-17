@@ -183,6 +183,32 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
 }
 
+/* レイアウトグループのスタイル */
+.layout-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    width: 100%;
+}
+
+.layout-group:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.layout-group-title {
+    width: 100%;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    padding-left: 5px;
+    border-left: 3px solid var(--primary-light);
+}
+
 .layout-buttons button {
     background-color: rgba(255, 255, 255, 0.1);
     color: var(--text-primary);

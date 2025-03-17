@@ -1085,166 +1085,185 @@ document.addEventListener('DOMContentLoaded', () => {
     function createLayoutButtons() {
         const layoutButtons = document.querySelector('.layout-buttons');
         layoutButtons.innerHTML = `
-            <button id="layout-2x2" title="2x2レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-1x2" title="1x2レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-2x1" title="2x1レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-1x3" title="1x3レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-3x1" title="3x1レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-2x3" title="2x3レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-3x2" title="3x2レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-3x3" title="3x3レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-1x4" title="1x4レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-4x1" title="4x1レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-4x2" title="4x2レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-2x4" title="2x4レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-5x2" title="5x2レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-2x5" title="2x5レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-custom" title="大3小4レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
-            <button id="layout-custom2" title="大2小8レイアウト">
-                <div class="layout-icon">
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                    <div class="grid-cell"></div>
-                </div>
-            </button>
+            <!-- 基本レイアウト（1～4画面） -->
+            <div class="layout-group">
+                <div class="layout-group-title">基本レイアウト（1～4画面）</div>
+                <button id="layout-1x2" title="1x2レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-2x1" title="2x1レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-2x2" title="2x2レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-1x3" title="1x3レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-3x1" title="3x1レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-1x4" title="1x4レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-4x1" title="4x1レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+            </div>
+            
+            <!-- 中規模レイアウト（6～9画面） -->
+            <div class="layout-group">
+                <div class="layout-group-title">中規模レイアウト（6～9画面）</div>
+                <button id="layout-2x3" title="2x3レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-3x2" title="3x2レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-3x3" title="3x3レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+            </div>
+            
+            <!-- 大規模レイアウト（8～10画面） -->
+            <div class="layout-group">
+                <div class="layout-group-title">大規模レイアウト（8～10画面）</div>
+                <button id="layout-4x2" title="4x2レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-2x4" title="2x4レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-5x2" title="5x2レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-2x5" title="2x5レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+            </div>
+            
+            <!-- カスタムレイアウト -->
+            <div class="layout-group">
+                <div class="layout-group-title">特殊レイアウト</div>
+                <button id="layout-custom" title="大3小4レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-custom2" title="大2小8レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+            </div>
         `;
 
         // レイアウトボタンのイベントリスナーを再設定
