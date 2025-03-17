@@ -155,6 +155,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                 player.style.display = index < 7 ? 'flex' : 'none';
                             });
                             break;
+                        case 'layout-custom2':
+                            streamPlayers.forEach((player, index) => {
+                                player.style.display = index < 10 ? 'flex' : 'none';
+                            });
+                            break;
                         default:
                             streamPlayers.forEach((player, index) => {
                                 player.style.display = index < 4 ? 'flex' : 'none';
@@ -607,6 +612,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'layout-custom':
                     streamPlayers.forEach((player, index) => {
                         player.style.display = index < 7 ? 'flex' : 'none';
+                    });
+                    break;
+                case 'layout-custom2':
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 10 ? 'flex' : 'none';
                     });
                     break;
                 default:
@@ -1221,6 +1231,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="grid-cell"></div>
                 </div>
             </button>
+            <button id="layout-custom2" title="大2小8レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
         `;
 
         // レイアウトボタンのイベントリスナーを再設定
@@ -1288,6 +1312,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     case 'layout-custom':
                         streamPlayers.forEach((player, index) => {
                             player.style.display = index < 7 ? 'flex' : 'none';
+                        });
+                        break;
+                    case 'layout-custom2':
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 10 ? 'flex' : 'none';
                         });
                         break;
                     default:
