@@ -1494,16 +1494,16 @@ document.addEventListener('DOMContentLoaded', () => {
             iframe.setAttribute('allowtransparency', 'true');
             
             // 現在のチャットサイズに応じてiframeの高さを設定
-            if (chatContainer.classList.contains('chat-size-small')) {
-                iframe.style.height = '100%';
-                iframe.style.transform = 'scale(0.7)';
-            } else if (chatContainer.classList.contains('chat-size-medium')) {
-                iframe.style.height = '100%';
-                iframe.style.transform = 'scale(0.85)';
-            } else {
-                iframe.style.height = '100%';
-                iframe.style.transform = 'scale(1)';
-            }
+            // if (chatContainer.classList.contains('chat-size-small')) {
+            //     iframe.style.height = '100%';
+            //     iframe.style.transform = 'scale(1)';
+            // } else if (chatContainer.classList.contains('chat-size-medium')) {
+            //     iframe.style.height = '100%';
+            //     iframe.style.transform = 'scale(1)';
+            // } else {
+            //     iframe.style.height = '100%';
+            //     iframe.style.transform = 'scale(1)';
+            // }
             
             // 既存のiframeがあれば削除
             while (chatContainer.firstChild) {

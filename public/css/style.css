@@ -1102,12 +1102,6 @@ iframe {
     transform: translateY(0);
 }
 
-.toggle-chat.active {
-    background: linear-gradient(135deg, var(--accent-color) 0%, #e84393 100%);
-    box-shadow: 0 0 15px rgba(232, 67, 147, 0.5);
-    animation: pulse-chat 2s infinite;
-}
-
 @keyframes pulse-chat {
     0% {
         box-shadow: 0 0 0 0 rgba(232, 67, 147, 0.5);
@@ -1221,7 +1215,8 @@ iframe {
 /* チャットトグルボタンのアクティブ状態 */
 .toggle-chat.active {
     background: linear-gradient(135deg, var(--accent-color) 0%, #e84393 100%);
-    box-shadow: 0 0 10px rgba(232, 67, 147, 0.5);
+    box-shadow: 0 0 15px rgba(232, 67, 147, 0.5);
+    animation: pulse-chat 2s infinite;
 }
 
 /* レスポンシブ対応 */
