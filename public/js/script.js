@@ -1,15 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Service Workerを無効化（エラー対策）
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-            for (let registration of registrations) {
-                registration.unregister();
-                console.log('Service Workerを無効化しました');
-            }
-        });
+    if (window.navigator && navigator.serviceWorker) {
+        navigator.serviceWorker.getRegistrations()
+            .then(registrations => {
+                for (let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+    }
+    
+    // チャットボタンを無効化する関数
+    function disableChatButton(button) {
+        button.classList.add('disabled');
+        button.title = 'チャット機能は配信が読み込まれるまで使用できません';
+        button.style.opacity = '0.5';
+        button.style.cursor = 'not-allowed';
     }
 
-    // 要素の取得
+    // チャットボタンを有効化する関数
+    function enableChatButton(button) {
+        button.classList.remove('disabled');
+        button.title = 'チャットを表示/非表示';
+        button.style.opacity = '1';
+        button.style.cursor = 'pointer';
+    }
+    
+    // 初期状態ですべてのチャットボタンを無効化
+    document.querySelectorAll('.toggle-chat').forEach(button => {
+        disableChatButton(button);
+    });
+    
     const streamsContainer = document.querySelector('.streams-container');
     const layoutButtons = document.querySelectorAll('.layout-controls button');
     const loadButtons = document.querySelectorAll('.load-stream');
@@ -22,32 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.opacity-control').forEach(control => {
         control.style.display = 'none';
     });
-    
-    // 初期化時にチャットボタンを無効化する
-    document.querySelectorAll('.toggle-chat').forEach(button => {
-        disableChatButton(button);
-    });
-    
-    // チャットボタンを無効化する関数
-    function disableChatButton(button) {
-        button.style.opacity = '0.5';
-        button.style.cursor = 'not-allowed';
-        button.style.backgroundColor = '#888';
-        button.title = 'チャット機能は配信が読み込まれていません';
-        button.classList.add('disabled');
-    }
-    
-    // チャットボタンを有効化する関数
-    function enableChatButton(button) {
-        button.style.opacity = '1';
-        button.style.cursor = 'pointer';
-        button.style.backgroundColor = '';
-        button.title = 'チャットを表示/非表示';
-        button.classList.remove('disabled');
-    }
-    
-    // 現在表示されている配信入力フィールドの数
-    let visibleStreamInputs = 1;
     
     // 状態管理
     let currentState = {
@@ -238,10 +232,38 @@ document.addEventListener('DOMContentLoaded', () => {
     // インラインURL入力の実装
     function initializeStreamPlayers() {
         document.querySelectorAll('.stream-player').forEach(player => {
+            const streamId = player.id.split('-')[1];
+            
+            // チャットボタンを無効化
+            const chatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
+            if (chatButton) {
+                // プレーヤー内にiframeがあるかどうかを確認（配信が読み込まれているかの判定）
+                const hasStream = player.querySelector('iframe:not(.chat-iframe)');
+                
+                // 配信が読み込まれていない場合はチャットボタンを無効化
+                if (!hasStream) {
+                    disableChatButton(chatButton);
+                } else {
+                    // 配信が読み込まれている場合、プラットフォームを確認
+                    if (currentState.streams[streamId]) {
+                        const platform = currentState.streams[streamId].platform;
+                        // TwitchとYouTubeの場合のみチャットボタンを有効化
+                        if (platform === 'twitch' || platform === 'youtube') {
+                            enableChatButton(chatButton);
+                        } else {
+                            disableChatButton(chatButton);
+                        }
+                    } else {
+                        // ストリーム情報がない場合も無効化
+                        disableChatButton(chatButton);
+                    }
+                }
+            }
+            
+            // プレースホルダーのクリックイベント
             const placeholder = player.querySelector('.placeholder');
             if (placeholder) {
                 placeholder.addEventListener('click', () => {
-                    const streamId = player.id.split('-')[1];
                     createInlineUrlInput(player, streamId);
                 });
             }
