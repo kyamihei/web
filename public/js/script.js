@@ -1,4 +1,18 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // DOM要素のキャッシュ - パフォーマンス向上のため
+    const elements = {
+        streamsContainer: document.querySelector('.streams-container'),
+        layoutButtons: document.querySelectorAll('.layout-controls button'),
+        loadButtons: document.querySelectorAll('.load-stream'),
+        menuToggle: document.getElementById('menu-toggle'),
+        closeMenu: document.getElementById('close-menu'),
+        streamMenu: document.getElementById('stream-menu'),
+        addStreamButton: document.getElementById('add-stream'),
+        opacityControls: document.querySelectorAll('.opacity-control'),
+        chatButtons: document.querySelectorAll('.toggle-chat'),
+        fullscreenToggle: document.getElementById('fullscreen-toggle')
+    };
+
     // Service Workerを無効化（エラー対策）
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(registrations) {
@@ -9,22 +23,22 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 要素の取得
-    const streamsContainer = document.querySelector('.streams-container');
-    const layoutButtons = document.querySelectorAll('.layout-controls button');
-    const loadButtons = document.querySelectorAll('.load-stream');
-    const menuToggle = document.getElementById('menu-toggle');
-    const closeMenu = document.getElementById('close-menu');
-    const streamMenu = document.getElementById('stream-menu');
-    const addStreamButton = document.getElementById('add-stream');
+    // 現在表示されている配信入力フィールドの数
+    let visibleStreamInputs = 1;
     
+    // 状態管理
+    let currentState = {
+        layout: 'layout-2x2',
+        streams: {}
+    };
+
     // 初期化時に透過度メニューを非表示にする
-    document.querySelectorAll('.opacity-control').forEach(control => {
+    elements.opacityControls.forEach(control => {
         control.style.display = 'none';
     });
     
     // 初期化時にチャットボタンを無効化する
-    document.querySelectorAll('.toggle-chat').forEach(button => {
+    elements.chatButtons.forEach(button => {
         disableChatButton(button);
     });
     
@@ -46,15 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
         button.classList.remove('disabled');
     }
     
-    // 現在表示されている配信入力フィールドの数
-    let visibleStreamInputs = 1;
-    
-    // 状態管理
-    let currentState = {
-        layout: 'layout-2x2',
-        streams: {}
-    };
-
     // URLからステートを復元
     function loadStateFromURL() {
         const params = new URLSearchParams(window.location.search);
@@ -90,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const layoutButton = document.getElementById(layoutName);
             if (layoutButton) {
                 // 他のレイアウトボタンからactiveクラスを削除
-                document.querySelectorAll('.layout-buttons button').forEach(btn => {
+                elements.layoutButtons.forEach(btn => {
                     btn.classList.remove('active');
                 });
                 
@@ -98,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 layoutButton.classList.add('active');
                 
                 // ストリームコンテナにレイアウトクラスを適用
-                const streamsContainer = document.querySelector('.streams-container');
+                const streamsContainer = elements.streamsContainer;
                 if (streamsContainer) {
                     // 既存のレイアウトクラスを削除
                     streamsContainer.className = 'streams-container';
@@ -426,14 +431,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // "追加"ボタンの表示状態を更新
         if (visibleStreamInputs < 10) {
-            addStreamButton.classList.remove('hidden');
+            elements.addStreamButton.classList.remove('hidden');
         } else {
-            addStreamButton.classList.add('hidden');
+            elements.addStreamButton.classList.add('hidden');
         }
     }
     
     // 配信入力フィールドを追加する機能
-    addStreamButton.addEventListener('click', () => {
+    elements.addStreamButton.addEventListener('click', () => {
         if (visibleStreamInputs < 10) {
             // 非表示のストリーム入力フィールドを順番に探す（ストリーム1から優先）
             for (let i = 1; i <= 10; i++) {
@@ -503,15 +508,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // メニュー開閉機能
-    menuToggle.addEventListener('click', () => {
+    elements.menuToggle.addEventListener('click', () => {
         document.body.style.overflow = 'hidden'; // スクロール防止
-        streamMenu.classList.add('open');
+        elements.streamMenu.classList.add('open');
         
         // 共有URLを更新
         updateShareUrl();
         
         // メニューアイテムのフェードインアニメーション
-        const menuItems = streamMenu.querySelectorAll('h3, .layout-buttons, .stream-input, .add-stream-button, .url-help, .share-url-container');
+        const menuItems = elements.streamMenu.querySelectorAll('h3, .layout-buttons, .stream-input, .add-stream-button, .url-help, .share-url-container');
         menuItems.forEach((item, index) => {
             item.style.opacity = '0';
             item.style.transform = 'translateY(20px)';
@@ -524,28 +529,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    closeMenu.addEventListener('click', () => {
-        streamMenu.classList.remove('open');
+    elements.closeMenu.addEventListener('click', () => {
+        elements.streamMenu.classList.remove('open');
         document.body.style.overflow = ''; // スクロール復活
     });
     
     // メニュー外クリックで閉じる
     document.addEventListener('click', (event) => {
-        if (!streamMenu.contains(event.target) && event.target !== menuToggle && !menuToggle.contains(event.target)) {
-            streamMenu.classList.remove('open');
+        if (!elements.streamMenu.contains(event.target) && event.target !== elements.menuToggle && !elements.menuToggle.contains(event.target)) {
+            elements.streamMenu.classList.remove('open');
         }
     });
     
     // レイアウトボタンのイベントリスナー
-    layoutButtons.forEach(button => {
+    elements.layoutButtons.forEach(button => {
         button.addEventListener('click', () => {
             // アクティブクラスの切り替え
-            layoutButtons.forEach(btn => btn.classList.remove('active'));
+            elements.layoutButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
             
             // レイアウトクラスの切り替え
             const layoutClass = button.id;
-            streamsContainer.className = 'streams-container ' + layoutClass;
+            elements.streamsContainer.className = 'streams-container ' + layoutClass;
             
             // 状態を更新
             currentState.layout = layoutClass;
@@ -607,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('layout-2x2').classList.add('active');
     
     // 読み込みボタンのイベントリスナー
-    loadButtons.forEach(button => {
+    elements.loadButtons.forEach(button => {
         button.addEventListener('click', () => {
             const streamId = button.getAttribute('data-target');
             const platformSelect = document.getElementById(`platform-${streamId}`);
@@ -626,77 +631,29 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // ストリームを読み込む関数
     function loadStream(streamId, platform, channelId) {
+        // 引数の検証
+        if (!streamId || !platform || !channelId) {
+            console.error('Invalid arguments for loadStream:', {streamId, platform, channelId});
+            return;
+        }
+        
         const streamContainer = document.getElementById(`stream-${streamId}`);
         const mainInput = document.getElementById(`stream-input-${streamId}`);
+        
+        if (!streamContainer) {
+            console.error(`Stream container not found for streamId: ${streamId}`);
+            return;
+        }
         
         // 既存のコンテンツをクリアしてiframeを追加
         streamContainer.innerHTML = '';
         
         // URLの正規化と埋め込みURL生成
-        let embedUrl = '';
-        let normalizedChannelId = channelId;
+        const { embedUrl, normalizedChannelId } = generateEmbedUrl(platform, channelId);
         
-        switch (platform) {
-            case 'twitch':
-                const parentParam = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
-                // Twitchの完全なURLからチャンネル名を抽出
-                if (channelId.includes('twitch.tv/')) {
-                    normalizedChannelId = channelId.split('twitch.tv/')[1].split('/')[0];
-                }
-                if (normalizedChannelId.startsWith('v')) {
-                    embedUrl = `https://player.twitch.tv/?video=${normalizedChannelId}&parent=${parentParam}&parent=www.${parentParam}&autoplay=true&muted=false&mature=true`;
-                } else {
-                    // 複数のparentパラメータを追加して互換性を向上
-                    embedUrl = `https://player.twitch.tv/?channel=${normalizedChannelId}&parent=${parentParam}&parent=www.${parentParam}&autoplay=true&muted=false&mature=true`;
-                }
-                break;
-                
-            case 'youtube':
-                // YouTubeの様々なURL形式に対応
-                let youtubeId = normalizedChannelId;
-                if (normalizedChannelId.includes('youtube.com/')) {
-                    try {
-                        const url = new URL(normalizedChannelId);
-                        if (normalizedChannelId.includes('youtube.com/watch')) {
-                    youtubeId = url.searchParams.get('v');
-                        } else if (normalizedChannelId.includes('youtube.com/live/')) {
-                            youtubeId = normalizedChannelId.split('youtube.com/live/')[1].split('?')[0];
-                        } else if (normalizedChannelId.includes('youtube.com/channel/')) {
-                            youtubeId = normalizedChannelId.split('youtube.com/channel/')[1].split('?')[0];
-                        }
-                    } catch (e) {
-                        console.error('Invalid YouTube URL:', e);
-                        alert('無効なYouTube URLです');
-                        return;
-                    }
-                } else if (normalizedChannelId.includes('youtu.be/')) {
-                    youtubeId = normalizedChannelId.split('youtu.be/')[1].split('?')[0];
-                }
-                embedUrl = `https://www.youtube.com/embed/${youtubeId}?autoplay=1`;
-                break;
-                
-            case 'twitcasting':
-                // ツイキャスの完全なURLからユーザー名を抽出
-                if (normalizedChannelId.includes('twitcasting.tv/')) {
-                    normalizedChannelId = normalizedChannelId.split('twitcasting.tv/')[1].split('/')[0];
-                }
-                embedUrl = `https://twitcasting.tv/${normalizedChannelId}/embeddedplayer/live?auto_play=true`;
-                break;
-                
-            case 'openrec':
-                // OPENRECの完全なURLから配信IDを抽出
-                if (normalizedChannelId.includes('openrec.tv/')) {
-                    const match = normalizedChannelId.match(/openrec\.tv\/(?:live|movie)\/([^\/\?]+)/);
-                    if (match) {
-                        normalizedChannelId = match[1];
-                    }
-                }
-                embedUrl = `https://www.openrec.tv/embed/${normalizedChannelId}`;
-                break;
-                
-            default:
-                alert('サポートされていないプラットフォームです');
-                return;
+        if (!embedUrl) {
+            alert('サポートされていないプラットフォームまたは無効なURLです');
+            return;
         }
         
         // iframeを作成して埋め込み
@@ -730,66 +687,142 @@ document.addEventListener('DOMContentLoaded', () => {
         resetButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
         resetButton.title = 'リセット';
         resetButton.setAttribute('data-target', streamId);
-        // 直接resetStreamを呼び出さないように変更（イベント委譲で処理するため）
         resetButtonContainer.appendChild(resetButton);
         streamContainer.appendChild(resetButtonContainer);
         
         // メイン入力フィールドを更新
-        if (mainInput) {
-            const platformSelect = mainInput.querySelector('.platform-select');
-            const channelInput = mainInput.querySelector('input');
-            const loadButton = mainInput.querySelector('.load-stream');
-            
-            if (platformSelect) {
-                platformSelect.value = platform;
-                // 読み込み後はプラットフォーム選択欄を変更不可に設定
-                platformSelect.disabled = true;
-            }
-            if (channelInput) {
-                channelInput.value = channelId;
-                // URL入力欄を変更不可に設定
-                channelInput.disabled = true;
-            }
-            if (loadButton) {
-                // 読み込みボタンを無効化
-                loadButton.disabled = true;
-                loadButton.style.opacity = '0.5';
-                loadButton.style.cursor = 'not-allowed';
-            }
-            
-            // 非表示状態を解除
-            mainInput.classList.remove('hidden');
-            updateVisibleStreamInputs();
+        updateMainInputField(mainInput, platform, channelId);
+        
+        // チャットボタンの状態を更新
+        updateChatButtonState(streamId, platform);
+        
+        // 状態を更新
+        currentState.streams[streamId] = { 
+            platform, 
+            channelId: normalizedChannelId,
+            chatVisible: false
+        };
+        saveStateToURL();
+    }
+    
+    // 埋め込みURLを生成する関数
+    function generateEmbedUrl(platform, channelId) {
+        let embedUrl = '';
+        let normalizedChannelId = channelId.trim();
+        
+        switch (platform) {
+            case 'twitch':
+                const parentParam = window.location.hostname === 'localhost' ? 'localhost' : window.location.hostname;
+                // Twitchの完全なURLからチャンネル名を抽出
+                if (normalizedChannelId.includes('twitch.tv/')) {
+                    normalizedChannelId = normalizedChannelId.split('twitch.tv/')[1].split('/')[0];
+                }
+                if (normalizedChannelId.startsWith('v')) {
+                    embedUrl = `https://player.twitch.tv/?video=${normalizedChannelId}&parent=${parentParam}&parent=www.${parentParam}&autoplay=true&muted=false&mature=true`;
+                } else {
+                    embedUrl = `https://player.twitch.tv/?channel=${normalizedChannelId}&parent=${parentParam}&parent=www.${parentParam}&autoplay=true&muted=false&mature=true`;
+                }
+                break;
+                
+            case 'youtube':
+                // YouTubeの様々なURL形式に対応
+                let youtubeId = normalizedChannelId;
+                if (normalizedChannelId.includes('youtube.com/')) {
+                    try {
+                        const url = new URL(normalizedChannelId);
+                        if (normalizedChannelId.includes('youtube.com/watch')) {
+                            youtubeId = url.searchParams.get('v');
+                        } else if (normalizedChannelId.includes('youtube.com/live/')) {
+                            youtubeId = normalizedChannelId.split('youtube.com/live/')[1].split('?')[0];
+                        } else if (normalizedChannelId.includes('youtube.com/channel/')) {
+                            youtubeId = normalizedChannelId.split('youtube.com/channel/')[1].split('?')[0];
+                        }
+                    } catch (e) {
+                        console.error('Invalid YouTube URL:', e);
+                        return { embedUrl: '', normalizedChannelId: '' };
+                    }
+                } else if (normalizedChannelId.includes('youtu.be/')) {
+                    youtubeId = normalizedChannelId.split('youtu.be/')[1].split('?')[0];
+                }
+                embedUrl = `https://www.youtube.com/embed/${youtubeId}?autoplay=1`;
+                normalizedChannelId = youtubeId;
+                break;
+                
+            case 'twitcasting':
+                // ツイキャスの完全なURLからユーザー名を抽出
+                if (normalizedChannelId.includes('twitcasting.tv/')) {
+                    normalizedChannelId = normalizedChannelId.split('twitcasting.tv/')[1].split('/')[0];
+                }
+                embedUrl = `https://twitcasting.tv/${normalizedChannelId}/embeddedplayer/live?auto_play=true`;
+                break;
+                
+            case 'openrec':
+                // OPENRECの完全なURLから配信IDを抽出
+                if (normalizedChannelId.includes('openrec.tv/')) {
+                    const match = normalizedChannelId.match(/openrec\.tv\/(?:live|movie)\/([^\/\?]+)/);
+                    if (match) {
+                        normalizedChannelId = match[1];
+                    }
+                }
+                embedUrl = `https://www.openrec.tv/embed/${normalizedChannelId}`;
+                break;
+                
+            default:
+                return { embedUrl: '', normalizedChannelId: '' };
         }
+        
+        return { embedUrl, normalizedChannelId };
+    }
+    
+    // メイン入力フィールドを更新する関数
+    function updateMainInputField(mainInput, platform, channelId) {
+        if (!mainInput) return;
+        
+        const platformSelect = mainInput.querySelector('.platform-select');
+        const channelInput = mainInput.querySelector('input[type="text"]');
+        const loadButton = mainInput.querySelector('.load-stream');
+        
+        if (platformSelect) {
+            platformSelect.value = platform;
+            // 読み込み後はプラットフォーム選択欄を変更不可に設定
+            platformSelect.disabled = true;
+        }
+        if (channelInput) {
+            channelInput.value = channelId;
+            // URL入力欄を変更不可に設定
+            channelInput.disabled = true;
+        }
+        if (loadButton) {
+            // 読み込みボタンを無効化
+            loadButton.disabled = true;
+            loadButton.style.opacity = '0.5';
+            loadButton.style.cursor = 'not-allowed';
+        }
+        
+        // 非表示状態を解除
+        mainInput.classList.remove('hidden');
+        updateVisibleStreamInputs();
+    }
+    
+    // チャットボタンの状態を更新する関数
+    function updateChatButtonState(streamId, platform) {
+        const toggleChatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
+        const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
+        
+        if (!toggleChatButton) return;
         
         // ツイキャスまたはOPENRECの場合、チャットボタンを無効化
         if (platform === 'twitcasting' || platform === 'openrec') {
-            const toggleChatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
-            const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
-            
-            if (toggleChatButton) {
-                disableChatButton(toggleChatButton);
-                toggleChatButton.title = `${platform === 'twitcasting' ? 'ツイキャス' : 'OPENREC'}のチャット機能は現在無効化されています`;
-            }
+            disableChatButton(toggleChatButton);
+            toggleChatButton.title = `${platform === 'twitcasting' ? 'ツイキャス' : 'OPENREC'}のチャット機能は現在無効化されています`;
             
             if (opacityControl) {
                 opacityControl.style.display = 'none';
             }
         } else if (platform === 'twitch' || platform === 'youtube') {
             // TwitchまたはYouTubeの場合はチャットボタンを有効化
-            const toggleChatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
-            if (toggleChatButton) {
-                enableChatButton(toggleChatButton);
-            }
+            enableChatButton(toggleChatButton);
         }
-        
-        // 状態を更新
-        currentState.streams[streamId] = { 
-            platform, 
-            channelId: normalizedChannelId,
-            chatVisible: false // チャットの表示状態も保存
-        };
-        saveStateToURL();
     }
     
     // プラットフォームに応じたスタイルを適用
@@ -859,35 +892,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // 共有URLを更新する関数
     function updateShareUrl() {
         const shareUrlInput = document.getElementById('share-url');
-        if (shareUrlInput) {
-            // 現在の状態から共有用の簡略化された状態を作成
-            const shareState = {
-                layout: currentState.layout,
-                streams: {}
-            };
-            
-            // レイアウト名の形式を確認し、必要に応じて修正
-            if (shareState.layout && !shareState.layout.startsWith('layout-')) {
-                shareState.layout = `layout-${shareState.layout}`;
-            }
-            
-            // ストリーム情報は配信プラットフォームとチャンネルIDのみを含める
-            Object.entries(currentState.streams).forEach(([streamId, streamData]) => {
-                if (streamData.platform && streamData.channelId) {
-                    shareState.streams[streamId] = {
-                        platform: streamData.platform,
-                        channelId: streamData.channelId
-                        // チャット表示状態、透過度、位置、サイズなどは含めない
-                    };
-                }
-            });
-            
-            // 簡略化された状態をエンコード
-            const stateString = btoa(JSON.stringify(shareState));
-            
-            // 共有用URLを生成
-            shareUrlInput.value = `${window.location.origin}${window.location.pathname}?state=${stateString}`;
+        if (!shareUrlInput) return;
+        
+        // 現在の状態から共有用の簡略化された状態を作成
+        const shareState = {
+            layout: currentState.layout,
+            streams: {}
+        };
+        
+        // レイアウト名の形式を確認し、必要に応じて修正
+        if (shareState.layout && !shareState.layout.startsWith('layout-')) {
+            shareState.layout = `layout-${shareState.layout}`;
         }
+        
+        // ストリーム情報は配信プラットフォームとチャンネルIDのみを含める
+        Object.entries(currentState.streams).forEach(([streamId, streamData]) => {
+            if (streamData.platform && streamData.channelId) {
+                shareState.streams[streamId] = {
+                    platform: streamData.platform,
+                    channelId: streamData.channelId
+                    // チャット表示状態、透過度、位置、サイズなどは含めない
+                };
+            }
+        });
+        
+        // 簡略化された状態をエンコード
+        const stateString = btoa(JSON.stringify(shareState));
+        
+        // 共有用URLを生成
+        shareUrlInput.value = `${window.location.origin}${window.location.pathname}?state=${stateString}`;
     }
 
     // 全体をリセットする関数
@@ -900,8 +933,8 @@ document.addEventListener('DOMContentLoaded', () => {
         chatContainers.forEach((container, index) => {
             if (!container.classList.contains('hidden')) {
                 container.classList.add('hidden');
-                streamPlayers[index].classList.remove('with-chat');
-                toggleButtons[index].classList.remove('active');
+                if (streamPlayers[index]) streamPlayers[index].classList.remove('with-chat');
+                if (toggleButtons[index]) toggleButtons[index].classList.remove('active');
             }
         });
         
@@ -913,7 +946,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             // レイアウトを2x2に戻す
-            document.getElementById('layout-2x2').click();
+            const defaultLayoutButton = document.getElementById('layout-2x2');
+            if (defaultLayoutButton) {
+                defaultLayoutButton.click();
+            }
             
             // すべての入力フィールドを非表示に
             document.querySelectorAll('.stream-input').forEach(input => {
@@ -945,7 +981,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.history.pushState({}, '', newURL);
             
             // "追加"ボタンを表示
-            addStreamButton.classList.remove('hidden');
+            elements.addStreamButton.classList.remove('hidden');
 
             // 共有URLを更新
             updateShareUrl();
@@ -955,353 +991,172 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300); // 300ミリ秒の遅延
     }
 
-    // 初期化時に共有URLコンテナを作成
-    function createShareUrlContainer() {
-        const container = document.createElement('div');
-        container.className = 'share-url-container';
-        container.innerHTML = `
-            <h3><i class="fas fa-share-alt"></i> 共有</h3>
-            <div class="share-url-input-container">
-                <input type="text" id="share-url" readonly>
-                <button class="copy-url-button">
-                    <i class="fas fa-copy"></i> コピー
-                </button>
-            </div>
-        `;
-        
-        // コピーボタンのイベントリスナーを追加
-        const copyButton = container.querySelector('.copy-url-button');
-        copyButton.addEventListener('click', () => {
-            const shareUrlInput = container.querySelector('#share-url');
-            shareUrlInput.select();
-            document.execCommand('copy');
-            
-            // コピー成功のフィードバック
-            const originalText = copyButton.innerHTML;
-            copyButton.innerHTML = '<i class="fas fa-check"></i> コピーしました！';
-            copyButton.style.background = 'var(--success-color)';
-            
-            setTimeout(() => {
-                copyButton.innerHTML = originalText;
-                copyButton.style.background = '';
-            }, 2000);
-        });
-        
-        // メニューの適切な位置に挿入
-        const streamControls = document.querySelector('.stream-controls');
-        if (streamControls) {
-            streamControls.appendChild(container);
-            
-            // リセットボタンを追加
-            const resetContainer = document.createElement('div');
-            resetContainer.className = 'reset-all-container';
-            resetContainer.innerHTML = `
-                <button class="reset-all-button">
-                    <i class="fas fa-undo-alt"></i> すべてリセット
-                </button>
-            `;
-            
-            const resetButton = resetContainer.querySelector('.reset-all-button');
-            resetButton.addEventListener('click', resetAll);
-            
-            streamControls.appendChild(resetContainer);
-        }
-    }
-
-    // 初期化時に実行
-    createShareUrlContainer();
-    
-    // ストリームプレーヤーのホバーエフェクト
-    document.querySelectorAll('.stream-player').forEach(player => {
-        player.addEventListener('mouseenter', () => {
-            const placeholder = player.querySelector('.placeholder-icon');
-            if (placeholder) {
-                placeholder.style.transform = 'scale(1.1)';
-                placeholder.style.opacity = '1';
-            }
-        });
-        
-        player.addEventListener('mouseleave', () => {
-            const placeholder = player.querySelector('.placeholder-icon');
-            if (placeholder) {
-                placeholder.style.transform = 'scale(1)';
-                placeholder.style.opacity = '0.7';
-            }
-        });
-    });
-
-    // 初期化
-    if (window.location.search) {
-        // URLからステートがある場合のみ復元
-        loadStateFromURL();
-    } else {
-        // URLにステートがない場合は、URLを変更せずに2x2レイアウトを適用
-        
-        // まず他のボタンからactiveクラスを削除（念のため）
-        layoutButtons.forEach(btn => btn.classList.remove('active'));
-        
-        // 2x2ボタンにactiveクラスを追加
-        document.getElementById('layout-2x2').classList.add('active');
-        
-        // レイアウトクラスの設定
-        streamsContainer.className = 'streams-container layout-2x2';
-        currentState.layout = 'layout-2x2';
-        
-        // レイアウトに応じてストリームプレーヤーの表示/非表示を設定
-        const streamPlayers = document.querySelectorAll('.stream-player');
-        streamPlayers.forEach((player, index) => {
-            player.style.display = index < 4 ? 'flex' : 'none';
-        });
-    }
-
-    initializeStreamPlayers();
-
-    function createLayoutButtons() {
-        const layoutButtons = document.querySelector('.layout-buttons');
-        layoutButtons.innerHTML = `
-            <!-- 基本レイアウト（1～4画面） -->
-            <div class="layout-group">
-                <div class="layout-group-title">基本レイアウト（1～4画面）</div>
-                <button id="layout-1x2" title="1x2レイアウト">
-                    <div class="layout-icon">
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                    </div>
-                </button>
-                <button id="layout-2x1" title="2x1レイアウト">
-                    <div class="layout-icon">
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                    </div>
-                </button>
-                <button id="layout-2x2" title="2x2レイアウト">
-                    <div class="layout-icon">
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                    </div>
-                </button>
-                <button id="layout-1x3" title="1x3レイアウト">
-                    <div class="layout-icon">
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                    </div>
-                </button>
-                <button id="layout-3x1" title="3x1レイアウト">
-                    <div class="layout-icon">
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                    </div>
-                </button>
-                <!-- 1x4と4x1ボタンを削除 -->
-            </div>
-            
-            <!-- 中規模レイアウト（6～9画面） -->
-            <div class="layout-group">
-                <div class="layout-group-title">中規模レイアウト（6～9画面）</div>
-                <button id="layout-2x3" title="2x3レイアウト">
-                    <div class="layout-icon">
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                    </div>
-                </button>
-                <button id="layout-3x2" title="3x2レイアウト">
-                    <div class="layout-icon">
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                    </div>
-                </button>
-                <button id="layout-3x3" title="3x3レイアウト">
-                    <div class="layout-icon">
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                    </div>
-                </button>
-            </div>
-            
-            <!-- 大規模レイアウト（8～10画面） -->
-            <div class="layout-group">
-                <div class="layout-group-title">大規模レイアウト（8～10画面）</div>
-                <button id="layout-2x4" title="2x4レイアウト">
-                    <div class="layout-icon">
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                    </div>
-                </button>
-                <button id="layout-custom" title="大3小4レイアウト">
-                    <div class="layout-icon">
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                    </div>
-                </button>
-                <button id="layout-custom2" title="大2小8レイアウト">
-                    <div class="layout-icon">
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                    </div>
-                </button>
-            </div>
-        `;
-
-        // レイアウトボタンのイベントリスナーを再設定
-        const buttons = layoutButtons.querySelectorAll('button');
-        buttons.forEach(button => {
-            button.addEventListener('click', () => {
-                
-                // アクティブクラスの切り替え
-                buttons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                
-                // レイアウトクラスの切り替え
-                const layoutClass = button.id;
-                streamsContainer.className = 'streams-container ' + layoutClass;
-                
-                // 状態を更新
-                currentState.layout = layoutClass;
-                saveStateToURL();
-                
-                // レイアウトに応じてストリームプレーヤーの表示/非表示を切り替え
-                const streamPlayers = document.querySelectorAll('.stream-player');
-                
-                switch (layoutClass) {
-                    case 'layout-1x2':
-                    case 'layout-2x1':
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 2 ? 'flex' : 'none';
-                        });
-                        break;
-                    case 'layout-1x3':
-                    case 'layout-3x1':
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 3 ? 'flex' : 'none';
-                        });
-                        break;
-                    case 'layout-2x3':
-                    case 'layout-3x2':
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 6 ? 'flex' : 'none';
-                        });
-                        break;
-                    case 'layout-3x3':
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 9 ? 'flex' : 'none';
-                        });
-                        break;
-                    case 'layout-2x4':
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 8 ? 'flex' : 'none';
-                        });
-                        break;
-                    case 'layout-custom':
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 7 ? 'flex' : 'none';
-                        });
-                        break;
-                    case 'layout-custom2':
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 10 ? 'flex' : 'none';
-                        });
-                        break;
-                    default:
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 4 ? 'flex' : 'none';
-                        });
+    // イベントリスナーのセットアップ
+    function setupEventListeners() {
+        // ストリームプレーヤーのホバーエフェクト
+        document.querySelectorAll('.stream-player').forEach(player => {
+            player.addEventListener('mouseenter', () => {
+                const placeholder = player.querySelector('.placeholder-icon');
+                if (placeholder) {
+                    placeholder.style.transform = 'scale(1.1)';
+                    placeholder.style.opacity = '1';
                 }
-
-                initializeStreamPlayers();
+            });
+            
+            player.addEventListener('mouseleave', () => {
+                const placeholder = player.querySelector('.placeholder-icon');
+                if (placeholder) {
+                    placeholder.style.transform = 'scale(1)';
+                    placeholder.style.opacity = '0.7';
+                }
             });
         });
+        
+        // チャット透過度スライダーのイベントリスナーを追加（イベント委譲）
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('chat-opacity')) {
+                const streamId = e.target.getAttribute('data-target');
+                const opacityValue = e.target.value;
+                updateChatOpacity(streamId, opacityValue);
+            }
+        });
+        
+        // ストリームプレーヤーのリセットボタンのイベントリスナー（イベント委譲）
+        document.addEventListener('click', (e) => {
+            // リセットボタンの処理
+            if (e.target.closest('.stream-reset-button')) {
+                const resetButton = e.target.closest('.stream-reset-button');
+                const streamId = resetButton.getAttribute('data-target');
+                
+                // まずチャットをOFFにする
+                const chatContainer = document.getElementById(`chat-${streamId}`);
+                const toggleButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
+                const streamPlayer = document.getElementById(`stream-${streamId}`);
+                
+                if (chatContainer && toggleButton && streamPlayer) {
+                    // チャットが表示されている場合は非表示にする
+                    if (!chatContainer.classList.contains('hidden')) {
+                        chatContainer.classList.add('hidden');
+                        toggleButton.classList.remove('active');
+                        streamPlayer.classList.remove('with-chat');
+                    }
+                }
+                
+                // 少し遅延を入れてから削除処理を実行
+                setTimeout(() => {
+                    resetStream(streamId);
+                }, 300); // 300ミリ秒の遅延
+            }
+            
+            // チャットボタンの処理
+            if (e.target.closest('.toggle-chat:not(.disabled)')) {
+                const button = e.target.closest('.toggle-chat');
+                const streamId = button.getAttribute('data-target');
+                toggleChat(streamId);
+            }
+            
+            // チャット位置ボタンの処理
+            if (e.target.closest('.toggle-chat-position')) {
+                const button = e.target.closest('.toggle-chat-position');
+                const streamId = button.getAttribute('data-target');
+                toggleChatPosition(streamId);
+            }
+            
+            // チャットサイズボタンの処理
+            if (e.target.closest('.toggle-chat-size')) {
+                const button = e.target.closest('.toggle-chat-size');
+                const streamId = button.getAttribute('data-target');
+                toggleChatSize(streamId);
+            }
+        });
+        
+        // 全画面表示ボタンのクリックイベント
+        elements.fullscreenToggle.addEventListener('click', toggleFullScreen);
+        
+        // 全画面表示の変更を監視
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                elements.fullscreenToggle.innerHTML = '<i class="fas fa-compress"></i>';
+                elements.fullscreenToggle.title = '全画面表示を終了';
+            } else {
+                elements.fullscreenToggle.innerHTML = '<i class="fas fa-expand"></i>';
+                elements.fullscreenToggle.title = '全画面表示';
+            }
+        });
     }
-
-    createLayoutButtons();
-
-    // 全画面表示の切り替え機能
-    const fullscreenToggle = document.getElementById('fullscreen-toggle');
     
+    // 全画面表示の切り替え機能
     function toggleFullScreen() {
         if (!document.fullscreenElement) {
             document.documentElement.requestFullscreen().catch(err => {
-                console.log(`Error attempting to enable full-screen mode: ${err.message}`);
+                console.error(`全画面表示エラー: ${err.message}`);
             });
-            fullscreenToggle.innerHTML = '<i class="fas fa-compress"></i>';
-            fullscreenToggle.title = '全画面表示を解除';
         } else {
             if (document.exitFullscreen) {
                 document.exitFullscreen();
-                fullscreenToggle.innerHTML = '<i class="fas fa-expand"></i>';
-                fullscreenToggle.title = '全画面表示';
             }
         }
     }
-
-    // 全画面表示ボタンのクリックイベント
-    fullscreenToggle.addEventListener('click', toggleFullScreen);
-
-    // 全画面表示の変更を監視
-    document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement) {
-            fullscreenToggle.innerHTML = '<i class="fas fa-expand"></i>';
-            fullscreenToggle.title = '全画面表示';
+    
+    // 初期化処理を実行
+    function init() {
+        // レイアウトボタンを作成
+        createLayoutButtons();
+        
+        // イベントリスナーをセットアップ
+        setupEventListeners();
+        
+        // ストリームプレーヤーを初期化
+        initializeStreamPlayers();
+        
+        // 共有URLコンテナを作成
+        createShareUrlContainer();
+        
+        // URLからステートを復元または初期レイアウトを適用
+        if (window.location.search) {
+            loadStateFromURL();
+        } else {
+            // URLにステートがない場合は、URLを変更せずに2x2レイアウトを適用
+            
+            // まず他のボタンからactiveクラスを削除（念のため）
+            elements.layoutButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // 2x2ボタンにactiveクラスを追加
+            document.getElementById('layout-2x2').classList.add('active');
+            
+            // レイアウトクラスの設定
+            elements.streamsContainer.className = 'streams-container layout-2x2';
+            currentState.layout = 'layout-2x2';
+            
+            // レイアウトに応じてストリームプレーヤーの表示/非表示を設定
+            const streamPlayers = document.querySelectorAll('.stream-player');
+            streamPlayers.forEach((player, index) => {
+                player.style.display = index < 4 ? 'flex' : 'none';
+            });
         }
-    });
-
-    // F11キーでの全画面表示も同じように処理
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'F11') {
-            e.preventDefault();
-            toggleFullScreen();
-        }
-    });
-
-    // script.js の最後に追加
-    window.addEventListener('load', () => {
-        console.log("Window loaded - setting active button");
-        if (!window.location.search) {
-        const layout2x2Button = document.getElementById('layout-2x2');
-        if (layout2x2Button) {
-            layout2x2Button.classList.add('active');
-            console.log("Active class added to 2x2 button");
-        }
-        }
-    });
-
+        
+        // 初期スタイルを適用
+        applyPlatformStyles();
+        
+        // 初期状態でツイキャスとOPENRECのチャットボタンをグレーアウト
+        document.querySelectorAll('.platform-select').forEach(select => {
+            if (select.value === 'twitcasting' || select.value === 'openrec') {
+                const streamId = select.id.split('-')[1];
+                const toggleChatButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
+                const opacityControl = document.querySelector(`.opacity-control[data-target="${streamId}"]`);
+                
+                if (toggleChatButton) {
+                    disableChatButton(toggleChatButton);
+                    toggleChatButton.title = `${select.value === 'twitcasting' ? 'ツイキャス' : 'OPENREC'}のチャット機能は現在無効化されています`;
+                }
+                if (opacityControl) opacityControl.style.display = 'none';
+            }
+        });
+    }
+    
+    // 初期化を実行
+    init();
+    
     // チャットトグルボタンのイベントリスナーを追加
     document.querySelectorAll('.toggle-chat').forEach(button => {
         button.addEventListener('click', (e) => {
@@ -1369,43 +1224,25 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // 現在のストリーム情報を取得
-        const platformSelect = document.getElementById(`platform-${streamId}`);
-        const channelInput = document.getElementById(`channel-${streamId}`);
-        
-        if (!platformSelect || !channelInput) {
-            console.error(`プラットフォームまたはチャンネル入力が見つかりません: platform-${streamId}, channel-${streamId}`);
-            return;
-        }
-        
-        const platform = platformSelect.value;
-        const channelValue = channelInput.value;
-        
-        // ツイキャスまたはOPENRECの場合はチャット機能を無効化
-        if (platform === 'twitcasting' || platform === 'openrec') {
-            console.log(`${platform === 'twitcasting' ? 'ツイキャス' : 'OPENREC'}のチャット機能は現在無効化されています`);
-            return;
-        }
-        
         // チャットが既に表示されている場合は非表示にする
         if (chatContainer.classList.contains('hidden')) {
             // チャットが非表示の場合は表示する
             let chatUrl = '';
             let iframe = null;
             
-            switch (platform) {
+            switch (currentState.streams[streamId].platform) {
                 case 'twitch':
-                    if (!channelValue) {
+                    if (!currentState.streams[streamId].channelId) {
                         alert('Twitchのチャンネルが設定されていません。');
                         return;
                     }
                     
                     // チャンネルIDを抽出
-                    let twitchChannelId = channelValue;
+                    let twitchChannelId = currentState.streams[streamId].channelId;
                     
                     // URLが入力された場合はチャンネルIDを抽出
-                    if (channelValue.includes('twitch.tv/')) {
-                        const match = channelValue.match(/twitch\.tv\/([^\/\?]+)/);
+                    if (currentState.streams[streamId].channelId.includes('twitch.tv/')) {
+                        const match = currentState.streams[streamId].channelId.match(/twitch\.tv\/([^\/\?]+)/);
                         if (match && match[1]) {
                             twitchChannelId = match[1];
                         }
@@ -1419,45 +1256,44 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                     
                 case 'youtube':
-                    if (!channelValue) {
+                    if (!currentState.streams[streamId].channelId) {
                         alert('YouTubeの動画IDが設定されていません。');
                         return;
                     }
                     
                     // YouTube動画IDを抽出
-                    let youtubeId = channelValue;
+                    let youtubeId = currentState.streams[streamId].channelId;
                     
-                    if (channelValue.includes('youtube.com/')) {
+                    if (currentState.streams[streamId].channelId.includes('youtube.com/')) {
                         try {
-                            const url = new URL(channelValue);
-                            if (channelValue.includes('youtube.com/watch')) {
+                            const url = new URL(currentState.streams[streamId].channelId);
+                            if (currentState.streams[streamId].channelId.includes('youtube.com/watch')) {
                                 youtubeId = url.searchParams.get('v');
-                            } else if (channelValue.includes('youtube.com/live/')) {
-                                youtubeId = channelValue.split('youtube.com/live/')[1].split('?')[0];
+                            } else if (currentState.streams[streamId].channelId.includes('youtube.com/live/')) {
+                                youtubeId = currentState.streams[streamId].channelId.split('youtube.com/live/')[1].split('?')[0];
                             }
                         } catch (e) {
                             console.error('Invalid YouTube URL:', e);
                             alert('無効なYouTube URLです');
                             return;
                         }
-                    } else if (channelValue.includes('youtu.be/')) {
-                        youtubeId = channelValue.split('youtu.be/')[1].split('?')[0];
+                    } else if (currentState.streams[streamId].channelId.includes('youtu.be/')) {
+                        youtubeId = currentState.streams[streamId].channelId.split('youtu.be/')[1].split('?')[0];
                     }
-                    
                     chatUrl = `https://www.youtube.com/live_chat?v=${youtubeId}&embed_domain=${window.location.hostname}`;
                     break;
                     
                 case 'twitcasting':
-                    if (!channelValue) {
+                    if (!currentState.streams[streamId].channelId) {
                         alert('ツイキャスのユーザー名が設定されていません。');
                         return;
                     }
                     
                     // ツイキャスのユーザー名を抽出
-                    let twitcastingUser = channelValue;
+                    let twitcastingUser = currentState.streams[streamId].channelId;
                     
-                    if (channelValue.includes('twitcasting.tv/')) {
-                        twitcastingUser = channelValue.split('twitcasting.tv/')[1].split('/')[0];
+                    if (currentState.streams[streamId].channelId.includes('twitcasting.tv/')) {
+                        twitcastingUser = currentState.streams[streamId].channelId.split('twitcasting.tv/')[1].split('/')[0];
                     }
                     
                     // 修正：正しいチャット埋め込みURLフォーマットを使用
@@ -1465,21 +1301,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
                     
                 case 'openrec':
-                    if (!channelValue) {
+                    if (!currentState.streams[streamId].channelId) {
                         alert('OPENRECの配信IDが設定されていません。');
                         return;
                     }
                     
                     // OPENRECの配信IDを抽出
-                    let openrecId = channelValue;
+                    let openrecId = currentState.streams[streamId].channelId;
                     
-                    if (channelValue.includes('openrec.tv/')) {
-                        const match = channelValue.match(/openrec\.tv\/(?:live|movie)\/([^\/\?]+)/);
+                    if (currentState.streams[streamId].channelId.includes('openrec.tv/')) {
+                        const match = currentState.streams[streamId].channelId.match(/openrec\.tv\/(?:live|movie)\/([^\/\?]+)/);
                         if (match) {
                             openrecId = match[1];
                         }
                     }
-                    
                     chatUrl = `https://www.openrec.tv/embed/chat/${openrecId}`;
                     break;
                     
@@ -1686,7 +1521,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentState.streams[streamId]) {
             currentState.streams[streamId].chatSize = size;
             saveStateToURL();
-            updateShareUrl();
         }
     }
 
