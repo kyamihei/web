@@ -30,14 +30,8 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
     
-    <!-- プリロード -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="css/style.css" as="style">
-    <link rel="preload" href="js/script.js" as="script">
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
-    
-    <!-- スタイルシート -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
@@ -102,52 +96,334 @@
         
         <div class="stream-controls">
             <h3><i class="fas fa-video"></i> 配信</h3>
-            <template id="stream-input-template">
-                <div id="stream-input-$ID" class="stream-input hidden">
-                    <div class="stream-label">ストリーム $ID</div>
-                    <div class="input-group">
-                        <select id="platform-$ID" class="platform-select">
-                            <option value="twitch">Twitch</option>
-                            <option value="youtube">YouTube</option>
-                            <option value="twitcasting">ツイキャス</option>
-                            <option value="openrec">OPENREC</option>
-                        </select>
-                        <input type="text" id="channel-$ID" placeholder="URL/チャンネルID">
-                        <button class="load-stream" data-target="$ID"><i class="fas fa-play"></i></button>
-                    </div>
-                    <div class="chat-controls">
-                        <button class="toggle-chat" data-target="$ID"><i class="fas fa-comments"></i></button>
-                        <div class="opacity-control" data-target="$ID">
-                            <i class="fas fa-adjust"></i>
-                            <input type="range" class="chat-opacity" data-target="$ID" min="1" max="100" value="70" title="チャット透過度">
-                        </div>
-                        <button class="toggle-chat-position" data-target="$ID" title="チャット位置切替"><i class="fas fa-exchange-alt"></i></button>
-                        <button class="toggle-chat-size" data-target="$ID" title="チャットサイズ変更"><i class="fas fa-text-height"></i><span>大</span></button>
-                        <button class="delete-stream" data-target="$ID"><i class="fas fa-trash-alt"></i></button>
-                    </div>
+            <div id="stream-input-1" class="stream-input hidden">
+                <div class="stream-label">ストリーム 1</div>
+                <div class="input-group">
+                    <select id="platform-1" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-1" placeholder="URL/チャンネルID">
+                    <button class="load-stream" data-target="1"><i class="fas fa-play"></i></button>
                 </div>
-            </template>
+                <div class="chat-controls">
+                    <button class="toggle-chat" data-target="1"><i class="fas fa-comments"></i></button>
+                    <div class="opacity-control" data-target="1">
+                        <i class="fas fa-adjust"></i>
+                        <input type="range" class="chat-opacity" data-target="1" min="1" max="100" value="70" title="チャット透過度">
+                    </div>
+                    <button class="toggle-chat-position" data-target="1" title="チャット位置切替"><i class="fas fa-exchange-alt"></i></button>
+                    <button class="toggle-chat-size" data-target="1" title="チャットサイズ変更"><i class="fas fa-text-height"></i><span>大</span></button>
+                    <button class="delete-stream" data-target="1"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
             
-            <div id="stream-inputs-container"></div>
+            <div id="stream-input-2" class="stream-input hidden">
+                <div class="stream-label">ストリーム 2</div>
+                <div class="input-group">
+                    <select id="platform-2" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-2" placeholder="URL/チャンネルID">
+                    <button class="load-stream" data-target="2"><i class="fas fa-play"></i></button>
+                </div>
+                <div class="chat-controls">
+                    <button class="toggle-chat" data-target="2"><i class="fas fa-comments"></i></button>
+                    <div class="opacity-control" data-target="2">
+                        <i class="fas fa-adjust"></i>
+                        <input type="range" class="chat-opacity" data-target="2" min="1" max="100" value="70" title="チャット透過度">
+                    </div>
+                    <button class="toggle-chat-position" data-target="2" title="チャット位置切替"><i class="fas fa-exchange-alt"></i></button>
+                    <button class="toggle-chat-size" data-target="2" title="チャットサイズ変更"><i class="fas fa-text-height"></i><span>大</span></button>
+                    <button class="delete-stream" data-target="2"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
+            
+            <div id="stream-input-3" class="stream-input hidden">
+                <div class="stream-label">ストリーム 3</div>
+                <div class="input-group">
+                    <select id="platform-3" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-3" placeholder="URL/チャンネルID">
+                    <button class="load-stream" data-target="3"><i class="fas fa-play"></i></button>
+                </div>
+                <div class="chat-controls">
+                    <button class="toggle-chat" data-target="3"><i class="fas fa-comments"></i></button>
+                    <div class="opacity-control" data-target="3">
+                        <i class="fas fa-adjust"></i>
+                        <input type="range" class="chat-opacity" data-target="3" min="1" max="100" value="70" title="チャット透過度">
+                    </div>
+                    <button class="toggle-chat-position" data-target="3" title="チャット位置切替"><i class="fas fa-exchange-alt"></i></button>
+                    <button class="toggle-chat-size" data-target="3" title="チャットサイズ変更"><i class="fas fa-text-height"></i><span>大</span></button>
+                    <button class="delete-stream" data-target="3"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
+            
+            <div id="stream-input-4" class="stream-input hidden">
+                <div class="stream-label">ストリーム 4</div>
+                <div class="input-group">
+                    <select id="platform-4" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-4" placeholder="URL/チャンネルID">
+                    <button class="load-stream" data-target="4"><i class="fas fa-play"></i></button>
+                </div>
+                <div class="chat-controls">
+                    <button class="toggle-chat" data-target="4"><i class="fas fa-comments"></i></button>
+                    <div class="opacity-control" data-target="4">
+                        <i class="fas fa-adjust"></i>
+                        <input type="range" class="chat-opacity" data-target="4" min="1" max="100" value="70" title="チャット透過度">
+                    </div>
+                    <button class="toggle-chat-position" data-target="4" title="チャット位置切替"><i class="fas fa-exchange-alt"></i></button>
+                    <button class="toggle-chat-size" data-target="4" title="チャットサイズ変更"><i class="fas fa-text-height"></i><span>大</span></button>
+                    <button class="delete-stream" data-target="4"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
+            
+            <div id="stream-input-5" class="stream-input hidden">
+                <div class="stream-label">ストリーム 5</div>
+                <div class="input-group">
+                    <select id="platform-5" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-5" placeholder="URL/チャンネルID">
+                    <button class="load-stream" data-target="5"><i class="fas fa-play"></i></button>
+                </div>
+                <div class="chat-controls">
+                    <button class="toggle-chat" data-target="5"><i class="fas fa-comments"></i></button>
+                    <div class="opacity-control" data-target="5">
+                        <i class="fas fa-adjust"></i>
+                        <input type="range" class="chat-opacity" data-target="5" min="1" max="100" value="70" title="チャット透過度">
+                    </div>
+                    <button class="toggle-chat-position" data-target="5" title="チャット位置切替"><i class="fas fa-exchange-alt"></i></button>
+                    <button class="toggle-chat-size" data-target="5" title="チャットサイズ変更"><i class="fas fa-text-height"></i><span>大</span></button>
+                    <button class="delete-stream" data-target="5"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
+            
+            <div id="stream-input-6" class="stream-input hidden">
+                <div class="stream-label">ストリーム 6</div>
+                <div class="input-group">
+                    <select id="platform-6" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-6" placeholder="URL/チャンネルID">
+                    <button class="load-stream" data-target="6"><i class="fas fa-play"></i></button>
+                </div>
+                <div class="chat-controls">
+                    <button class="toggle-chat" data-target="6"><i class="fas fa-comments"></i></button>
+                    <div class="opacity-control" data-target="6">
+                        <i class="fas fa-adjust"></i>
+                        <input type="range" class="chat-opacity" data-target="6" min="1" max="100" value="70" title="チャット透過度">
+                    </div>
+                    <button class="toggle-chat-position" data-target="6" title="チャット位置切替"><i class="fas fa-exchange-alt"></i></button>
+                    <button class="toggle-chat-size" data-target="6" title="チャットサイズ変更"><i class="fas fa-text-height"></i><span>大</span></button>
+                    <button class="delete-stream" data-target="6"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
+            
+            <div id="stream-input-7" class="stream-input hidden">
+                <div class="stream-label">ストリーム 7</div>
+                <div class="input-group">
+                    <select id="platform-7" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-7" placeholder="URL/チャンネルID">
+                    <button class="load-stream" data-target="7"><i class="fas fa-play"></i></button>
+                </div>
+                <div class="chat-controls">
+                    <button class="toggle-chat" data-target="7"><i class="fas fa-comments"></i></button>
+                    <div class="opacity-control" data-target="7">
+                        <i class="fas fa-adjust"></i>
+                        <input type="range" class="chat-opacity" data-target="7" min="1" max="100" value="70" title="チャット透過度">
+                    </div>
+                    <button class="toggle-chat-position" data-target="7" title="チャット位置切替"><i class="fas fa-exchange-alt"></i></button>
+                    <button class="toggle-chat-size" data-target="7" title="チャットサイズ変更"><i class="fas fa-text-height"></i><span>大</span></button>
+                    <button class="delete-stream" data-target="7"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
+            
+            <div id="stream-input-8" class="stream-input hidden">
+                <div class="stream-label">ストリーム 8</div>
+                <div class="input-group">
+                    <select id="platform-8" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-8" placeholder="URL/チャンネルID">
+                    <button class="load-stream" data-target="8"><i class="fas fa-play"></i></button>
+                </div>
+                <div class="chat-controls">
+                    <button class="toggle-chat" data-target="8"><i class="fas fa-comments"></i></button>
+                    <div class="opacity-control" data-target="8">
+                        <i class="fas fa-adjust"></i>
+                        <input type="range" class="chat-opacity" data-target="8" min="1" max="100" value="70" title="チャット透過度">
+                    </div>
+                    <button class="toggle-chat-position" data-target="8" title="チャット位置切替"><i class="fas fa-exchange-alt"></i></button>
+                    <button class="toggle-chat-size" data-target="8" title="チャットサイズ変更"><i class="fas fa-text-height"></i><span>大</span></button>
+                    <button class="delete-stream" data-target="8"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
+            
+            <div id="stream-input-9" class="stream-input hidden">
+                <div class="stream-label">ストリーム 9</div>
+                <div class="input-group">
+                    <select id="platform-9" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-9" placeholder="URL/チャンネルID">
+                    <button class="load-stream" data-target="9"><i class="fas fa-play"></i></button>
+                </div>
+                <div class="chat-controls">
+                    <button class="toggle-chat" data-target="9"><i class="fas fa-comments"></i></button>
+                    <div class="opacity-control" data-target="9">
+                        <i class="fas fa-adjust"></i>
+                        <input type="range" class="chat-opacity" data-target="9" min="1" max="100" value="70" title="チャット透過度">
+                    </div>
+                    <button class="toggle-chat-position" data-target="9" title="チャット位置切替"><i class="fas fa-exchange-alt"></i></button>
+                    <button class="toggle-chat-size" data-target="9" title="チャットサイズ変更"><i class="fas fa-text-height"></i><span>大</span></button>
+                    <button class="delete-stream" data-target="9"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
+            
+            <div id="stream-input-10" class="stream-input hidden">
+                <div class="stream-label">ストリーム 10</div>
+                <div class="input-group">
+                    <select id="platform-10" class="platform-select">
+                        <option value="twitch">Twitch</option>
+                        <option value="youtube">YouTube</option>
+                        <option value="twitcasting">ツイキャス</option>
+                        <option value="openrec">OPENREC</option>
+                    </select>
+                    <input type="text" id="channel-10" placeholder="URL/チャンネルID">
+                    <button class="load-stream" data-target="10"><i class="fas fa-play"></i></button>
+                </div>
+                <div class="chat-controls">
+                    <button class="toggle-chat" data-target="10"><i class="fas fa-comments"></i></button>
+                    <div class="opacity-control" data-target="10">
+                        <i class="fas fa-adjust"></i>
+                        <input type="range" class="chat-opacity" data-target="10" min="1" max="100" value="70" title="チャット透過度">
+                    </div>
+                    <button class="toggle-chat-position" data-target="10" title="チャット位置切替"><i class="fas fa-exchange-alt"></i></button>
+                    <button class="toggle-chat-size" data-target="10" title="チャットサイズ変更"><i class="fas fa-text-height"></i><span>大</span></button>
+                    <button class="delete-stream" data-target="10"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
             
             <button id="add-stream" class="add-stream-button"><i class="fas fa-plus"></i> 配信を追加</button>
         </div>
     </div>
     
     <div class="streams-container layout-2x2">
-        <template id="stream-player-template">
-            <div id="stream-$ID" class="stream-player">
-                <div class="placeholder">
-                    <i class="fas fa-plus-circle placeholder-icon"></i>
-                    <p>ストリーム$ID</p>
-                    <p>ここをクリックして配信を追加</p>
-                </div>
-                <div id="chat-$ID" class="chat-container hidden"></div>
+        <div id="stream-1" class="stream-player">
+            <div class="placeholder">
+                <i class="fas fa-plus-circle placeholder-icon"></i>
+                <p>ストリーム１</p>
+                <p>ここをクリックして配信を追加</p>
             </div>
-        </template>
-        <div id="streams-container"></div>
+            <div id="chat-1" class="chat-container hidden"></div>
+        </div>
+        <div id="stream-2" class="stream-player">
+            <div class="placeholder">
+                <i class="fas fa-plus-circle placeholder-icon"></i>
+                <p>ストリーム２</p>
+                <p>ここをクリックして配信を追加</p>
+            </div>
+            <div id="chat-2" class="chat-container hidden"></div>
+        </div>
+        <div id="stream-3" class="stream-player">
+            <div class="placeholder">
+                <i class="fas fa-plus-circle placeholder-icon"></i>
+                <p>ストリーム３</p>
+                <p>ここをクリックして配信を追加</p>
+            </div>
+            <div id="chat-3" class="chat-container hidden"></div>
+        </div>
+        <div id="stream-4" class="stream-player">
+            <div class="placeholder">
+                <i class="fas fa-plus-circle placeholder-icon"></i>
+                <p>ストリーム４</p>
+                <p>ここをクリックして配信を追加</p>
+            </div>
+            <div id="chat-4" class="chat-container hidden"></div>
+        </div>
+        <div id="stream-5" class="stream-player">
+            <div class="placeholder">
+                <i class="fas fa-plus-circle placeholder-icon"></i>
+                <p>ストリーム５</p>
+                <p>ここをクリックして配信を追加</p>
+            </div>
+            <div id="chat-5" class="chat-container hidden"></div>
+        </div>
+        <div id="stream-6" class="stream-player">
+            <div class="placeholder">
+                <i class="fas fa-plus-circle placeholder-icon"></i>
+                <p>ストリーム６</p>
+                <p>ここをクリックして配信を追加</p>
+            </div>
+            <div id="chat-6" class="chat-container hidden"></div>
+        </div>
+        <div id="stream-7" class="stream-player">
+            <div class="placeholder">
+                <i class="fas fa-plus-circle placeholder-icon"></i>
+                <p>ストリーム７</p>
+                <p>ここをクリックして配信を追加</p>
+            </div>
+            <div id="chat-7" class="chat-container hidden"></div>
+        </div>
+        <div id="stream-8" class="stream-player">
+            <div class="placeholder">
+                <i class="fas fa-plus-circle placeholder-icon"></i>
+                <p>ストリーム８</p>
+                <p>ここをクリックして配信を追加</p>
+            </div>
+            <div id="chat-8" class="chat-container hidden"></div>
+        </div>
+        <div id="stream-9" class="stream-player">
+            <div class="placeholder">
+                <i class="fas fa-plus-circle placeholder-icon"></i>
+                <p>ストリーム９</p>
+                <p>ここをクリックして配信を追加</p>
+            </div>
+            <div id="chat-9" class="chat-container hidden"></div>
+        </div>
+        <div id="stream-10" class="stream-player">
+            <div class="placeholder">
+                <i class="fas fa-plus-circle placeholder-icon"></i>
+                <p>ストリーム１０</p>
+                <p>ここをクリックして配信を追加</p>
+            </div>
+            <div id="chat-10" class="chat-container hidden"></div>
+        </div>
     </div>
     
-    <script src="js/script.js" defer></script>
+    
+    <script src="js/script.js"></script>
 </body>
 </html>
