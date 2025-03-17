@@ -1,24 +1,24 @@
 /* 全体のスタイル */
 :root {
-    --primary-color: #6c5ce7;
-    --primary-light: #a29bfe;
-    --primary-dark: #5641e5;
-    --secondary-color: #00cec9;
-    --accent-color: #fd79a8;
-    --dark-bg: #0f0f1a;
-    --dark-surface: #1a1a2e;
-    --dark-surface-2: #242538;
+    --primary-color: #7c5cff;
+    --primary-light: #9d89ff;
+    --primary-dark: #6345e5;
+    --secondary-color: #00d4d0;
+    --accent-color: #ff79ac;
+    --dark-bg: #0a0a1a;
+    --dark-surface: #15152e;
+    --dark-surface-2: #1e1e38;
     --text-primary: #ffffff;
-    --text-secondary: #b8b8d4;
+    --text-secondary: #c8c8e4;
     --twitch-color: #9146FF;
     --youtube-color: #FF0000;
     --twitcasting-color: #00a0dc;
     --openrec-color: #eb5528;
-    --success-color: #00b894;
-    --danger-color: #ff7675;
-    --warning-color: #fdcb6e;
+    --success-color: #00d68f;
+    --danger-color: #ff6b6b;
+    --warning-color: #ffd93d;
     --border-radius: 8px;
-    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+    --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 2px 10px rgba(0, 0, 0, 0.1);
     --transition-speed: 0.3s;
 }
 
@@ -41,7 +41,7 @@
 
 body {
     font-family: 'Noto Sans JP', 'Poppins', sans-serif;
-    background: linear-gradient(135deg, var(--dark-bg) 0%, #16162c 100%);
+    background: linear-gradient(135deg, var(--dark-bg) 0%, #12122c 50%, #1a1a3a 100%);
     color: var(--text-primary);
     line-height: 1.6;
     padding: 10px;
@@ -99,7 +99,9 @@ h1, h2, h3, h4, h5, h6 {
     right: -400px;
     width: 380px;
     height: 100%;
-    background: linear-gradient(135deg, var(--dark-surface) 0%, var(--dark-surface-2) 100%);
+    background: linear-gradient(160deg, var(--dark-surface) 0%, var(--dark-surface-2) 100%),
+                linear-gradient(45deg, rgba(124, 92, 255, 0.1) 0%, rgba(0, 212, 208, 0.1) 100%);
+    backdrop-filter: blur(10px);
     box-shadow: -2px 0 20px rgba(0, 0, 0, 0.5);
     z-index: 1000;
     overflow-y: auto;
@@ -210,9 +212,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .layout-buttons button {
-    background-color: rgba(255, 255, 255, 0.1);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
     color: var(--text-primary);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(5px);
     padding: 8px 15px;
     border-radius: var(--border-radius);
     cursor: pointer;
@@ -223,15 +226,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .layout-buttons button:hover {
-    background-color: rgba(255, 255, 255, 0.15);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%),
+                linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .layout-buttons button.active {
-    background-color: var(--primary-color);
-    border-color: var(--primary-light);
-    box-shadow: 0 0 15px rgba(108, 92, 231, 0.5);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%),
+                linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 /* ストリームコントロール */
@@ -259,7 +263,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .add-stream-button {
-    background: linear-gradient(135deg, var(--success-color) 0%, #20bf6b 100%);
+    background: linear-gradient(135deg, var(--success-color) 0%, #00b894 100%),
+                linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
     color: white;
     border: none;
     padding: 12px 20px;
@@ -292,8 +297,10 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 10px;
     padding: 12px;
     border-radius: var(--border-radius);
-    background-color: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: linear-gradient(145deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%),
+                linear-gradient(45deg, rgba(124, 92, 255, 0.05) 0%, rgba(0, 212, 208, 0.05) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(5px);
     transition: all var(--transition-speed) ease;
 }
 
@@ -400,7 +407,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .load-stream {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%),
+                linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
     color: white;
     border: none;
     padding: 10px 12px;
@@ -424,7 +432,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .delete-stream {
-    background: linear-gradient(135deg, var(--danger-color) 0%, #e17055 100%);
+    background: linear-gradient(135deg, var(--danger-color) 0%, #ff4757 100%),
+                linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
     color: white;
     border: none;
     padding: 10px 12px;
@@ -554,7 +563,8 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ストリームプレーヤー */
 .stream-player {
-    background: linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(36, 37, 56, 0.8) 100%);
+    background: linear-gradient(145deg, rgba(26, 26, 46, 0.9) 0%, rgba(36, 37, 56, 0.9) 100%),
+                linear-gradient(45deg, rgba(124, 92, 255, 0.05) 0%, rgba(0, 212, 208, 0.05) 100%);
     border-radius: var(--border-radius);
     overflow: hidden;
     position: relative;
@@ -563,7 +573,8 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
     align-items: center;
     box-shadow: var(--box-shadow);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(5px);
     transition: all var(--transition-speed) ease;
 }
 
@@ -902,7 +913,7 @@ iframe {
 }
 
 .reset-button {
-    background: linear-gradient(135deg, var(--danger-color) 0%, #e17055 100%);
+    background: linear-gradient(135deg, var(--danger-color) 0%, #ff4757 100%);
     box-shadow: var(--box-shadow);
 }
 
@@ -945,11 +956,13 @@ iframe {
 
 /* 共有URLコンテナ */
 .share-url-container {
-    background-color: rgba(0, 0, 0, 0.2);
+    background: linear-gradient(145deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.3) 100%),
+                linear-gradient(45deg, rgba(124, 92, 255, 0.05) 0%, rgba(0, 212, 208, 0.05) 100%);
     border-radius: var(--border-radius);
     padding: 12px;
     margin: 15px 0;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(5px);
 }
 
 .share-url-container h3 {
@@ -1148,7 +1161,7 @@ iframe {
 }
 
 .reset-all-button {
-    background: linear-gradient(135deg, var(--danger-color) 0%, #e17055 100%);
+    background: linear-gradient(135deg, var(--danger-color) 0%, #ff4757 100%);
     color: white;
     border: none;
     padding: 12px 24px;
@@ -1183,7 +1196,8 @@ iframe {
 
 /* チャット関連のスタイル */
 .toggle-chat {
-    background: linear-gradient(135deg, var(--secondary-color) 0%, #00a8a3 100%);
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #00a8a3 100%),
+                linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
     color: white;
     border: none;
     padding: 8px 15px;
@@ -1357,7 +1371,8 @@ iframe {
 
 /* チャットトグルボタンのアクティブ状態 */
 .toggle-chat.active {
-    background: linear-gradient(135deg, var(--accent-color) 0%, #e84393 100%);
+    background: linear-gradient(135deg, var(--accent-color) 0%, #e84393 100%),
+                linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
     box-shadow: 0 0 15px rgba(232, 67, 147, 0.5);
     animation: pulse-chat 2s infinite;
 }

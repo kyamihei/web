@@ -574,7 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                     break;
                 case 'layout-3x3':
-                    streamPlayers.forEach((player, index) => {
+                streamPlayers.forEach((player, index) => {
                         player.style.display = index < 9 ? 'flex' : 'none';
                     });
                     break;
