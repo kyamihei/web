@@ -725,7 +725,8 @@ document.addEventListener('DOMContentLoaded', () => {
         resetButton.className = 'stream-reset-button';
         resetButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
         resetButton.title = 'リセット';
-        resetButton.addEventListener('click', () => resetStream(streamId));
+        resetButton.setAttribute('data-target', streamId);
+        // 直接resetStreamを呼び出さないように変更（イベント委譲で処理するため）
         resetButtonContainer.appendChild(resetButton);
         streamContainer.appendChild(resetButtonContainer);
         
@@ -1772,4 +1773,31 @@ document.addEventListener('DOMContentLoaded', () => {
             saveStateToURL();
         }
     }
+
+    // ストリームプレーヤーのリセットボタンのイベントリスナー
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.stream-reset-button')) {
+            const resetButton = e.target.closest('.stream-reset-button');
+            const streamId = resetButton.getAttribute('data-target');
+            
+            // まずチャットをOFFにする
+            const chatContainer = document.getElementById(`chat-${streamId}`);
+            const toggleButton = document.querySelector(`.toggle-chat[data-target="${streamId}"]`);
+            const streamPlayer = document.getElementById(`stream-${streamId}`);
+            
+            if (chatContainer && toggleButton && streamPlayer) {
+                // チャットが表示されている場合は非表示にする
+                if (!chatContainer.classList.contains('hidden')) {
+                    chatContainer.classList.add('hidden');
+                    toggleButton.classList.remove('active');
+                    streamPlayer.classList.remove('with-chat');
+                }
+            }
+            
+            // 少し遅延を入れてから削除処理を実行
+            setTimeout(() => {
+                resetStream(streamId);
+            }, 300); // 300ミリ秒の遅延
+        }
+    });
 });
