@@ -38,6 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const streamMenu = document.getElementById('stream-menu');
     const addStreamButton = document.getElementById('add-stream');
     
+    // 表示されているストリーム入力フィールドの数を管理する変数
+    let visibleStreamInputs = 0;
+    
     // 初期化時に透過度メニューを非表示にする
     document.querySelectorAll('.opacity-control').forEach(control => {
         control.style.display = 'none';
