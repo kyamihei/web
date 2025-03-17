@@ -1154,6 +1154,59 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
+    // 共有URLコンテナを作成する関数
+    function createShareUrlContainer() {
+        const container = document.createElement('div');
+        container.className = 'share-url-container';
+        container.innerHTML = `
+            <h3><i class="fas fa-share-alt"></i> 共有</h3>
+            <div class="share-url-input-container">
+                <input type="text" id="share-url" readonly>
+                <button class="copy-url-button">
+                    <i class="fas fa-copy"></i> コピー
+                </button>
+            </div>
+        `;
+        
+        // コピーボタンのイベントリスナーを追加
+        const copyButton = container.querySelector('.copy-url-button');
+        copyButton.addEventListener('click', () => {
+            const shareUrlInput = container.querySelector('#share-url');
+            shareUrlInput.select();
+            document.execCommand('copy');
+            
+            // コピー成功のフィードバック
+            const originalText = copyButton.innerHTML;
+            copyButton.innerHTML = '<i class="fas fa-check"></i> コピーしました！';
+            copyButton.style.background = 'var(--success-color)';
+            
+            setTimeout(() => {
+                copyButton.innerHTML = originalText;
+                copyButton.style.background = '';
+            }, 2000);
+        });
+        
+        // メニューの適切な位置に挿入
+        const streamControls = document.querySelector('.stream-controls');
+        if (streamControls) {
+            streamControls.appendChild(container);
+            
+            // リセットボタンを追加
+            const resetContainer = document.createElement('div');
+            resetContainer.className = 'reset-all-container';
+            resetContainer.innerHTML = `
+                <button class="reset-all-button">
+                    <i class="fas fa-undo-alt"></i> すべてリセット
+                </button>
+            `;
+            
+            const resetButton = resetContainer.querySelector('.reset-all-button');
+            resetButton.addEventListener('click', resetAll);
+            
+            streamControls.appendChild(resetContainer);
+        }
+    }
+    
     // 初期化を実行
     init();
     
@@ -1638,3 +1691,198 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// レイアウトボタンを作成する関数
+function createLayoutButtons() {
+    const layoutButtons = document.querySelector('.layout-buttons');
+    if (!layoutButtons) return;
+    
+    layoutButtons.innerHTML = `
+        <!-- 基本レイアウト（1～4画面） -->
+        <div class="layout-group">
+            <div class="layout-group-title">基本レイアウト（1～4画面）</div>
+            <button id="layout-1x2" title="1x2レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-2x1" title="2x1レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-2x2" title="2x2レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-1x3" title="1x3レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-3x1" title="3x1レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+        </div>
+        
+        <!-- 中規模レイアウト（6～9画面） -->
+        <div class="layout-group">
+            <div class="layout-group-title">中規模レイアウト（6～9画面）</div>
+            <button id="layout-2x3" title="2x3レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-3x2" title="3x2レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-3x3" title="3x3レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+        </div>
+        
+        <!-- 大規模レイアウト（8～10画面） -->
+        <div class="layout-group">
+            <div class="layout-group-title">大規模レイアウト（8～10画面）</div>
+            <button id="layout-2x4" title="2x4レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-custom" title="大3小4レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+            <button id="layout-custom2" title="大2小8レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
+        </div>
+    `;
+
+    // レイアウトボタンのイベントリスナーを設定
+    const buttons = layoutButtons.querySelectorAll('button');
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            // アクティブクラスの切り替え
+            buttons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            
+            // レイアウトクラスの切り替え
+            const layoutClass = button.id;
+            elements.streamsContainer.className = 'streams-container ' + layoutClass;
+            
+            // 状態を更新
+            currentState.layout = layoutClass;
+            saveStateToURL();
+            
+            // レイアウトに応じてストリームプレーヤーの表示/非表示を切り替え
+            const streamPlayers = document.querySelectorAll('.stream-player');
+            
+            switch (layoutClass) {
+                case 'layout-1x2':
+                case 'layout-2x1':
+                streamPlayers.forEach((player, index) => {
+                    player.style.display = index < 2 ? 'flex' : 'none';
+                });
+                    break;
+                case 'layout-1x3':
+                case 'layout-3x1':
+                streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 3 ? 'flex' : 'none';
+                });
+                    break;
+                case 'layout-2x3':
+                case 'layout-3x2':
+                streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 6 ? 'flex' : 'none';
+                });
+                    break;
+                case 'layout-3x3':
+                streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 9 ? 'flex' : 'none';
+                    });
+                    break;
+                case 'layout-2x4':
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 8 ? 'flex' : 'none';
+                    });
+                    break;
+                case 'layout-custom':
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 7 ? 'flex' : 'none';
+                    });
+                    break;
+                case 'layout-custom2':
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 10 ? 'flex' : 'none';
+                    });
+                    break;
+                default:
+                streamPlayers.forEach((player, index) => {
+                    player.style.display = index < 4 ? 'flex' : 'none';
+                });
+            }
+
+            initializeStreamPlayers();
+        });
+    });
+}
