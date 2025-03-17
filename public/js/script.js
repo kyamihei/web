@@ -1210,7 +1210,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="grid-cell"></div>
                 </div>
             </button>
-            <button id="layout-custom" title="カスタムレイアウト">
+            <button id="layout-custom" title="大3小4レイアウト">
                 <div class="layout-icon">
                     <div class="grid-cell"></div>
                     <div class="grid-cell"></div>

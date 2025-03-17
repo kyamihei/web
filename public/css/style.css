@@ -445,6 +445,7 @@ h1, h2, h3, h4, h5, h6 {
 .layout-2x4 { grid-template: repeat(2, 1fr) / repeat(4, 1fr); }
 .layout-5x2 { grid-template: repeat(5, 1fr) / repeat(2, 1fr); }
 .layout-2x5 { grid-template: repeat(2, 1fr) / repeat(5, 1fr); }
+/* 大3小4レイアウト */
 .layout-custom {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -456,7 +457,7 @@ h1, h2, h3, h4, h5, h6 {
         "small3 small4 big3 big3";
 }
 
-/* カスタムレイアウトの各エリア */
+/* 大3小4レイアウトの各エリア */
 .layout-custom .stream-player:nth-child(1) {
     grid-area: big1;
 }
@@ -1005,8 +1006,8 @@ iframe {
 }
 
 #layout-5x2 .layout-icon {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(5, 1fr);
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
 }
 
 #layout-2x5 .layout-icon {
@@ -1023,26 +1024,26 @@ iframe {
 #layout-custom .grid-cell:nth-child(1) {
     grid-column: 1 / 3;
     grid-row: 1 / 3;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 #layout-custom .grid-cell:nth-child(2) {
     grid-column: 3 / 5;
     grid-row: 1 / 3;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 #layout-custom .grid-cell:nth-child(3) {
     grid-column: 3 / 5;
     grid-row: 3 / 5;
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 #layout-custom .grid-cell:nth-child(4),
 #layout-custom .grid-cell:nth-child(5),
 #layout-custom .grid-cell:nth-child(6),
 #layout-custom .grid-cell:nth-child(7) {
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 #layout-custom .grid-cell:nth-child(4) {
