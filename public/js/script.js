@@ -127,6 +127,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                 player.style.display = index < 6 ? 'flex' : 'none';
                             });
                             break;
+                        case 'layout-3x3':
+                            streamPlayers.forEach((player, index) => {
+                                player.style.display = index < 9 ? 'flex' : 'none';
+                            });
+                            break;
                         case 'layout-1x4':
                         case 'layout-4x1':
                             streamPlayers.forEach((player, index) => {
@@ -555,25 +560,30 @@ document.addEventListener('DOMContentLoaded', () => {
             switch (layoutClass) {
                 case 'layout-1x2':
                 case 'layout-2x1':
-                streamPlayers.forEach((player, index) => {
-                    player.style.display = index < 2 ? 'flex' : 'none';
-                });
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 2 ? 'flex' : 'none';
+                    });
                     break;
                 case 'layout-1x3':
                 case 'layout-3x1':
-                streamPlayers.forEach((player, index) => {
-                    player.style.display = index < 3 ? 'flex' : 'none';
-                });
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 3 ? 'flex' : 'none';
+                    });
                     break;
                 case 'layout-2x3':
                 case 'layout-3x2':
-                streamPlayers.forEach((player, index) => {
+                    streamPlayers.forEach((player, index) => {
                         player.style.display = index < 6 ? 'flex' : 'none';
-                });
+                    });
+                    break;
+                case 'layout-3x3':
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 9 ? 'flex' : 'none';
+                    });
                     break;
                 case 'layout-1x4':
                 case 'layout-4x1':
-                streamPlayers.forEach((player, index) => {
+                    streamPlayers.forEach((player, index) => {
                         player.style.display = index < 4 ? 'flex' : 'none';
                     });
                     break;
@@ -590,9 +600,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     break;
                 default:
-                streamPlayers.forEach((player, index) => {
-                    player.style.display = index < 4 ? 'flex' : 'none';
-                });
+                    streamPlayers.forEach((player, index) => {
+                        player.style.display = index < 4 ? 'flex' : 'none';
+                    });
             }
 
             initializeStreamPlayers();
@@ -1109,6 +1119,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="grid-cell"></div>
                 </div>
             </button>
+            <button id="layout-3x3" title="3x3レイアウト">
+                <div class="layout-icon">
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                    <div class="grid-cell"></div>
+                </div>
+            </button>
             <button id="layout-1x4" title="1x4レイアウト">
                 <div class="layout-icon">
                     <div class="grid-cell"></div>
@@ -1216,6 +1239,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     case 'layout-3x2':
                         streamPlayers.forEach((player, index) => {
                             player.style.display = index < 6 ? 'flex' : 'none';
+                        });
+                        break;
+                    case 'layout-3x3':
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 9 ? 'flex' : 'none';
                         });
                         break;
                     case 'layout-1x4':

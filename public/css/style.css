@@ -438,6 +438,7 @@ h1, h2, h3, h4, h5, h6 {
 .layout-3x1 { grid-template: repeat(3, 1fr) / 1fr; }
 .layout-2x3 { grid-template: repeat(2, 1fr) / repeat(3, 1fr); }
 .layout-3x2 { grid-template: repeat(3, 1fr) / repeat(2, 1fr); }
+.layout-3x3 { grid-template: repeat(3, 1fr) / repeat(3, 1fr); }
 .layout-1x4 { grid-template: 1fr / repeat(4, 1fr); }
 .layout-4x1 { grid-template: repeat(4, 1fr) / 1fr; }
 .layout-4x2 { grid-template: repeat(4, 1fr) / repeat(2, 1fr); }
@@ -939,6 +940,11 @@ iframe {
 
 #layout-3x2 .layout-icon {
     grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+#layout-3x3 .layout-icon {
+    grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
 }
 
