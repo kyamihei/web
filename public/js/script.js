@@ -137,11 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                 player.style.display = index < 8 ? 'flex' : 'none';
                             });
                             break;
-                        case 'layout-2x5':
-                            streamPlayers.forEach((player, index) => {
-                                player.style.display = index < 10 ? 'flex' : 'none';
-                            });
-                            break;
                         case 'layout-custom':
                             streamPlayers.forEach((player, index) => {
                                 player.style.display = index < 7 ? 'flex' : 'none';
@@ -586,11 +581,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'layout-2x4':
                     streamPlayers.forEach((player, index) => {
                         player.style.display = index < 8 ? 'flex' : 'none';
-                    });
-                    break;
-                case 'layout-2x5':
-                    streamPlayers.forEach((player, index) => {
-                        player.style.display = index < 10 ? 'flex' : 'none';
                     });
                     break;
                 case 'layout-custom':
@@ -1162,39 +1152,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="grid-cell"></div>
                     </div>
                 </button>
-                <button id="layout-5x2" title="5x2レイアウト">
-                    <div class="layout-icon">
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                    </div>
-                </button>
-                <button id="layout-2x5" title="2x5レイアウト">
-                    <div class="layout-icon">
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                        <div class="grid-cell"></div>
-                    </div>
-                </button>
-            </div>
-            
-            <!-- カスタムレイアウト -->
-            <div class="layout-group">
-                <div class="layout-group-title">特殊レイアウト</div>
                 <button id="layout-custom" title="大3小4レイアウト">
                     <div class="layout-icon">
                         <div class="grid-cell"></div>
@@ -1270,11 +1227,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     case 'layout-2x4':
                         streamPlayers.forEach((player, index) => {
                             player.style.display = index < 8 ? 'flex' : 'none';
-                        });
-                        break;
-                    case 'layout-2x5':
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 10 ? 'flex' : 'none';
                         });
                         break;
                     case 'layout-custom':
