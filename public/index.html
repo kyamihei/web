@@ -425,57 +425,50 @@
     
     <!-- レイアウト選択ポップアップ -->
     <div id="layout-selection-popup" class="layout-selection-popup">
-        <div class="layout-selection-container">
-            <h2>どのレイアウトで複窓する？</h2>
-            <p>お好みのレイアウトを選択してください。あとからでも変更できます。</p>
-            
+        <div class="layout-selection-content">
+            <h2><i class="fas fa-th-large"></i> どのレイアウトで複窓する？</h2>
             <div class="layout-options">
                 <div class="layout-option" data-layout="layout-2x2">
-                    <div class="layout-option-icon">
+                    <div class="layout-icon">
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                     </div>
-                    <div class="layout-option-name">2x2 (4画面)</div>
+                    <span>2x2</span>
                 </div>
-                
                 <div class="layout-option" data-layout="layout-1x2">
-                    <div class="layout-option-icon">
+                    <div class="layout-icon">
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                     </div>
-                    <div class="layout-option-name">1x2 (2画面)</div>
+                    <span>1x2</span>
                 </div>
-                
                 <div class="layout-option" data-layout="layout-2x1">
-                    <div class="layout-option-icon">
+                    <div class="layout-icon">
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                     </div>
-                    <div class="layout-option-name">2x1 (2画面)</div>
+                    <span>2x1</span>
                 </div>
-                
                 <div class="layout-option" data-layout="layout-1x3">
-                    <div class="layout-option-icon">
+                    <div class="layout-icon">
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                     </div>
-                    <div class="layout-option-name">1x3 (3画面)</div>
+                    <span>1x3</span>
                 </div>
-                
                 <div class="layout-option" data-layout="layout-3x1">
-                    <div class="layout-option-icon">
+                    <div class="layout-icon">
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                     </div>
-                    <div class="layout-option-name">3x1 (3画面)</div>
+                    <span>3x1</span>
                 </div>
-                
                 <div class="layout-option" data-layout="layout-2x3">
-                    <div class="layout-option-icon">
+                    <div class="layout-icon">
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
@@ -483,11 +476,10 @@
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                     </div>
-                    <div class="layout-option-name">2x3 (6画面)</div>
+                    <span>2x3</span>
                 </div>
-                
                 <div class="layout-option" data-layout="layout-3x2">
-                    <div class="layout-option-icon">
+                    <div class="layout-icon">
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
@@ -495,12 +487,28 @@
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                     </div>
-                    <div class="layout-option-name">3x2 (6画面)</div>
+                    <span>3x2</span>
                 </div>
-                
-                <div class="layout-option" data-layout="layout-3x3">
-                    <div class="layout-option-icon">
+                <div class="layout-option" data-layout="layout-1x4">
+                    <div class="layout-icon">
                         <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                    <span>1x4</span>
+                </div>
+                <div class="layout-option" data-layout="layout-4x1">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                    <span>4x1</span>
+                </div>
+                <div class="layout-option" data-layout="layout-4x2">
+                    <div class="layout-icon">
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
@@ -510,11 +518,10 @@
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                     </div>
-                    <div class="layout-option-name">3x3 (9画面)</div>
+                    <span>4x2</span>
                 </div>
-                
                 <div class="layout-option" data-layout="layout-2x4">
-                    <div class="layout-option-icon">
+                    <div class="layout-icon">
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
@@ -524,13 +531,39 @@
                         <div class="grid-cell"></div>
                         <div class="grid-cell"></div>
                     </div>
-                    <div class="layout-option-name">2x4 (8画面)</div>
+                    <span>2x4</span>
+                </div>
+                <div class="layout-option" data-layout="layout-custom">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                    <span>大3小4</span>
+                </div>
+                <div class="layout-option" data-layout="layout-custom2">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                    <span>大2小8</span>
                 </div>
             </div>
-            
             <div class="layout-selection-buttons">
-                <button id="confirm-layout" class="layout-selection-button confirm">確定</button>
-                <button id="skip-layout-selection" class="layout-selection-button cancel">スキップ</button>
+                <button id="confirm-layout" class="confirm-button">確定</button>
+                <button id="skip-layout-selection" class="skip-button">スキップ</button>
             </div>
         </div>
     </div>
