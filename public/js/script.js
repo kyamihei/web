@@ -383,8 +383,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // カスタムサイズをリセット
         streamContainer.classList.remove('custom-sized');
-        streamContainer.style.gridColumn = '';
-        streamContainer.style.gridRow = '';
+        streamContainer.style.gridColumnStart = 'auto';
+        streamContainer.style.gridRowStart = 'auto';
+        streamContainer.style.gridColumnEnd = '';
+        streamContainer.style.gridRowEnd = '';
+        streamContainer.style.minWidth = '';
+        streamContainer.style.minHeight = '';
         
         // プレースホルダーを表示
         streamContainer.innerHTML = `
@@ -592,8 +596,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // カスタムサイズをリセット
             document.querySelectorAll('.stream-player.custom-sized').forEach(player => {
                 player.classList.remove('custom-sized');
-                player.style.gridColumn = '';
-                player.style.gridRow = '';
+                player.style.gridColumnStart = 'auto';
+                player.style.gridRowStart = 'auto';
+                player.style.gridColumnEnd = '';
+                player.style.gridRowEnd = '';
+                player.style.minWidth = '';
+                player.style.minHeight = '';
             });
             
             // カスタムレイアウト情報をクリア
@@ -974,8 +982,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // カスタムサイズをリセット
             document.querySelectorAll('.stream-player.custom-sized').forEach(player => {
                 player.classList.remove('custom-sized');
-                player.style.gridColumn = '';
-                player.style.gridRow = '';
+                player.style.gridColumnStart = 'auto';
+                player.style.gridRowStart = 'auto';
+                player.style.gridColumnEnd = '';
+                player.style.gridRowEnd = '';
+                player.style.minWidth = '';
+                player.style.minHeight = '';
             });
             
             // レイアウトを2x2に戻す
@@ -1105,10 +1117,10 @@ document.addEventListener('DOMContentLoaded', () => {
             resizeHandles.forEach(handle => {
                 if (!handle.classList.contains('dragging')) {
                     handle.style.opacity = '0';
-                }
-            });
+            }
         });
     });
+});
 
     // 初期化
     if (window.location.search) {
@@ -1295,8 +1307,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 // カスタムサイズをリセット
                 document.querySelectorAll('.stream-player.custom-sized').forEach(player => {
                     player.classList.remove('custom-sized');
-                    player.style.gridColumn = '';
-                    player.style.gridRow = '';
+                    player.style.gridColumnStart = 'auto';
+                    player.style.gridRowStart = 'auto';
+                    player.style.gridColumnEnd = '';
+                    player.style.gridRowEnd = '';
+                    player.style.minWidth = '';
+                    player.style.minHeight = '';
                 });
                 
                 // カスタムレイアウト情報をクリア
@@ -1961,14 +1977,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const allPlayers = Array.from(document.querySelectorAll('.stream-player:not(.hidden)'));
         const otherPlayers = allPlayers.filter(p => p !== player && !p.classList.contains('hidden'));
         
-        // 初期グリッド情報を保存
-        const initialGridInfo = allPlayers.map(player => {
-            return {
-                el: player,
-                rect: player.getBoundingClientRect()
-            };
-        });
-        
         // 現在のレイアウトの列数と行数を推定
         const gridStyle = window.getComputedStyle(grid);
         const columnsTemplate = gridStyle.gridTemplateColumns;
@@ -1988,6 +1996,8 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (grid.classList.contains('layout-2x4')) { columnCount = 4; rowCount = 2; }
         else if (grid.classList.contains('layout-custom')) { columnCount = 3; rowCount = 3; } // 推定値
         else if (grid.classList.contains('layout-custom2')) { columnCount = 4; rowCount = 3; } // 推定値
+        
+        console.log(`リサイズ開始: グリッドは${columnCount}x${rowCount}`);
         
         // マウス移動のイベントリスナー
         function onMouseMove(e) {
@@ -2011,27 +2021,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 newHeight = Math.max(100, startRect.height - deltaY);
             }
             
-            // 新しいグリッドスパンを計算
-            // 列と行のサイズを推定して計算
+            // セルのサイズを計算
             const cellWidth = gridRect.width / columnCount;
             const cellHeight = gridRect.height / rowCount;
             
+            // グリッドスパンの計算
             const colSpan = Math.max(1, Math.round(newWidth / cellWidth));
             const rowSpan = Math.max(1, Math.round(newHeight / cellHeight));
             
-            // 値の整数化と最小・最大値の制限
+            // 最大値の制限
             const maxColSpan = Math.min(colSpan, columnCount);
             const maxRowSpan = Math.min(rowSpan, rowCount);
             
+            console.log(`サイズ変更: ${newWidth}x${newHeight}、スパン: ${maxColSpan}x${maxRowSpan}`);
+            
             // グリッドスパンを設定
-            player.style.gridColumn = `span ${maxColSpan}`;
-            player.style.gridRow = `span ${maxRowSpan}`;
+            player.style.gridColumnStart = 'auto'; // 重要: 明示的なスタート位置をリセット
+            player.style.gridRowStart = 'auto';
+            player.style.gridColumnEnd = `span ${maxColSpan}`;
+            player.style.gridRowEnd = `span ${maxRowSpan}`;
             
             // カスタムサイズが適用されたことを示すクラスを追加
             player.classList.add('custom-sized');
             
-            // その他のストリームプレーヤーの位置を自動調整するのはCSS Grid自体に任せる
-            // grid-auto-flow: dense; の設定により、空きスペースに自動的に配置される
+            // 直接サイズも設定（CSSグリッドの設定と並行して使用）
+            if (maxColSpan > 1 || maxRowSpan > 1) {
+                // サイズを少し小さくして、他の要素とのスペースを確保
+                const width = cellWidth * maxColSpan - 10;
+                const height = cellHeight * maxRowSpan - 10;
+                
+                // プレーヤーの最小サイズを設定
+                player.style.minWidth = `${width}px`;
+                player.style.minHeight = `${height}px`;
+            }
+            
+            // コンソールにデバッグ情報を出力
+            console.log(`現在のグリッド設定: column=${player.style.gridColumnEnd}, row=${player.style.gridRowEnd}`);
         }
         
         // マウスアップのイベントリスナー
@@ -2047,6 +2072,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // リサイズハンドルを再配置
             addResizeHandlesToPlayers();
+            
+            console.log('リサイズ完了', player.style.gridColumnEnd, player.style.gridRowEnd);
         }
         
         // イベントリスナーを追加
@@ -2060,8 +2087,10 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.stream-player.custom-sized').forEach(player => {
             const streamId = player.id.split('-')[1];
             customLayout[streamId] = {
-                gridColumn: player.style.gridColumn,
-                gridRow: player.style.gridRow
+                gridColumnEnd: player.style.gridColumnEnd,
+                gridRowEnd: player.style.gridRowEnd,
+                minWidth: player.style.minWidth,
+                minHeight: player.style.minHeight
             };
         });
         
@@ -2076,8 +2105,12 @@ document.addEventListener('DOMContentLoaded', () => {
             Object.entries(currentState.customLayout).forEach(([streamId, layout]) => {
                 const player = document.getElementById(`stream-${streamId}`);
                 if (player) {
-                    player.style.gridColumn = layout.gridColumn;
-                    player.style.gridRow = layout.gridRow;
+                    player.style.gridColumnStart = 'auto';
+                    player.style.gridRowStart = 'auto';
+                    player.style.gridColumnEnd = layout.gridColumnEnd;
+                    player.style.gridRowEnd = layout.gridRowEnd;
+                    player.style.minWidth = layout.minWidth;
+                    player.style.minHeight = layout.minHeight;
                     player.classList.add('custom-sized');
                 }
             });

@@ -567,8 +567,8 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: var(--box-shadow);
     border: 1px solid rgba(255, 255, 255, 0.05);
     transition: all var(--transition-speed) ease;
-    grid-column: unset;
-    grid-row: unset;
+    grid-column-start: auto;
+    grid-row-start: auto;
 }
 
 .stream-player:hover {
@@ -596,6 +596,17 @@ body.resizing-active {
     z-index: 1;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    transform: translateY(0) !important;
+}
+
+.custom-sized iframe:not(.chat-iframe) {
+    width: 100%;
+    height: 100%;
+}
+
+.custom-sized.with-chat iframe:not(.chat-iframe) {
+    width: 100%;
+    height: 100%;
 }
 
 /* リサイズハンドル */
