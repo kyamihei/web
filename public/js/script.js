@@ -9,132 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
     
-    // レイアウト選択ポップアップの処理
-    const layoutSelectionPopup = document.getElementById('layout-selection-popup');
-    const layoutOptions = document.querySelectorAll('.layout-option');
-    const confirmLayoutButton = document.getElementById('confirm-layout');
-    const skipLayoutSelectionButton = document.getElementById('skip-layout-selection');
-    let selectedLayout = 'layout-2x2'; // デフォルトのレイアウト
-    
-    // 初回訪問時（URLにパラメータがない場合）のみポップアップを表示
-    function showLayoutSelectionPopup() {
-        if (!window.location.search) {
-            layoutSelectionPopup.classList.add('show');
-            // デフォルト選択
-            document.querySelector('.layout-option[data-layout="layout-2x2"]').classList.add('selected');
-            // ストリームコンテナを一時的に非表示にする
-            document.querySelector('.streams-container').style.visibility = 'hidden';
-        }
-    }
-    
-    // レイアウトオプションのクリックイベント
-    layoutOptions.forEach(option => {
-        option.addEventListener('click', () => {
-            // 既存の選択を解除
-            layoutOptions.forEach(opt => opt.classList.remove('selected'));
-            // 新しい選択を適用
-            option.classList.add('selected');
-            // 選択されたレイアウトを保存
-            selectedLayout = option.getAttribute('data-layout');
-        });
-    });
-    
-    // 確定ボタンのクリックイベント
-    confirmLayoutButton.addEventListener('click', () => {
-        // 選択されたレイアウトを適用
-        applySelectedLayout(selectedLayout);
-        // ポップアップを閉じる
-        layoutSelectionPopup.classList.remove('show');
-        // ストリームコンテナを表示する
-        document.querySelector('.streams-container').style.visibility = 'visible';
-    });
-    
-    // スキップボタンのクリックイベント
-    skipLayoutSelectionButton.addEventListener('click', () => {
-        // デフォルトのレイアウト（2x2）を適用
-        applySelectedLayout('layout-2x2');
-        // ポップアップを閉じる
-        layoutSelectionPopup.classList.remove('show');
-        // ストリームコンテナを表示する
-        document.querySelector('.streams-container').style.visibility = 'visible';
-    });
-    
-    // 選択されたレイアウトを適用する関数
-    function applySelectedLayout(layoutClass) {
-        // レイアウトボタンを探す
-        const layoutButton = document.getElementById(layoutClass);
-        if (layoutButton) {
-            // 他のレイアウトボタンからactiveクラスを削除
-            document.querySelectorAll('.layout-buttons button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // 選択されたレイアウトボタンにactiveクラスを追加
-            layoutButton.classList.add('active');
-            
-            // ストリームコンテナにレイアウトクラスを適用
-            const streamsContainer = document.querySelector('.streams-container');
-            if (streamsContainer) {
-                // 既存のレイアウトクラスを削除
-                streamsContainer.className = 'streams-container';
-                // 新しいレイアウトクラスを追加
-                streamsContainer.classList.add(layoutClass);
-                
-                // レイアウトに応じてストリームプレーヤーの表示/非表示を切り替え
-                const streamPlayers = document.querySelectorAll('.stream-player');
-                
-                switch (layoutClass) {
-                    case 'layout-1x2':
-                    case 'layout-2x1':
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 2 ? 'flex' : 'none';
-                        });
-                        break;
-                    case 'layout-1x3':
-                    case 'layout-3x1':
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 3 ? 'flex' : 'none';
-                        });
-                        break;
-                    case 'layout-2x3':
-                    case 'layout-3x2':
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 6 ? 'flex' : 'none';
-                        });
-                        break;
-                    case 'layout-3x3':
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 9 ? 'flex' : 'none';
-                        });
-                        break;
-                    case 'layout-2x4':
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 8 ? 'flex' : 'none';
-                        });
-                        break;
-                    case 'layout-custom':
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 7 ? 'flex' : 'none';
-                        });
-                        break;
-                    case 'layout-custom2':
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 10 ? 'flex' : 'none';
-                        });
-                        break;
-                    default:
-                        streamPlayers.forEach((player, index) => {
-                            player.style.display = index < 4 ? 'flex' : 'none';
-                        });
-                }
-                
-                // 状態を更新
-                currentState.layout = layoutClass;
-                saveStateToURL();
-            }
-        }
-    }
-    
     // チャットボタンを無効化する関数
     function disableChatButton(button) {
         button.classList.add('disabled');
@@ -1189,37 +1063,227 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 初期表示用のストリーム入力フィールドを表示する関数
-    function showInitialStreamInputs() {
-        // デフォルトで表示するストリーム入力の数（レイアウトに合わせて設定）
-        const initialStreamCount = 4; // 2x2レイアウトなので4つ
-        
-        // 指定した数のストリーム入力フィールドを表示
-        for (let i = 1; i <= initialStreamCount; i++) {
-            const streamInput = document.getElementById(`stream-input-${i}`);
-            if (streamInput) {
-                streamInput.classList.remove('hidden');
-                visibleStreamInputs++;
-            }
-        }
-    }
-
-    // 初期化処理
-    function initialize() {
-        // URLからステートを読み込む
+    // 初期化
+    if (window.location.search) {
+        // URLからステートがある場合のみ復元
         loadStateFromURL();
+    } else {
+        // URLにステートがない場合は、URLを変更せずに2x2レイアウトを適用
         
-        // ステートがなければ初期ストリーム入力を表示
-        if (!window.location.search) {
-            showInitialStreamInputs();
-        }
+        // まず他のボタンからactiveクラスを削除（念のため）
+        layoutButtons.forEach(btn => btn.classList.remove('active'));
         
-        // レイアウト選択ポップアップを表示
-        showLayoutSelectionPopup();
+        // 2x2ボタンにactiveクラスを追加
+        document.getElementById('layout-2x2').classList.add('active');
+        
+        // レイアウトクラスの設定
+        streamsContainer.className = 'streams-container layout-2x2';
+        currentState.layout = 'layout-2x2';
+        
+        // レイアウトに応じてストリームプレーヤーの表示/非表示を設定
+        const streamPlayers = document.querySelectorAll('.stream-player');
+        streamPlayers.forEach((player, index) => {
+            player.style.display = index < 4 ? 'flex' : 'none';
+        });
     }
 
-    // 初期化実行
-    initialize();
+    initializeStreamPlayers();
+
+    function createLayoutButtons() {
+        const layoutButtons = document.querySelector('.layout-buttons');
+        layoutButtons.innerHTML = `
+            <!-- 基本レイアウト（1～4画面） -->
+            <div class="layout-group">
+                <div class="layout-group-title">基本レイアウト（1～4画面）</div>
+                <button id="layout-1x2" title="1x2レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-2x1" title="2x1レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-2x2" title="2x2レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-1x3" title="1x3レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-3x1" title="3x1レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <!-- 1x4と4x1ボタンを削除 -->
+            </div>
+            
+            <!-- 中規模レイアウト（6～9画面） -->
+            <div class="layout-group">
+                <div class="layout-group-title">中規模レイアウト（6～9画面）</div>
+                <button id="layout-2x3" title="2x3レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-3x2" title="3x2レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-3x3" title="3x3レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+            </div>
+            
+            <!-- 大規模レイアウト（8～10画面） -->
+            <div class="layout-group">
+                <div class="layout-group-title">大規模レイアウト（8～10画面）</div>
+                <button id="layout-2x4" title="2x4レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-custom" title="大3小4レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+                <button id="layout-custom2" title="大2小8レイアウト">
+                    <div class="layout-icon">
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                        <div class="grid-cell"></div>
+                    </div>
+                </button>
+            </div>
+        `;
+
+        // レイアウトボタンのイベントリスナーを再設定
+        const buttons = layoutButtons.querySelectorAll('button');
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                
+                // アクティブクラスの切り替え
+                buttons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // レイアウトクラスの切り替え
+                const layoutClass = button.id;
+                streamsContainer.className = 'streams-container ' + layoutClass;
+                
+                // 状態を更新
+                currentState.layout = layoutClass;
+                saveStateToURL();
+                
+                // レイアウトに応じてストリームプレーヤーの表示/非表示を切り替え
+                const streamPlayers = document.querySelectorAll('.stream-player');
+                
+                switch (layoutClass) {
+                    case 'layout-1x2':
+                    case 'layout-2x1':
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 2 ? 'flex' : 'none';
+                        });
+                        break;
+                    case 'layout-1x3':
+                    case 'layout-3x1':
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 3 ? 'flex' : 'none';
+                        });
+                        break;
+                    case 'layout-2x3':
+                    case 'layout-3x2':
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 6 ? 'flex' : 'none';
+                        });
+                        break;
+                    case 'layout-3x3':
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 9 ? 'flex' : 'none';
+                        });
+                        break;
+                    case 'layout-2x4':
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 8 ? 'flex' : 'none';
+                        });
+                        break;
+                    case 'layout-custom':
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 7 ? 'flex' : 'none';
+                        });
+                        break;
+                    case 'layout-custom2':
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 10 ? 'flex' : 'none';
+                        });
+                        break;
+                    default:
+                        streamPlayers.forEach((player, index) => {
+                            player.style.display = index < 4 ? 'flex' : 'none';
+                        });
+                }
+
+                initializeStreamPlayers();
+            });
+        });
+    }
+
+    createLayoutButtons();
 
     // 全画面表示の切り替え機能
     const fullscreenToggle = document.getElementById('fullscreen-toggle');
