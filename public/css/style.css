@@ -454,6 +454,8 @@ h1, h2, h3, h4, h5, h6 {
     gap: 10px;
     padding: 10px;
     height: 100vh;
+    grid-auto-flow: dense; /* スペースを効率的に使用 */
+    transition: grid-template-columns 0.3s ease, grid-template-rows 0.3s ease;
 }
 
 /* レイアウト設定 */
@@ -565,6 +567,122 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: var(--box-shadow);
     border: 1px solid rgba(255, 255, 255, 0.05);
     transition: all var(--transition-speed) ease;
+    grid-column: unset;
+    grid-row: unset;
+}
+
+.stream-player:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* リサイズ中のプレーヤー */
+.stream-player.resizing {
+    transform: none !important;
+    transition: none !important;
+    border: 2px dashed var(--primary-light);
+    z-index: 10;
+    pointer-events: all;
+}
+
+/* リサイズ中の本体スタイル */
+body.resizing-active {
+    cursor: move;
+}
+
+/* カスタムサイズのプレーヤーのスタイル */
+.stream-player.custom-sized {
+    z-index: 1;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* リサイズハンドル */
+.resize-handle {
+    position: absolute;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    background-color: rgba(108, 92, 231, 0.5);
+    border-radius: 4px;
+}
+
+.resize-handle:hover, .resize-handle.dragging {
+    background-color: rgba(108, 92, 231, 0.8);
+    opacity: 1 !important;
+}
+
+.resizing .resize-handle {
+    opacity: 1;
+}
+
+.resize-n {
+    top: 0;
+    left: 10px;
+    right: 10px;
+    height: 6px;
+    cursor: n-resize;
+}
+
+.resize-e {
+    top: 10px;
+    right: 0;
+    bottom: 10px;
+    width: 6px;
+    cursor: e-resize;
+}
+
+.resize-s {
+    bottom: 0;
+    left: 10px;
+    right: 10px;
+    height: 6px;
+    cursor: s-resize;
+}
+
+.resize-w {
+    top: 10px;
+    left: 0;
+    bottom: 10px;
+    width: 6px;
+    cursor: w-resize;
+}
+
+.resize-ne {
+    top: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    cursor: ne-resize;
+    border-top-right-radius: var(--border-radius);
+}
+
+.resize-se {
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    cursor: se-resize;
+    border-bottom-right-radius: var(--border-radius);
+}
+
+.resize-sw {
+    bottom: 0;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    cursor: sw-resize;
+    border-bottom-left-radius: var(--border-radius);
+}
+
+.resize-nw {
+    top: 0;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    cursor: nw-resize;
+    border-top-left-radius: var(--border-radius);
 }
 
 .stream-number {
@@ -581,12 +699,6 @@ h1, h2, h3, h4, h5, h6 {
     opacity: 0.8;
     pointer-events: none;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-}
-
-.stream-player:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .placeholder {
