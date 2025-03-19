@@ -454,8 +454,6 @@ h1, h2, h3, h4, h5, h6 {
     gap: 10px;
     padding: 10px;
     height: 100vh;
-    grid-auto-flow: dense; /* スペースを効率的に使用 */
-    transition: grid-template-columns 0.3s ease, grid-template-rows 0.3s ease;
 }
 
 /* レイアウト設定 */
@@ -567,133 +565,6 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: var(--box-shadow);
     border: 1px solid rgba(255, 255, 255, 0.05);
     transition: all var(--transition-speed) ease;
-    grid-column-start: auto;
-    grid-row-start: auto;
-}
-
-.stream-player:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    border-color: rgba(255, 255, 255, 0.1);
-}
-
-/* リサイズ中のプレーヤー */
-.stream-player.resizing {
-    transform: none !important;
-    transition: none !important;
-    border: 2px dashed var(--primary-light);
-    z-index: 10;
-    pointer-events: all;
-}
-
-/* リサイズ中の本体スタイル */
-body.resizing-active {
-    cursor: move;
-}
-
-/* カスタムサイズのプレーヤーのスタイル */
-.stream-player.custom-sized {
-    z-index: 1;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transform: translateY(0) !important;
-}
-
-.custom-sized iframe:not(.chat-iframe) {
-    width: 100%;
-    height: 100%;
-}
-
-.custom-sized.with-chat iframe:not(.chat-iframe) {
-    width: 100%;
-    height: 100%;
-}
-
-/* リサイズハンドル */
-.resize-handle {
-    position: absolute;
-    z-index: 100;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    background-color: rgba(108, 92, 231, 0.5);
-    border-radius: 4px;
-}
-
-.resize-handle:hover, .resize-handle.dragging {
-    background-color: rgba(108, 92, 231, 0.8);
-    opacity: 1 !important;
-}
-
-.resizing .resize-handle {
-    opacity: 1;
-}
-
-.resize-n {
-    top: 0;
-    left: 10px;
-    right: 10px;
-    height: 6px;
-    cursor: n-resize;
-}
-
-.resize-e {
-    top: 10px;
-    right: 0;
-    bottom: 10px;
-    width: 6px;
-    cursor: e-resize;
-}
-
-.resize-s {
-    bottom: 0;
-    left: 10px;
-    right: 10px;
-    height: 6px;
-    cursor: s-resize;
-}
-
-.resize-w {
-    top: 10px;
-    left: 0;
-    bottom: 10px;
-    width: 6px;
-    cursor: w-resize;
-}
-
-.resize-ne {
-    top: 0;
-    right: 0;
-    width: 12px;
-    height: 12px;
-    cursor: ne-resize;
-    border-top-right-radius: var(--border-radius);
-}
-
-.resize-se {
-    bottom: 0;
-    right: 0;
-    width: 12px;
-    height: 12px;
-    cursor: se-resize;
-    border-bottom-right-radius: var(--border-radius);
-}
-
-.resize-sw {
-    bottom: 0;
-    left: 0;
-    width: 12px;
-    height: 12px;
-    cursor: sw-resize;
-    border-bottom-left-radius: var(--border-radius);
-}
-
-.resize-nw {
-    top: 0;
-    left: 0;
-    width: 12px;
-    height: 12px;
-    cursor: nw-resize;
-    border-top-left-radius: var(--border-radius);
 }
 
 .stream-number {
@@ -710,6 +581,12 @@ body.resizing-active {
     opacity: 0.8;
     pointer-events: none;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.stream-player:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.1);
 }
 
 .placeholder {
@@ -1787,4 +1664,133 @@ iframe {
     grid-column: 4 / 5;
     grid-row: 4 / 5;
     background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* レイアウト選択ポップアップ */
+.layout-selection-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.layout-selection-popup.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.layout-selection-container {
+    background: linear-gradient(135deg, var(--dark-surface) 0%, var(--dark-surface-2) 100%);
+    border-radius: var(--border-radius);
+    padding: 25px;
+    max-width: 800px;
+    width: 90%;
+    box-shadow: var(--box-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+}
+
+.layout-selection-popup.show .layout-selection-container {
+    transform: translateY(0);
+}
+
+.layout-selection-container h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+}
+
+.layout-selection-container p {
+    color: var(--text-secondary);
+    margin-bottom: 25px;
+    font-size: 16px;
+}
+
+.layout-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.layout-option {
+    padding: 10px;
+    border-radius: var(--border-radius);
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+}
+
+.layout-option:hover {
+    background-color: rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.layout-option.selected {
+    background-color: rgba(var(--primary-rgb), 0.2);
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--primary-rgb), 0.3);
+}
+
+.layout-option-icon {
+    display: grid;
+    gap: 2px;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 8px;
+}
+
+.layout-option-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.layout-selection-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.layout-selection-button {
+    padding: 10px 25px;
+    border-radius: var(--border-radius);
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-speed) ease;
+}
+
+.layout-selection-button.confirm {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+}
+
+.layout-selection-button.confirm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--primary-rgb), 0.3);
+}
+
+.layout-selection-button.cancel {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    color: var(--text-primary);
+}
+
+.layout-selection-button.cancel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
